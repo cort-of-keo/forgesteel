@@ -33,7 +33,7 @@ export const RollModal = (props: Props) => {
 				if (props.hero.state.conditions.some(c => c.type === ConditionType.Bleeding) || (HeroLogic.getCombatState(props.hero) === 'dying')) {
 					warnings.push({
 						label: ConditionType.Bleeding,
-						text: 'Whenever you make a test using Might or Agility, you lose 1d6 + Level Stamina after it is resolved.'
+						text: 'Whenever you make a test using Might or Agility, you lose 1d6 Stamina after it is resolved.'
 					});
 				}
 				if (props.hero.state.conditions.some(c => c.type === ConditionType.Restrained)) {
