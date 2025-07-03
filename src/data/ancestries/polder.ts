@@ -81,7 +81,7 @@ export const polder: Ancestry = {
 					value: 2
 				}
 			],
-			count: 3
+			count: 4
 		})
 	]
 };

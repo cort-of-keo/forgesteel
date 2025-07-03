@@ -11,10 +11,13 @@ export const timeRaider: Ancestry = {
 	name: 'Time Raider',
 	description: 'The original servitor species of the synliiroi - evil psions with near god-like power - the kuran’zoi liberated themselves during the First Psychic War. In the centuries since, they built their own culture and civilization as nomads of the timescape. The exonym “time raiders” was given to them by denizens of the lower worlds who, seeing the advanced technology they wield, concluded they must be from the future.',
 	features: [
-		FactoryLogic.feature.create({
+		FactoryLogic.feature.createDamageModifier({
 			id: 'time-raider-feature-1',
-			name: 'Four Arms',
-			description: 'Your multiple arms let you take on multiple tasks at the same time. Whenever you use the Grab or Knockback maneuver against an adjacent creature, you can target an additional adjacent creature, using the same power roll for both targets. You can grab up to two creatures at a time.'
+			name: 'Psychic Scar',
+			description: 'Your mind is a formidable layer of defense. You have psychic immunity equal to your level.',
+			modifiers: [
+				FactoryLogic.damageModifier.createPerLevel({ damageType: DamageType.Psychic, modifierType: DamageModifierType.Immunity, value: 1 })
+			]
 		}),
 		FactoryLogic.feature.createChoice({
 			id: 'time-raider-feature-2',
@@ -46,7 +49,7 @@ export const timeRaider: Ancestry = {
 							FactoryLogic.feature.create({
 								id: 'time-raider-feature-2-2a',
 								name: 'Foresight',
-								description: 'You instinctively know the location of any concealed creatures who aren’t hidden from you, negating the usual bane on strikes against them.'
+								description: 'You instinctively know the location of any concealed creatures who aren’t hidden from you within 20, negating the usual bane on strikes against them.'
 							}),
 							FactoryLogic.feature.createAbility({
 								ability: FactoryLogic.createAbility({
@@ -67,19 +70,25 @@ export const timeRaider: Ancestry = {
 					value: 1
 				},
 				{
-					feature: FactoryLogic.feature.createDamageModifier({
+					feature: FactoryLogic.feature.create({
 						id: 'time-raider-feature-2-3',
-						name: 'Psychic Scar',
-						modifiers: [
-							FactoryLogic.damageModifier.createPerLevel({ damageType: DamageType.Psychic, modifierType: DamageModifierType.Immunity, value: 1 })
-						]
+						name: 'Four-Armed Athletics',
+						description: 'Your unique physiology enhances your movement. You gain an edge on tests that use the Climb, Gymnastics, or Swim skills when you can use all your arms in the attempt.'
 					}),
 					value: 1
 				},
 				{
+					feature: FactoryLogic.feature.create({
+						id: 'time-raider-feature-2-4',
+						name: 'Four-Armed Martial Arts',
+						description: 'Your multiple arms let you take on multiple tasks at the same time. Whenever you use the Grab or Knockback maneuver against an adjacent creature, you can target one additional adjacent creature, using the same power roll for both targets. Additionally, you can have up to two creatures grabbed at a time.'
+					}),
+					value: 2
+				},
+				{
 					feature: FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
-							id: 'time-raider-feature-2-4',
+							id: 'time-raider-feature-2-5',
 							name: 'Concussive Slam',
 							description: 'You slam an invisible force down upon the target.',
 							type: FactoryLogic.type.createAction(),
@@ -104,7 +113,7 @@ export const timeRaider: Ancestry = {
 				{
 					feature: FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
-							id: 'time-raider-feature-2-5',
+							id: 'time-raider-feature-2-6',
 							name: 'Psionic Bolt',
 							description: 'You shoot forth a beam of psychic purple force that grips your target.',
 							type: FactoryLogic.type.createAction(),
@@ -129,7 +138,7 @@ export const timeRaider: Ancestry = {
 				{
 					feature: FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
-							id: 'time-raider-feature-2-6',
+							id: 'time-raider-feature-2-7',
 							name: 'Minor Acceleration',
 							description: 'You fill yourself or an ally with a burst of energy.',
 							type: FactoryLogic.type.createManeuver(),
@@ -148,7 +157,7 @@ export const timeRaider: Ancestry = {
 				},
 				{
 					feature: FactoryLogic.feature.createConditionImmunity({
-						id: 'time-raider-feature-2-7',
+						id: 'time-raider-feature-2-8',
 						name: 'Unstoppable Mind',
 						description: 'Your mind allows you to maintain your focus in any situation.',
 						conditions: [ ConditionType.Dazed ]
@@ -156,7 +165,7 @@ export const timeRaider: Ancestry = {
 					value: 2
 				}
 			],
-			count: 2
+			count: 3
 		})
 	]
 };

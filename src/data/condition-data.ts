@@ -1,5 +1,5 @@
 export class ConditionData {
-	static bleeding = 'While bleeding, whenever you make a test using Might or Agility, make a strike, or use an action, maneuver, or a triggered action, you lose 1d6 Stamina after the test, action, maneuver, or triggered action is resolved. This Stamina loss can’t be prevented in any way.';
+	static bleeding = 'While bleeding, whenever you make a test using Might or Agility, make a strike, or use an action, maneuver, or a triggered action, you lose 1d6 + Level Stamina after the test, action, maneuver, or triggered action is resolved. This Stamina loss can’t be prevented in any way.';
 
 	static dazed = `
 While you are dazed, you can do only one thing on your turn: use a maneuver, use an action, or take a move action.
