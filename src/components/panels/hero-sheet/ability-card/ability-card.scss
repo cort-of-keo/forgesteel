@@ -1,0 +1,165 @@
+@use '../../../pages/heroes/hero-sheet/common.scss';
+
+.hero-sheet .ability.card {
+    padding: 10px;
+    display:grid;
+    justify-self: stretch;
+
+    p strong {
+        @include common.font-slab;
+    }
+
+    section.bordered {
+        margin-bottom: 0;
+    }
+    h2 {
+        margin-top: -8px;
+
+        .cost {
+            @include common.font-slab;
+            display: block;
+            float: right;
+            border: 2px solid common.$color-medium;
+            height: 36px;
+            width: 36px;
+            border-radius: 50%;
+            margin-top: -10px;
+            text-align: center;
+            font-size: 22px;
+            padding-top: 2px;
+
+            &::after {
+                content: "Cost";
+                display: inline-block;
+                position: relative;
+                font-size: 9px;
+                line-height: 9px;
+                height: 9px;
+                font-weight: 450;
+                bottom: 9px;
+                left: 50%;
+                transform: translateX(-16px);
+                background: #fff;
+                padding: 1px 2px;
+                border-radius: 6px;
+            }
+        }
+    }
+
+    .stats {
+        display: grid;
+        place-content: stretch;
+        grid-template-rows: min-content min-content;
+        margin-bottom: 15px;
+
+        * {
+            @include common.font-slab;
+            font-size: 16px;
+            line-height: 20px;
+            text-wrap: nowrap;
+        }
+
+        .keywords-action-type * {
+            font-weight: 450;
+        }
+
+        .keywords-action-type,
+        .distance-target {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .action-type,
+        .target {
+            text-align: right;
+        }
+
+        .distance, 
+        .target {
+            img {
+                height: 17px;
+                margin-right: 3px;
+                opacity: 0.8;
+            }
+
+            img, span {
+                font-weight: 350;
+                display: inline-block;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    .power-roll {
+        display: grid;
+        grid-template-rows: min-content 1fr;
+
+        font-size: 15px;
+
+        .power, .symbol-text {
+            @include common.font-slab;
+        }
+        .power  {
+            font-weight: 600;
+            margin: 0 10px 10px;
+            > span {
+                display: inline-block;
+                font-size: 17px;
+
+                border-bottom: 1px solid common.$color-medium;
+                min-width: 50%;
+
+                .characteristic {
+                    transform: translateY(2.5px);
+                    font-size: 15px;
+                    color: common.$color-medium;
+                }
+            }
+        }
+
+        .roll-tiers {
+            display: grid;
+            grid-template-rows: min-content min-content min-content;
+            margin: 0 10px 10px;
+
+            .tier {
+                display: grid;
+                grid-template-columns: min-content 1fr;
+                margin: 5px 0;
+
+                .range {
+                    margin-top: 2px;
+                    width: 50px;
+                    height: 18px;
+                }
+
+                .effect {
+                    border-bottom: 2px solid common.$color-light;
+                    padding-bottom: 5px;
+                }
+            }
+
+        }
+    }
+
+    .trigger {
+        font-size: 15px;
+        label {
+            font-weight: 450;
+        }
+    }
+    .effect {
+        h4 {
+            text-align: left;
+            font-weight: 450;
+            margin:0 10px 5px;
+        }
+    }
+    .ability-effect {
+        font-size: 15px;
+
+        ul {
+            margin-left: 10px;
+        }
+    }
+}

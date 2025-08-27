@@ -412,6 +412,14 @@ export class HeroLogic {
 		return value;
 	};
 
+	static getWindedThreshold = (hero: Hero) => {
+		return Math.floor(HeroLogic.getStamina(hero) / 2);
+	};
+
+	static getDeadThreshold = (hero: Hero) => {
+		return -HeroLogic.getWindedThreshold(hero);
+	};
+
 	static getRecoveryValue = (hero: Hero) => {
 		let value = Math.floor(HeroLogic.getStamina(hero) / 3);
 
@@ -659,6 +667,13 @@ export class HeroLogic {
 		return reducedKits;
 	};
 
+	static getBonusFromModifier = (hero: Hero, attrFn: (kit: Kit) => number): number => {
+		const kits = HeroLogic.getKits(hero);
+		const result = Collections.max(kits.map(attrFn), s => s) || 0;
+
+		return result;
+	};
+
 	static getFeatureDamageBonuses = (hero: Hero, ability: Ability) => {
 		const array: { feature: string, value: number, type: DamageType }[] = [];
 
@@ -702,6 +717,51 @@ export class HeroLogic {
 			});
 
 		return value;
+	};
+
+	static getHeroicResources = (hero: Hero) => {
+		return HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.HeroicResource)
+			.map(f => {
+				let gains = [];
+				switch (f.data.type) {
+					case 'heroic': {
+						const gainsFromFeatures = HeroLogic.getFeatures(hero)
+							.map(f => f.feature)
+							.filter(f => f.type === FeatureType.HeroicResourceGain)
+							.map(f => f.data);
+
+						const gainsFromDomains = HeroLogic.getDomains(hero)
+							.flatMap(d => d.resourceGains)
+							.filter(g => g.resource === f.name)
+							.map(g => g);
+
+						const replacedTags = gainsFromFeatures.flatMap(g => g.replacesTags);
+
+						gains = [
+							...f.data.gains,
+							...gainsFromFeatures,
+							...gainsFromDomains
+						].filter(g => !replacedTags.includes(g.tag));
+						break;
+					}
+					case 'epic': {
+						gains = f.data.gains;
+						break;
+					}
+				}
+
+				return {
+					id: f.id,
+					name: f.name,
+					type: f.data.type,
+					gains: gains,
+					details: f.data.details,
+					canBeNegative: f.data.canBeNegative,
+					value: f.data.value
+				};
+			});
 	};
 
 	///////////////////////////////////////////////////////////////////////////
@@ -805,8 +865,28 @@ export class HeroLogic {
 		});
 	};
 
-	static calculatePotency = (hero: Hero, strength: 'weak' | 'average' | 'strong') => {
-		const value = hero.class && (hero.class.characteristics.length > 0) ? Math.max(...hero.class.characteristics.map(c => c.value)) : 0;
+	static calculateSaveValue = (hero: Hero) => {
+		// Account for Ancestry Traits that reduce Saving Throw
+		const featureIdsSaveOn5: string[] = [
+			'devil-feature-2-5', // Impressive Horns
+			'high-elf-feature-2-4', // Otherworldly Grace
+			'wode-elf-feature-2-4' // Otherworldly Grace
+		];
+		const features = HeroLogic.getFeatures(hero);
+		if (features.find(f => featureIdsSaveOn5.includes(f.feature.id))) {
+			return 5;
+		}
+		return 6;
+	};
+
+	static getPotency = (hero: Hero, strength: 'weak' | 'average' | 'strong') => {
+		const value = Math.max(
+			HeroLogic.getCharacteristic(hero, Characteristic.Might),
+			HeroLogic.getCharacteristic(hero, Characteristic.Agility),
+			HeroLogic.getCharacteristic(hero, Characteristic.Reason),
+			HeroLogic.getCharacteristic(hero, Characteristic.Intuition),
+			HeroLogic.getCharacteristic(hero, Characteristic.Presence)
+		);
 
 		switch (strength) {
 			case 'weak':
@@ -818,13 +898,19 @@ export class HeroLogic {
 		}
 	};
 
+	static calculateSurgeDamage = (hero: Hero) => {
+		const value = hero.class && (hero.class.characteristics.length > 0) ? Math.max(...hero.class.characteristics.map(c => c.value)) : 0;
+		return value;
+	};
+
 	static getCombatState = (hero: Hero) => {
 		const maxStamina = HeroLogic.getStamina(hero);
 		if (maxStamina > 0) {
-			const winded = Math.floor(maxStamina / 2);
+			const winded = HeroLogic.getWindedThreshold(hero);
+			const dead = HeroLogic.getDeadThreshold(hero);
 			const currentStamina = maxStamina - hero.state.staminaDamage;
 
-			if (currentStamina <= -winded) {
+			if (currentStamina <= dead) {
 				return 'dead';
 			}
 

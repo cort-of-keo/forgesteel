@@ -2,7 +2,7 @@ import { AbilityDistanceType } from '../../enums/abiity-distance-type';
 import { AbilityKeyword } from '../../enums/ability-keyword';
 import { Characteristic } from '../../enums/characteristic';
 import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster';
+import { MonsterGroup } from '../../models/monster-group';
 import { MonsterLogic } from '../../logic/monster-logic';
 import { MonsterOrganizationType } from '../../enums/monster-organization-type';
 import { MonsterRoleType } from '../../enums/monster-role-type';
@@ -738,7 +738,7 @@ The scyza’s trunk-like legs and claws cleave through the ground and kick up te
 						name: 'Castling',
 						type: FactoryLogic.type.createManeuver(),
 						distance: [ FactoryLogic.distance.createSelf() ],
-						target: '1 ally',
+						target: 'One ally',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The rampart moves or shifts up to their speed to a square adjacent to the target and then swamps places with the target.')
 						]

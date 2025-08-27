@@ -1,9 +1,7 @@
 import { Ability, AbilityDistance, AbilitySectionField, AbilitySectionPackage, AbilitySectionRoll, AbilitySectionText, AbilityType } from '../models/ability';
-import { Encounter, EncounterGroup, EncounterObjective, EncounterSlot } from '../models/encounter';
-import { Hero, HeroState } from '../models/hero';
+import { Encounter, EncounterGroup, EncounterObjective } from '../models/encounter';
 import { Kit, KitDamageBonus } from '../models/kit';
 import { MapFog, MapMini, MapTile, MapWall, MapZone, TacticalMap } from '../models/tactical-map';
-import { Monster, MonsterGroup, MonsterRole, MonsterState } from '../models/monster';
 import { MonsterFilter, TerrainFilter } from '../models/filter';
 import { Montage, MontageChallenge, MontageSection } from '../models/montage';
 import { Project, ProjectProgress } from '../models/project';
@@ -17,6 +15,7 @@ import { Complication } from '../models/complication';
 import { Culture } from '../models/culture';
 import { Domain } from '../models/domain';
 import { Element } from '../models/element';
+import { EncounterSlot } from '../models/encounter-slot';
 import { FactoryAbilityTypeLogic } from './factory-ability-type-logic';
 import { FactoryDamageModifierLogic } from './factory-damage-modifier-logic';
 import { FactoryDistanceLogic } from './factory-distance-logic';
@@ -26,14 +25,20 @@ import { FeatureField } from '../enums/feature-field';
 import { FeatureType } from '../enums/feature-type';
 import { Follower } from '../models/follower';
 import { FollowerType } from '../enums/follower-type';
+import { Hero } from '../models/hero';
 import { HeroClass } from '../models/class';
+import { HeroState } from '../models/hero-state';
+import { Imbuement } from '../models/imbuement';
 import { Item } from '../models/item';
 import { ItemType } from '../enums/item-type';
 import { KitArmor } from '../enums/kit-armor';
 import { KitWeapon } from '../enums/kit-weapon';
-import { MonsterLogic } from './monster-logic';
+import { Monster } from '../models/monster';
+import { MonsterGroup } from '../models/monster-group';
 import { MonsterOrganizationType } from '../enums/monster-organization-type';
+import { MonsterRole } from '../models/monster-roll';
 import { MonsterRoleType } from '../enums/monster-role-type';
+import { MonsterState } from '../models/monster-state';
 import { Negotiation } from '../models/negotiation';
 import { Options } from '../models/options';
 import { PanelWidth } from '../enums/panel-width';
@@ -43,6 +48,7 @@ import { Playbook } from '../models/playbook';
 import { Plot } from '../models/plot';
 import { PowerRoll } from '../models/power-roll';
 import { RetainerData } from '../data/retainer-data';
+import { SheetPageSize } from '../enums/sheet-page-size';
 import { Size } from '../models/size';
 import { Sourcebook } from '../models/sourcebook';
 import { Speed } from '../models/speed';
@@ -125,6 +131,7 @@ export class FactoryLogic {
 			perks: [],
 			titles: [],
 			items: [],
+			imbuements: [],
 			monsterGroups: [],
 			skills: [],
 			languages: [],
@@ -226,6 +233,7 @@ export class FactoryLogic {
 					name: 'Heroic Resource',
 					gains: [
 						{
+							tag: 'start',
 							trigger: 'Start of your turn',
 							value: '2'
 						}
@@ -360,7 +368,7 @@ export class FactoryLogic {
 		crafting?: Project,
 		effect?: string,
 		featuresByLevel?: { level: number, features: Feature[] }[],
-		customizationsByLevel?: { level: number, features: { feature: Feature, selected: boolean }[] }[]
+		imbuements?: Imbuement[]
 	}): Item => {
 		return {
 			id: data.id,
@@ -384,21 +392,27 @@ export class FactoryLogic {
 					features: []
 				}
 			],
-			customizationsByLevel: data.customizationsByLevel || [
-				{
-					level: 1,
-					features: []
-				},
-				{
-					level: 5,
-					features: []
-				},
-				{
-					level: 9,
-					features: []
-				}
-			],
-			count: 1
+			imbuements: data.imbuements || [],
+			count: 1,
+
+			customizationsByLevel: []
+		};
+	};
+
+	static createImbuement = (data: {
+		type: ItemType,
+		crafting?: Project,
+		level: number,
+		feature: Feature
+	}): Imbuement => {
+		return {
+			id: data.feature.id,
+			name: data.feature.name,
+			description: data.feature.description,
+			type: data.type,
+			crafting: data.crafting || null,
+			level: data.level,
+			feature: data.feature
 		};
 	};
 
@@ -466,6 +480,14 @@ export class FactoryLogic {
 		};
 	};
 
+	static defaultMonsterChatacteristics = [
+		{ characteristic: Characteristic.Might, value: 0 },
+		{ characteristic: Characteristic.Agility, value: 0 },
+		{ characteristic: Characteristic.Reason, value: 0 },
+		{ characteristic: Characteristic.Intuition, value: 0 },
+		{ characteristic: Characteristic.Presence, value: 0 }
+	];
+
 	static createMonster = (data: {
 		id: string,
 		name: string,
@@ -507,7 +529,7 @@ export class FactoryLogic {
 			stamina: data.stamina || 5,
 			stability: data.stability || 0,
 			freeStrikeDamage: data.freeStrikeDamage || 2,
-			characteristics: data.characteristics || MonsterLogic.createCharacteristics(0, 0, 0, 0, 0),
+			characteristics: data.characteristics || FactoryLogic.defaultMonsterChatacteristics,
 			withCaptain: data.withCaptain || '',
 			features: data.features || [],
 			retainer: retainer,
@@ -601,7 +623,10 @@ export class FactoryLogic {
 			monsterID: monsterID,
 			count: 1,
 			customization: {
-				addOnIDs: []
+				addOnIDs: [],
+				itemIDs: [],
+				levelAdjustment: 0,
+				convertToSolo: false
 			},
 			monsters: [],
 			state: {
@@ -626,7 +651,10 @@ export class FactoryLogic {
 			monsterID: monster.id,
 			count: 1,
 			customization: {
-				addOnIDs: []
+				addOnIDs: [],
+				itemIDs: [],
+				levelAdjustment: 0,
+				convertToSolo: false
 			},
 			monsters: [ m ],
 			state: {
@@ -938,11 +966,12 @@ export class FactoryLogic {
 			showStandardAbilities: true,
 			dimUnavailableAbilities: true,
 			showSources: true,
+			includePlayState: true,
 			abilityWidth: PanelWidth.Medium,
+			classicSheetPageSize: SheetPageSize.Letter,
 			compactView: false,
 			showMonstersInGroups: true,
 			showContentInTable: false,
-			showSimilarMonsters: false,
 			similarLevel: true,
 			similarRole: true,
 			similarOrganization: true,

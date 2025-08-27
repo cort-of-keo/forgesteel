@@ -1,7 +1,6 @@
 import { Alert, Button, Divider, Drawer, Flex, InputNumber, Popover, Progress, Segmented, Space, Tag } from 'antd';
 import { ConditionEndType, ConditionType } from '../../../enums/condition-type';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Encounter, EncounterSlot } from '../../../models/encounter';
 import { Collections } from '../../../utils/collections';
 import { Condition } from '../../../models/condition';
 import { ConditionPanel } from '../condition/condition-panel';
@@ -9,6 +8,8 @@ import { ConditionSelectModal } from '../../modals/select/condition-select/condi
 import { DamageModifierType } from '../../../enums/damage-modifier-type';
 import { DropdownButton } from '../../controls/dropdown-button/dropdown-button';
 import { Empty } from '../../controls/empty/empty';
+import { Encounter } from '../../../models/encounter';
+import { EncounterSlot } from '../../../models/encounter-slot';
 import { ErrorBoundary } from '../../controls/error-boundary/error-boundary';
 import { Field } from '../../controls/field/field';
 import { Format } from '../../../utils/format';
@@ -17,7 +18,7 @@ import { Hero } from '../../../models/hero';
 import { HeroLogic } from '../../../logic/hero-logic';
 import { Markdown } from '../../controls/markdown/markdown';
 import { Monster } from '../../../models/monster';
-import { MonsterInfo } from '../../controls/token/token';
+import { MonsterInfo } from '../token/token';
 import { MonsterLogic } from '../../../logic/monster-logic';
 import { MonsterOrganizationType } from '../../../enums/monster-organization-type';
 import { NumberSpin } from '../../controls/number-spin/number-spin';

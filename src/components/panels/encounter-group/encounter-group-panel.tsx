@@ -1,10 +1,11 @@
 import { Alert, Button, Flex, Popover, Segmented, Space, Tag } from 'antd';
-import { DownOutlined, EllipsisOutlined, HeartFilled, PlusOutlined } from '@ant-design/icons';
-import { Encounter, EncounterGroup, EncounterSlot } from '../../../models/encounter';
-import { HeroInfo, MonsterInfo, TerrainInfo } from '../../controls/token/token';
+import { DownOutlined, EllipsisOutlined, HeartFilled, PlusOutlined, UpOutlined } from '@ant-design/icons';
+import { Encounter, EncounterGroup } from '../../../models/encounter';
+import { HeroInfo, MonsterInfo, TerrainInfo } from '../token/token';
 import { Collections } from '../../../utils/collections';
 import { ConditionLogic } from '../../../logic/condition-logic';
 import { DangerButton } from '../../controls/danger-button/danger-button';
+import { EncounterSlot } from '../../../models/encounter-slot';
 import { Format } from '../../../utils/format';
 import { Hero } from '../../../models/hero';
 import { HeroLogic } from '../../../logic/hero-logic';
@@ -14,6 +15,7 @@ import { MonsterOrganizationType } from '../../../enums/monster-organization-typ
 import { Options } from '../../../models/options';
 import { Terrain } from '../../../models/terrain';
 import { TerrainLogic } from '../../../logic/terrain-logic';
+import { useState } from 'react';
 
 import './encounter-group-panel.scss';
 
@@ -247,6 +249,7 @@ interface MonsterSlotProps {
 
 export const MonsterSlot = (props: MonsterSlotProps) => {
 	const isMinionSlot = props.slot.monsters.every(m => m.role.organization === MonsterOrganizationType.Minion);
+	const [ showMonsters, setShowMonsters ] = useState<boolean>(!isMinionSlot);
 
 	const getStaminaDescription = () => {
 		const max = Collections.sum(props.slot.monsters, m => MonsterLogic.getStamina(m));
@@ -325,6 +328,14 @@ export const MonsterSlot = (props: MonsterSlotProps) => {
 							{getMinionCaptainTag()}
 							{props.slot.state.conditions.map(c => <Tag key={c.id}>{ConditionLogic.getFullDescription(c)}</Tag>)}
 						</div>
+						<Button
+							type='text'
+							icon={showMonsters ? <UpOutlined /> : <DownOutlined />}
+							onClick={e => {
+								e.stopPropagation();
+								setShowMonsters(!showMonsters);
+							}}
+						/>
 					</div>
 					: null
 			}
@@ -332,27 +343,29 @@ export const MonsterSlot = (props: MonsterSlotProps) => {
 				isMinionSlot ? getMinionCountMessage() : null
 			}
 			{
-				props.slot.monsters.map(monster => (
-					<div key={monster.id} className={props.slot.state.defeated || monster.state.defeated ? 'encounter-slot-row defeated' : 'encounter-slot-row'} onClick={() => props.onSelectMonster(monster)}>
-						<div className='name-column'>
-							<MonsterInfo monster={monster} />
+				showMonsters ?
+					props.slot.monsters.map(monster => (
+						<div key={monster.id} className={props.slot.state.defeated || monster.state.defeated ? 'encounter-slot-row defeated' : 'encounter-slot-row'} onClick={() => props.onSelectMonster(monster)}>
+							<div className='name-column'>
+								<MonsterInfo monster={monster} />
+							</div>
+							{
+								isMinionSlot ?
+									<div className='stamina-column' />
+									:
+									<div className='stamina-column'>
+										{MonsterLogic.getStaminaDescription(monster)}
+										<HeartFilled style={{ color: 'rgb(200, 0, 0)' }} />
+									</div>
+							}
+							<div className='conditions-column'>
+								{[ 'healthy', 'injured' ].includes(MonsterLogic.getCombatState(monster)) ? null : <Tag>{Format.capitalize(MonsterLogic.getCombatState(monster))}</Tag>}
+								{monster.state.hidden ? <Tag>Hidden</Tag> : null}
+								{monster.state.conditions.map(c => <Tag key={c.id}>{ConditionLogic.getFullDescription(c)}</Tag>)}
+							</div>
 						</div>
-						{
-							isMinionSlot ?
-								<div className='stamina-column' />
-								:
-								<div className='stamina-column'>
-									{MonsterLogic.getStaminaDescription(monster)}
-									<HeartFilled style={{ color: 'rgb(200, 0, 0)' }} />
-								</div>
-						}
-						<div className='conditions-column'>
-							{[ 'healthy', 'injured' ].includes(MonsterLogic.getCombatState(monster)) ? null : <Tag>{Format.capitalize(MonsterLogic.getCombatState(monster))}</Tag>}
-							{monster.state.hidden ? <Tag>Hidden</Tag> : null}
-							{monster.state.conditions.map(c => <Tag key={c.id}>{ConditionLogic.getFullDescription(c)}</Tag>)}
-						</div>
-					</div>
-				))
+					))
+					: null
 			}
 		</div>
 	);

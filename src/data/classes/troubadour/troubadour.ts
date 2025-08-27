@@ -59,22 +59,27 @@ Jackson Bootblack`,
 					name: 'Drama',
 					gains: [
 						{
+							tag: 'start',
 							trigger: 'Start of your turn',
 							value: '1d3'
 						},
 						{
+							tag: '',
 							trigger: 'The first time three or more heroes use an ability on the same turn',
 							value: '2'
 						},
 						{
+							tag: '',
 							trigger: 'The first time any hero is made winded during the encounter',
 							value: '2'
 						},
 						{
+							tag: '',
 							trigger: 'Whenever a creature within your line of effect rolls a natural 19 or 20',
 							value: '3'
 						},
 						{
+							tag: '',
 							trigger: 'When you or another hero dies',
 							value: '10'
 						}
@@ -161,7 +166,7 @@ additional effects:
 							feature: FactoryLogic.feature.createAbility({
 								ability: FactoryLogic.createAbility({
 									id: 'Ojd2syAahwIuMZ7E',
-									name: '',
+									name: 'Allow Me to Introduce Tonight’s Players',
 									description: '',
 									type: FactoryLogic.type.createMain(),
 									distance: [ FactoryLogic.distance.createSelf() ],
@@ -231,6 +236,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: 'bPZ0jgAHVi08ZX2X',
 								name: 'Melodrama #1',
+								tag: '',
 								trigger: 'Whenever a creature rolls a natural 2 on a power roll.',
 								value: '2'
 							}),
@@ -240,6 +246,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: 'Jlp0a0yANrSIoeXp',
 								name: 'Melodrama #2',
+								tag: '',
 								trigger: 'The first time the Director deals damage to a hero using a Villain action or an ability that costs Malice.',
 								value: '2'
 							}),
@@ -249,6 +256,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: '05FGfz1LetwQOlGm',
 								name: 'Melodrama #3',
+								tag: '',
 								trigger: 'The first time a hero unwillingly falls 5 or more squares.',
 								value: '2'
 							}),
@@ -258,6 +266,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: 'bnEzQSbTNyay2M51',
 								name: 'Melodrama #4',
+								tag: '',
 								trigger: 'The first time a hero deals damage with 3 surges.',
 								value: '2'
 							}),
@@ -267,6 +276,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: 'lbGOgNoNt9SsiBDB',
 								name: 'Melodrama #5',
+								tag: '',
 								trigger: 'Whenever a hero spends their last Recovery.',
 								value: '2'
 							}),
@@ -280,7 +290,8 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							}),
 							value: 1
 						}
-					]
+					],
+					count: 2
 				}),
 				FactoryLogic.feature.createPerk({
 					id: 'c8wilO6exppZ8lk0'
@@ -380,10 +391,13 @@ You can ask the Director for three rumors regarding the area you’re in or an a
 
 Additionally, you and creatures you are bonded with gain a +1 bonus to saving throws. Whenever you or a bonded creature succeeds on a saving throw, you and each creature you are bonded with gains temporary Stamina equal to your level.`
 				}),
-				FactoryLogic.feature.create({
+				FactoryLogic.feature.createHeroicResourceGain({
 					id: 'JRIAGwr5xwIXZdG5',
 					name: 'A Muse’s Muse',
-					description: 'At the start of each of your turns during combat, you gain 1d3 + 1 drama instead of 1d3. '
+					tag: 'start 2',
+					trigger: 'Start of your turn',
+					value: '1d3 + 1',
+					replacesTags: [ 'start' ]
 				}),
 				FactoryLogic.feature.createSkillChoice({
 					id: 'A7CsaTimMURrXg0M',
@@ -423,6 +437,7 @@ Additionally, whenever you spend a Recovery, you can forgo regaining Stamina to 
 					name: 'Applause',
 					gains: [
 						{
+							tag: '',
 							trigger: 'Finish a respite',
 							value: 'XP gained'
 						}
@@ -673,7 +688,7 @@ Additionally, whenever you spend a Recovery, you can forgo regaining Stamina to 
 			id: 'y4twMNJioffMnTAp',
 			name: 'Fake Your Death',
 			description: 'O happy dagger, this is thy sheath!',
-			type: FactoryLogic.type.createMain(),
+			type: FactoryLogic.type.createManeuver(),
 			keywords: [ AbilityKeyword.Magic ],
 			distance: [ FactoryLogic.distance.createSelf() ],
 			target: 'Self',
@@ -745,6 +760,7 @@ Additionally, whenever you spend a Recovery, you can forgo regaining Stamina to 
 			keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic, AbilityKeyword.Melee, AbilityKeyword.Weapon ],
 			distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 3 }) ],
 			target: 'Each enemy in the area',
+			cost: 7,
 			sections: [
 				FactoryLogic.createAbilitySectionRoll(
 					FactoryLogic.createPowerRoll({
@@ -755,6 +771,46 @@ Additionally, whenever you spend a Recovery, you can forgo regaining Stamina to 
 					})
 				),
 				FactoryLogic.createAbilitySectionText('Each ally in the area can shift up to 2 squares.')
+			]
+		}),
+		FactoryLogic.createAbility({
+			id: '7vm0VdMiqgrZtpcu2',
+			name: 'Star Solo',
+			description: 'Your performance travels and doesn’t stop moving until your audience is completely rocked.',
+			type: FactoryLogic.type.createMain(),
+			keywords: [ AbilityKeyword.Magic, AbilityKeyword.Melee, AbilityKeyword.Ranged, AbilityKeyword.Strike, AbilityKeyword.Weapon ],
+			distance: [
+				FactoryLogic.distance.createMelee(),
+				FactoryLogic.distance.createRanged(10)
+			],
+			target: 'One creature or object',
+			cost: 7,
+			sections: [
+				FactoryLogic.createAbilitySectionRoll(
+					FactoryLogic.createPowerRoll({
+						characteristic: [ Characteristic.Presence ],
+						tier1: '5 + P damage',
+						tier2: '8 + P damage; push 3',
+						tier3: '11 + P damage; push 5'
+					})
+				),
+				FactoryLogic.createAbilitySectionText('You can choose to have this ability deal sonic damage. Additionally, you can use this ability against the same target for the next 2 combat rounds without spending drama.')
+			]
+		}),
+		FactoryLogic.createAbility({
+			id: '7vm0VdMiqgrZtpcu3',
+			name: 'We Meet at Last',
+			description: 'You magically intertwine your fate with another creature—for better or worse.',
+			type: FactoryLogic.type.createManeuver(),
+			keywords: [ AbilityKeyword.Magic, AbilityKeyword.Ranged ],
+			distance: [ FactoryLogic.distance.createRanged(10) ],
+			target: 'One creature',
+			cost: 7,
+			sections: [
+				FactoryLogic.createAbilitySectionText(`
+Until the end of the encounter, both you and the target can target each other with abilities even if you are beyond distance, with the distance of this ability replacing those abilities’ distances. The target can’t be force moved by an ability used beyond distance this way.
+
+Additionally, once on each of your turns, you can use a free maneuver to communicate a motivating or dispiriting message to the target, either granting them 2 surges or forcing them to take a bane on the next ability roll they make before the start of your next turn.`)
 			]
 		}),
 		FactoryLogic.createAbility({
