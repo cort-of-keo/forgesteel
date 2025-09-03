@@ -25,11 +25,19 @@ export class OptionsUpdateLogic {
 		}
 
 		if (options.includePlayState === undefined) {
-			options.includePlayState = true;
+			options.includePlayState = false;
+		}
+
+		if (options.colorSheet === undefined) {
+			options.colorSheet = true;
 		}
 
 		if (options.classicSheetPageSize === undefined) {
 			options.classicSheetPageSize = SheetPageSize.Letter;
+		}
+
+		if (options.pageOrientation === undefined) {
+			options.pageOrientation = 'portrait';
 		}
 
 		if (options.showMonstersInGroups === undefined) {
