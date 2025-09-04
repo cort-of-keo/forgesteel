@@ -202,6 +202,7 @@ export class FactoryLogic {
 			features: [],
 			incitingIncidents: {
 				options: [],
+				selected: null,
 				selectedID: null
 			}
 		};
@@ -981,6 +982,7 @@ export class FactoryLogic {
 			classicSheetPageSize: SheetPageSize.Letter,
 			pageOrientation: 'portrait',
 			colorSheet: true,
+			sheetTextColor: 'default',
 			featuresInclude: 'all',
 			abilitySort: 'size',
 			compactView: false,
