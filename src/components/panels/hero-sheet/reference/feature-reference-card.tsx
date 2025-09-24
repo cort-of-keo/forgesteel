@@ -1,24 +1,26 @@
 import { Fragment, JSX } from 'react';
 
 import { CharacterSheet } from '../../../../models/character-sheet';
-import { CharacterSheetFormatter } from '../../../../utils/character-sheet-formatter';
 import { Feature } from '../../../../models/feature';
 import { FeatureComponent } from '../components/feature-component';
+import { SheetFormatter } from '../../../../logic/hero-sheet/sheet-formatter';
 
 import './feature-reference-card.scss';
 
 interface Props {
 	character: CharacterSheet;
-	columns?: boolean;
+	columns?: number;
 }
 
 export const FeatureReferenceCard = (props: Props) => {
 	const character = props.character;
 
-	const columns = props.columns || false;
+	const columns = props.columns || 1;
 
 	const cardClasses = [ 'feature-reference', 'card' ];
-	if (columns) {
+	if (columns > 2) {
+		cardClasses.push('extra-wide');
+	} else if (columns > 1) {
 		cardClasses.push('wide');
 	}
 
@@ -32,20 +34,22 @@ export const FeatureReferenceCard = (props: Props) => {
 			}, new Map<string, Feature[]>());
 
 			const containerClasses = [ 'features-container' ];
-			if (columns) {
+			if (columns === 2) {
 				containerClasses.push('two-column');
+			} else if (columns === 3) {
+				containerClasses.push('three-column');
 			}
 
 			const sections: JSX.Element[] = [];
 			bySource.forEach((features, source) => {
-				features.sort(CharacterSheetFormatter.sortFeatures);
+				features.sort(SheetFormatter.sortFeatures);
 				sections.push(
 					<Fragment key={source}>
 						<li><h3>{source}</h3></li>
 						{features.map(f =>
 							<li key={f.id}>
 								<FeatureComponent
-									feature={CharacterSheetFormatter.enhanceFeature(f)}
+									feature={SheetFormatter.enhanceFeature(f)}
 									hero={character.hero}
 								/>
 							</li>
@@ -59,26 +63,6 @@ export const FeatureReferenceCard = (props: Props) => {
 					{sections}
 				</ul>
 			);
-
-			// bySource.forEach((features, source) => {
-			// 	features.sort(CharacterSheetFormatter.sortFeatures);
-			// 	sections.push(
-			// 		<Fragment key={source}>
-			// 			<h3>{source}</h3>
-			// 			<ul className={containerClasses.join(' ')}>
-			// 				{features.map(f =>
-			// 					<li key={f.id}>
-			// 						<FeatureComponent
-			// 							feature={CharacterSheetFormatter.enhanceFeature(f)}
-			// 							hero={character.hero}
-			// 						/>
-			// 					</li>
-			// 				)}
-			// 			</ul>
-			// 		</Fragment>
-			// 	);
-			// });
-			// return sections;
 		}
 	};
 

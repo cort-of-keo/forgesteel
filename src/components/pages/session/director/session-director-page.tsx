@@ -40,7 +40,7 @@ interface Props {
 	playbook: Playbook;
 	session: Playbook;
 	options: Options;
-	showDirectory: () => void;
+	highlightAbout: boolean;
 	showAbout: () => void;
 	showRoll: () => void;
 	showReference: () => void;
@@ -251,7 +251,7 @@ export const SessionDirectorPage = (props: Props) => {
 									type='warning'
 									showIcon={true}
 									message='You have not created any encounters.'
-									action={<Button type='text' title='Encounters' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybookList('encounter')} />}
+									action={<Button type='text' title='Encounters' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('encounter')} />}
 								/>
 								: null
 						}
@@ -280,7 +280,7 @@ export const SessionDirectorPage = (props: Props) => {
 									type='warning'
 									showIcon={true}
 									message='You have not created any montages.'
-									action={<Button type='text' title='Montages' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybookList('montage')} />}
+									action={<Button type='text' title='Montages' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('montage')} />}
 								/>
 								: null
 						}
@@ -309,7 +309,7 @@ export const SessionDirectorPage = (props: Props) => {
 									type='warning'
 									showIcon={true}
 									message='You have not created any negotiations.'
-									action={<Button type='text' title='Negotiations' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybookList('negotiation')} />}
+									action={<Button type='text' title='Negotiations' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('negotiation')} />}
 								/>
 								: null
 						}
@@ -338,7 +338,7 @@ export const SessionDirectorPage = (props: Props) => {
 									type='warning'
 									showIcon={true}
 									message='You have not created any maps.'
-									action={<Button type='text' title='Maps' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybookList('tactical-map')} />}
+									action={<Button type='text' title='Maps' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('tactical-map')} />}
 								/>
 								: null
 						}
@@ -372,7 +372,7 @@ export const SessionDirectorPage = (props: Props) => {
 		return (
 			<ErrorBoundary>
 				<div className='session-director-page'>
-					<AppHeader subheader='Session' showDirectory={props.showDirectory}>
+					<AppHeader subheader='Session'>
 						<Popover
 							trigger='click'
 							content={(
@@ -417,7 +417,7 @@ export const SessionDirectorPage = (props: Props) => {
 						{getSelector()}
 						{getSelectedContent()}
 					</div>
-					<AppFooter page='session' showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
+					<AppFooter page='session' highlightAbout={props.highlightAbout} showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
 				</div>
 			</ErrorBoundary>
 		);

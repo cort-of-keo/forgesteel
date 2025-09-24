@@ -63,9 +63,11 @@ You can attempt to assist another creature with a test they make, provided you h
 
 When you attempt to assist another creature, make a test using the skill you choose, and using a characteristic chosen by the Director based on the activity you use to help. The outcome of that test determines the bonus applied to the test you’re assisting:
 
-* **11 or lower**: You get in the way or make things worse. The creature takes a bane on their test.
-* **12–16**: Your help grants the other creature an edge on their test.
-* **17+**: Your help gives the other creature a double edge on their test.
+| Roll  | Effect |
+|:------|:---------|
+| ≤ 11  | You get in the way or make things worse. The creature takes a bane on their test.|
+|12–16 | Your help grants the other creature an edge on their test.|
+|17+ | Your help gives the other creature a double edge on their test.|
 
 For example, when an ally tries to pick a jailer’s pocket, you might attempt to assist by using the Flirt skill to distract the jailer. The Director accepts this, and asks you to make a Presence test using Flirt. The outcome of that test determines the bonus you provide to the other hero’s Agility test to pick the jailer’s pocket—or whether you fumble the distraction and potentially draw attention to the attempt.`
 	};
@@ -94,9 +96,11 @@ If a creature who can’t burrow wants to dig into the ground, they can use the 
 **Claw Dirt**
 
 **Power Roll + Might**:
-* **11 or lower**: You can move 1 square into, out of, or through ground you are touching that can be burrowed through, and you are slowed and weakened (EoT).
-* **12–16**: You can use your main action this turn to move 1 square into, out of, or through ground you are touching that can be burrowed through, and you are slowed (EoT).
-* **17+**: You can move 1 square into, out of, or through ground you are touching that can be burrowed through.
+| Roll  | Effect |
+|:------|:---------|
+| ≤ 11  | You can move 1 square into, out of, or through ground you are touching that can be burrowed through, and you are slowed and weakened (EoT).|
+|12–16 | You can use your main action this turn to move 1 square into, out of, or through ground you are touching that can be burrowed through, and you are slowed (EoT).|
+|17+ | You can move 1 square into, out of, or through ground you are touching that can be burrowed through.|
 
 **Burrowing Forced Movement**: While a creature who is completely beneath the ground while burrowing is force moved by movement that isn’t vertical, they aren’t moved, and they take 1 damage for each square they would have been force moved. If the forced movement is vertical, the creature is moved through the dirt as if it were air.`
 	};
@@ -111,16 +115,22 @@ Creatures without those types of movement can still climb or swim when a rule al
 **Climbing other Creatures**: You can attempt to climb a creature whose size is greater than yours. If the creature is willing, you can climb them without any trouble. If the creature is unwilling, you make the following test:
 
 **Power Roll + Might or Agility**:
-* **11 or lower**: You fail to climb the creature, and they can make a free strike against you.
-* **12–16**: You fail to climb the creature.
-* **17+**: You climb the creature.
+
+| Roll  | Effect |
+|:------|:---------|
+| ≤ 11  | You fail to climb the creature, and they can make a free strike against you.|
+| 12–16 | You fail to climb the creature.|
+| 17+   | You climb the creature.|
 
 While you climb or ride a creature, you gain an edge to melee abilities used against them. The creature can use a maneuver to attempt to knock you off, forcing you to make the following test:
 
 **Power Roll + Might or Agility**:
-* **11 or lower**: You fall off the creature into an unoccupied adjacent space of your choice, taking falling damage and landing prone as usual.
-* **12–16**: You slide down the creature into an unoccupied adjacent space of your choice and don’t land prone.
-* **17+**: You continue to hold on to the creature.
+
+| Roll  | Effect |
+|:------|:---------|
+| ≤ 11  | You fall off the creature into an unoccupied adjacent space of your choice, taking falling damage and landing prone as usual.|
+| 12–16 | You slide down the creature into an unoccupied adjacent space of your choice and don’t land prone.|
+| 17+ | You continue to hold on to the creature.|
 
 If you are knocked prone while climbing or riding a creature, you fall and land prone in an adjacent space of your choice, taking damage as usual from the fall.`
 	};
@@ -146,7 +156,7 @@ If you are prone, you can remain prone and crawl on the ground. Doing so costs y
 	static criticalHit: RulesItem = {
 		label: 'Critical Hit',
 		content: `
-Whenever you make an ability roll as a main action and the roll is a natural 19 or natural 20—a total of 19 or 20 before adding your charac- teristic score or other modifiers—you score a critical hit. A critical hit allows you to immediately take an additional action after resolving the power roll, whether or not it’s your turn and even if you are dazed (see Conditions below).
+Whenever you make an ability roll as a main action and the roll is a natural 19 or natural 20 — a total of 19 or 20 before adding your characteristic score or other modifiers — you score a critical hit. A critical hit allows you to immediately take an additional main action after resolving the power roll, whether or not it’s your turn and even if you are dazed (see Conditions below).
 
 You can’t score a critical hit with an ability roll made as a maneuver or any other action type, but you can score a critical hit with a main action you use off your turn. For example, an opportunity attack made as a triggered action or a signature ability used as a free triggered action with the assistance of the tactician’s Strike Now ability can be critical hits.`
 	};
@@ -220,7 +230,7 @@ Though you can’t freely push, pull, or slide a target up and down unless that 
 
 **Big vs Little**:  When a larger creature force moves a smaller target with a melee weapon ability, the distance of the forced movement is increased by 1. If a smaller creature force moves a larger target with a melee weapon ability, the distance doesn’t change.
 
-**Forced Into a Fall**: If you can’t fly and are force moved across an open space that would cause you to fall, such as being pushed over the edge of a cliff, you continue moving the total distance you were moved first. If you are still in a position to fall when the foced movement ends, you fall.
+**Forced Into a Fall**: If you can’t fly and are force moved across an open space that would cause you to fall, such as being pushed over the edge of a cliff, you continue moving the total distance you were moved first. If you are still in a position to fall when the forced movement ends, you fall.
 
 **“When a Creature Moves …”**: Certain abilities and effects trigger when a creature moves into a particular area. Forced movement triggers these options unless otherwise noted, including an effect stating that a creature must willingly move to trigger it.
 
@@ -277,11 +287,25 @@ Whenever an effect allows you to move (including using the Advance move action),
 If you want to jump even longer or higher than your baseline jump allows, make a Might or Agility test:
 
 **Power Roll + Might or Agility**:
-* **11 or lower**: You don’t jump any farther than your baseline jump allows.
-* **12–16**: You jump 1 square longer and higher than your baseline jump allows.
-* **17+**: You jump 2 squares longer and higher than your baselinejump allows.
+
+| Roll  | Effect |
+|:------|:---------|
+| ≤ 11  | You don’t jump any farther than your baseline jump allows.		 |
+| 12–16 | You jump 1 square longer and higher than your baseline jump allows.|
+| 17+   | You jump 2 squares longer and higher than your baselinejump allows.|
 
 You can’t jump farther or higher than the distance of the effect that allows you to move. You can’t jump out of difficult terrain or damaging terrain.`
+	};
+
+	static mainAction: RulesItem = {
+		label: 'Main Action',
+		content: `
+When you take a main action, you most often do so to use a unique ability granted by your class, kit, or a treasure. These abilities represent the most unique, flavorful, and impactful things you can do with your main action.
+
+You can also use your main action to help another creature regain Stamina, charge into battle, defend yourself, or make a free strike.
+
+You can convert your main action into a maneuver or a move action, allowing you to take two maneuvers or move actions on your turn.
+		`
 	};
 
 	static mountedCombat: RulesItem = {
@@ -292,6 +316,32 @@ A willing creature with the Mount role can serve as your mount as long as their 
 If a creature riding a mount is force moved, they are knocked off the mount and must make a test to determine how they land (see Climbing Other Creatures). If a mount is force moved, they carry any riders with them. Riders and mounts teleport separately.
 
 If your mount dies, they fall prone, and you fall off them and land prone in the nearest unoccupied space of your choice.`
+	};
+
+	static movement: RulesItem = {
+		label: 'Movement',
+		content: `
+During combat, creatures can employ multiple mechanics that allow them to move around the battlefield. The most common of those mechanics is the Advance or Disengage move action (detailed under Move Actions below), but abilities granted by your class, equipment, ancestry, title, or other options might allow you other ways to move.
+
+Your hero starts with a speed granted by their ancestry—usually 5. This represents the maximum number of squares you can move when you take the Advance move action or when another effect allows you to move. Your speed can be increased by your kit and other game options.
+
+All squares adjacent to your character cost 1 movement to move into. No, there’s no Pythagorean theorem on the grid. It’s a game, don’t overthink it.
+
+Your hero can move freely through an ally’s space. You can move through an enemy’s space, but that space is difficult terrain (see below). You can’t stop moving in any other creature’s space, including to make a strike or use a main action or maneuver while in that space and then continuing your move, unless that creature’s size is two or more sizes greater or smaller than your own.
+
+At the Director’s discretion, you can be forced into the same space as another creature whose size is within 1 of yours, such as by falling down a narrow shaft with such a creature already at the bottom. When you are squeezed into the same space as another creature whose size is within 1 of yours, your ability rolls and tests take a bane.
+
+**Can’t Exceed Speed:** A single move or other effect can never allow a creature to move more squares than their speed, unless the effect states otherwise. For example, a creature with speed 5 might have that speed reduced to 2 by the slowed condition (see Conditions in Chapter 5: Classes). If an ally then targets them with an effect that allows them to move up to 3 squares, the creature can move only 2 squares because that’s their current speed.
+
+**Can’t Cut Corners:** A creature can’t move diagonally when doing so would involve passing through the corner of a wall or some other object that completely fills the corner between the creature’s space and the space they are moving to. This rule applies only to moving past objects, not moving past other creatures.`
+	};
+
+	static naturalRoll: RulesItem = {
+		label: 'Natural Roll',
+		content: `
+The total of your power roll before your characteristic or any other modifiers are added is called the natural roll. The rules often refer to this as “rolling a natural X,” where X is the total of the roll. For example, if you get a 20 on a power roll before adding your characteristic, this is called rolling a natural 20.
+
+When you roll a natural 19 or 20 on a power roll, it is always a tier 3 result regardless of any modifiers, and on certain types of power rolls, this is a critical hit (see Critical Hit in Classes).`
 	};
 
 	static opportunityAttack: RulesItem = {
@@ -395,5 +445,14 @@ When a creature teleports, they move from one space to another space instantaneo
 		label: 'Underwater Combat',
 		content: `
 If a creature is fully submerged in water, they have fire immunity 5 and lightning weakness 5. If their speed doesn’t have the Swim keyword, all their power rolls take a bane.`
+	};
+
+	static wieldingTreasures: RulesItem = {
+		label: 'Wielding Treasures',
+		content: `
+Some treasures are wielded in the form of weapons or implements. A weapon might have the Light Weapon, Medium Weapon, or Heavy Weapon keywords, or might have a keyword denoting a specific category of weapon (Bow, Polearm, and so forth). An implement might have the Implement keyword or a keyword denoting the type of implement (Orb, Wand, and so forth). Armor is also considered a wielded treasure, with the Light Armor, Medium Armor, or Heavy Armor keywords, or the Shield keyword.
+
+A hero can wield as many weapons, implements, suits of armor, or shields as they can feasibly hold or wear. However, an ability can benefit only from one weapon or implement at a time.
+		`
 	};
 }

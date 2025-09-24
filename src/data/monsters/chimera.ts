@@ -90,13 +90,6 @@ The queen’s resulting fury was said to be felt by the gods. As she screamed, a
 					modifiers: [ FactoryLogic.damageModifier.create({ damageType: DamageType.Fire, modifierType: DamageModifierType.Immunity, value: 6 }) ]
 				}),
 				FactoryLogic.feature.create({
-					id: 'chimera-feature-3',
-					name: 'Solo Monster',
-					description: `*End Effect*: At the end of each of their turns, the chimera can take 5 damage to end one effect on them that can be ended by a saving throw. This damage can’t be reduced in any way.
-
-					*Solo Turns*: The chimera can take two turns each round. They can’t take turns consecutively.`
-				}),
-				FactoryLogic.feature.create({
 					id: 'chimera-feature-4',
 					name: 'Volant',
 					description: 'When the chimera makes a creature winded or reduces them to 0 Stamina, they can move their speed toward an enemy.'
@@ -124,7 +117,7 @@ The queen’s resulting fury was said to be felt by the gods. As she screamed, a
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
 						id: 'chimera-feature-6',
-						name: 'Dragon\'s Eruption',
+						name: 'Dragon’s Eruption',
 						type: FactoryLogic.type.createMain(),
 						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic, AbilityKeyword.Ranged ],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 3, within: 10 }) ],
@@ -162,7 +155,7 @@ The queen’s resulting fury was said to be felt by the gods. As she screamed, a
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
 						id: 'chimera-feature-8',
-						name: 'Lion\'s Toss',
+						name: 'Lion’s Toss',
 						type: FactoryLogic.type.createManeuver(),
 						keywords: [ AbilityKeyword.Melee, AbilityKeyword.Weapon ],
 						distance: [ FactoryLogic.distance.createMelee(2) ],
@@ -180,7 +173,7 @@ The queen’s resulting fury was said to be felt by the gods. As she screamed, a
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
 						id: 'chimera-feature-9',
-						name: 'Ram\'s Defiance',
+						name: 'Ram’s Defiance',
 						type: FactoryLogic.type.createTrigger('A creature makes a strike against the chimera and obtains a tier 1 outcome.'),
 						keywords: [ AbilityKeyword.Melee, AbilityKeyword.Strike, AbilityKeyword.Weapon ],
 						distance: [ FactoryLogic.distance.createMelee(2) ],
@@ -200,12 +193,12 @@ The queen’s resulting fury was said to be felt by the gods. As she screamed, a
 					ability: FactoryLogic.createAbility({
 						id: 'chimera-feature-10',
 						name: 'Overture of Destruction',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(1),
 						keywords: [ AbilityKeyword.Area ],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 1 }) ],
 						target: 'Each enemy in the area',
 						sections: [
-							FactoryLogic.createAbilitySectionText('The chimera can use Bite and Lion’s Toss against each target.')
+							FactoryLogic.createAbilitySectionText('**Effect** The chimera can use Bite and Lion’s Toss against each target.')
 						]
 					})
 				}),
@@ -213,12 +206,12 @@ The queen’s resulting fury was said to be felt by the gods. As she screamed, a
 					ability: FactoryLogic.createAbility({
 						id: 'chimera-feature-11',
 						name: 'Fire Solo',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(2),
 						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
-							FactoryLogic.createAbilitySectionText('The chimera uses Dragon’s Eruption and Roar without spending Malice.')
+							FactoryLogic.createAbilitySectionText('**Effect** The chimera uses Dragon’s Eruption and Roar without spending Malice.')
 						]
 					})
 				}),
@@ -226,12 +219,12 @@ The queen’s resulting fury was said to be felt by the gods. As she screamed, a
 					ability: FactoryLogic.createAbility({
 						id: 'chimera-feature-12',
 						name: 'Chorus of Destruction',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(3),
 						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
-							FactoryLogic.createAbilitySectionText('The chimera uses Roar, then shifts up to their speed and can make a free strike against each enemy who comes adjacent to them during the shift. When the chimera ends this shift, they use Dragon’s Eruption. The use of these abilities as part of this villain action costs no Malice.')
+							FactoryLogic.createAbilitySectionText('**Effect** The chimera uses Roar, then shifts up to their speed and can make a free strike against each enemy who comes adjacent to them during the shift. When the chimera ends this shift, they use Dragon’s Eruption. The use of these abilities as part of this villain action costs no Malice.')
 						]
 					})
 				})

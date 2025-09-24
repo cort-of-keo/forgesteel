@@ -18,7 +18,7 @@ import { Utils } from '../../utils/utils';
 export class HeroUpdateLogic {
 	static updateHero = (hero: Hero, sourcebooks: Sourcebook[]) => {
 		HeroUpdateLogic.updateHeroStructure(hero, sourcebooks);
-		// HeroUpdateLogic.updateHeroData(hero, sourcebooks);
+		HeroUpdateLogic.updateHeroData(hero, sourcebooks);
 	};
 
 	static updateHeroStructure = (hero: Hero, sourcebooks: Sourcebook[]) => {
@@ -462,6 +462,10 @@ export class HeroUpdateLogic {
 
 					const selectedIDs = oFeature.data.selected.map(p => p.id);
 					feature.data.selected = SourcebookLogic.getTitles(sourcebooks).filter(t => selectedIDs.includes(t.id));
+					feature.data.selected.forEach(title => {
+						const originalTitle = oFeature.data.selected.find(t => t.id === title.id);
+						title.selectedFeatureID = originalTitle ? originalTitle.selectedFeatureID : '';
+					});
 					break;
 				}
 			};

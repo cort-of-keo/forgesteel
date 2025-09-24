@@ -1,4 +1,4 @@
-import { FeatureAbility, FeatureMalice } from '../models/feature';
+import { FeatureMalice, FeatureMaliceAbility } from '../models/feature';
 import { Characteristic } from '../enums/characteristic';
 import { Collections } from '../utils/collections';
 import { ConditionType } from '../enums/condition-type';
@@ -393,6 +393,23 @@ export class MonsterLogic {
 		return str;
 	};
 
+	static getWindedThreshold = (monster: Monster) => {
+		return Math.floor(MonsterLogic.getStamina(monster) / 2);
+	};
+
+	static getDeadThreshold = (monster: Monster) => {
+		return -MonsterLogic.getWindedThreshold(monster);
+	};
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	static getRecoveries = (_monster: Monster) => {
+		return 6; // Monsters, p. 351
+	};
+
+	static getRecoveryValue = (monster: Monster) => {
+		return Math.floor(MonsterLogic.getStamina(monster) / 3);
+	};
+
 	static resetState = (state: MonsterState) => {
 		state.staminaDamage = 0;
 		state.staminaTemp = 0;
@@ -402,15 +419,20 @@ export class MonsterLogic {
 		state.captainID = undefined;
 	};
 
-	static getMaliceOptions = (group?: MonsterGroup) => {
-		const options: (FeatureMalice | FeatureAbility)[] = [ ...MonsterData.malice ];
+	static getMaliceOptions = (monster: Monster, group?: MonsterGroup) => {
+		const options: (FeatureMalice | FeatureMaliceAbility)[] = [ ...MonsterData.malice ];
 		if (group) {
-			options.push(...group.malice);
+			options.push(...group.malice.filter(f => f.data.echelon <= MonsterLogic.getEchelon(monster)));
 		}
 
 		return options.sort((a, b) => {
-			const getCost = (malice: FeatureMalice | FeatureAbility) => {
-				return malice.type === FeatureType.Ability ? malice.data.ability.cost as number : malice.data.cost;
+			const getCost = (malice: FeatureMalice | FeatureMaliceAbility) => {
+				let cost = (malice.type === FeatureType.MaliceAbility) ? malice.data.ability.cost as number : malice.data.cost;
+				const repeatable = (malice.type === FeatureType.MaliceAbility) ? malice.data.ability.repeatable : malice.data.repeatable;
+				if (repeatable) {
+					cost += 0.5;
+				}
+				return cost;
 			};
 
 			return getCost(a) - getCost(b);

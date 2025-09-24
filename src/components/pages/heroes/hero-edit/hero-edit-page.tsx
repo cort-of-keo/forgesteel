@@ -25,7 +25,6 @@ import { FeatureType } from '../../../../enums/feature-type';
 import { Format } from '../../../../utils/format';
 import { HeroClass } from '../../../../models/class';
 import { HeroLogic } from '../../../../logic/hero-logic';
-import { HeroUpdateLogic } from '../../../../logic/update/hero-update-logic';
 import { Options } from '../../../../models/options';
 import { Sourcebook } from '../../../../models/sourcebook';
 import { SourcebookLogic } from '../../../../logic/sourcebook-logic';
@@ -50,7 +49,7 @@ interface Props {
 	heroes: Hero[];
 	sourcebooks: Sourcebook[];
 	options: Options;
-	showDirectory: () => void;
+	highlightAbout: boolean;
 	showAbout: () => void;
 	showRoll: () => void;
 	showReference: () => void;
@@ -383,13 +382,6 @@ export const HeroEditPage = (props: Props) => {
 			setDirty(true);
 		};
 
-		const updateHeroData = () => {
-			const heroCopy = Utils.copy(hero);
-			HeroUpdateLogic.updateHeroData(heroCopy, props.sourcebooks.filter(cs => hero.settingIDs.includes(cs.id)));
-			setHero(heroCopy);
-			setDirty(true);
-		};
-
 		const saveChanges = () => {
 			props.saveChanges(hero);
 			setDirty(false);
@@ -599,7 +591,6 @@ export const HeroEditPage = (props: Props) => {
 							setPicture={setPicture}
 							setFolder={setFolder}
 							setFeatureData={setFeatureData}
-							updateHeroData={updateHeroData}
 						/>
 					);
 			}
@@ -608,7 +599,7 @@ export const HeroEditPage = (props: Props) => {
 		return (
 			<ErrorBoundary>
 				<div className='hero-edit-page'>
-					<AppHeader subheader='Hero Builder' showDirectory={props.showDirectory}>
+					<AppHeader subheader='Hero Builder'>
 						<Input
 							name='search'
 							placeholder='Search'
@@ -630,7 +621,7 @@ export const HeroEditPage = (props: Props) => {
 						{getControls()}
 						{getContent()}
 					</div>
-					<AppFooter page='heroes' showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
+					<AppFooter page='heroes' highlightAbout={props.highlightAbout} showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
 				</div>
 			</ErrorBoundary>
 		);

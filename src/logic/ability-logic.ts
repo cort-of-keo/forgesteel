@@ -3,12 +3,15 @@ import { AbilityDistanceType } from '../enums/abiity-distance-type';
 import { AbilityKeyword } from '../enums/ability-keyword';
 import { Characteristic } from '../enums/characteristic';
 import { Collections } from '../utils/collections';
+import { CreatureLogic } from './creature-logic';
 import { Format } from '../utils/format';
 import { FormatLogic } from './format-logic';
 import { Hero } from '../models/hero';
 import { HeroLogic } from './hero-logic';
 import { KitArmor } from '../enums/kit-armor';
 import { KitWeapon } from '../enums/kit-weapon';
+import { Monster } from '../models/monster';
+import { MonsterLogic } from './monster-logic';
 import { PowerRoll } from '../models/power-roll';
 import { Utils } from '../utils/utils';
 
@@ -141,6 +144,21 @@ export class AbilityLogic {
 			sections.push(`(${distance.qualifier})`);
 		}
 		return sections.filter(x => !!x).join(' ');
+	};
+
+	static getDistanceCreature = (distance: AbilityDistance, ability?: Ability, creature?: Hero | Monster) => {
+		if (CreatureLogic.isMonster(creature)) {
+			return AbilityLogic.getDistance(distance, ability, undefined);
+		} else {
+			return AbilityLogic.getDistance(distance, ability, creature);
+		}
+	};
+
+	static usesDamage = (ability: Ability) => {
+		return ability.sections
+			.filter(s => s.type === 'roll')
+			.flatMap(s => [ s.roll.tier1, s.roll.tier2, s.roll.tier3 ])
+			.some(tier => tier.includes('damage') || tier.includes('dmg'));
 	};
 
 	static usesPotency = (powerRoll: PowerRoll) => {
@@ -286,6 +304,62 @@ export class AbilityLogic {
 			.join('; ');
 	};
 
+	static getTierEffectRetainer = (value: string, tier: number, ability: Ability, retainer: Monster | undefined) => {
+		return value
+			.split(';')
+			.map(section => section.trim())
+			.map((section, n) => {
+				if (retainer && (n === 0) && [ 'damage', 'dmg' ].some(s => section.toLowerCase().endsWith(s))) {
+					let value = 0;
+					const types: string[] = [];
+
+					const isSignature = (ability.cost === 'signature');
+					const signatureBonus = MonsterLogic.getSignatureDamageBonus(retainer);
+
+					if (isSignature && signatureBonus) {
+						switch (tier) {
+							case 1:
+								value += signatureBonus.tier1;
+								break;
+							case 2:
+								value += signatureBonus.tier2;
+								break;
+							case 3:
+								value += signatureBonus.tier3;
+								break;
+						}
+					}
+
+					section.toLowerCase().split(' ').forEach(token => {
+						if ((token === 'damage') || (token === 'dmg')) {
+							// Damage; ignore
+						} else if (token === 'or') {
+							// Ignore
+						} else if (!isNaN(parseInt(token))) {
+							value += parseInt(token);
+						} else {
+							types.push(token);
+						}
+					});
+
+					const damage = [ types.sort().join(' or '), 'damage' ].join(' ');
+
+					return `${value} ${damage}`;
+				}
+
+				return AbilityLogic.getTextEffect(section, undefined);
+			})
+			.join('; ');
+	};
+
+	static getTierEffectCreature = (value: string, tier: number, ability: Ability, distance: AbilityDistanceType | undefined, creature: Hero | Monster | undefined): string => {
+		if (CreatureLogic.isMonster(creature)) {
+			return AbilityLogic.getTierEffectRetainer(value, tier, ability, creature);
+		} else {
+			return AbilityLogic.getTierEffect(value, tier, ability, distance, creature);
+		}
+	};
+
 	static getTextEffect = (text: string, hero: Hero | undefined) => {
 		// Potency: [weak | average | strong]
 		if (hero) {
@@ -315,33 +389,48 @@ export class AbilityLogic {
 				if (options.length > 0) {
 					const value = Math.max(...options);
 
+					const dice = FormatLogic.getDice(match[0]);
 					const constant = FormatLogic.getConstant(match[0]);
 					const multiplier = FormatLogic.getMultiplier(match[0]);
 
-					text = text.replace(match[0], `${match[1]} ${constant + (value * multiplier)}`);
+					if (dice) {
+						text = text.replace(match[0], `${match[1]} ${dice} + ${constant + (value * multiplier)}`);
+					} else {
+						text = text.replace(match[0], `${match[1]} ${constant + (value * multiplier)}`);
+					}
 				}
 			});
 		}
 
 		// Equal to [N times] your level
 		if (hero) {
-			const lvlRegex = /equal to[^,.;:]your level/gi;
+			const lvlRegex = /equal to[^,.;:]*your level/gi;
 			[ ...text.matchAll(lvlRegex) ].map(r => r[0]).forEach(str => {
+				const dice = FormatLogic.getDice(str);
 				const constant = FormatLogic.getConstant(str);
 				const value = hero.class ? hero.class.level : 1;
 				const multiplier = FormatLogic.getMultiplier(str);
-				text = text.replace(str, `equal to ${constant + (value * multiplier)}`);
+				if (dice) {
+					text = text.replace(str, `equal to ${dice} + ${constant + (value * multiplier)}`);
+				} else {
+					text = text.replace(str, `equal to ${constant + (value * multiplier)}`);
+				}
 			});
 		}
 
 		// Equal to [N times] your recovery value
 		if (hero) {
-			const recRegex = /equal to[^,.;:]your recovery value/gi;
+			const recRegex = /equal to[^,.;:]*your recovery value/gi;
 			[ ...text.matchAll(recRegex) ].map(r => r[0]).forEach(str => {
+				const dice = FormatLogic.getDice(str);
 				const constant = FormatLogic.getConstant(str);
 				const value = HeroLogic.getRecoveryValue(hero);
 				const multiplier = FormatLogic.getMultiplier(str);
-				text = text.replace(str, `equal to ${constant + (value * multiplier)}`);
+				if (dice) {
+					text = text.replace(str, `equal to ${dice} + ${constant + (value * multiplier)}`);
+				} else {
+					text = text.replace(str, `equal to ${constant + (value * multiplier)}`);
+				}
 			});
 		}
 
@@ -349,12 +438,17 @@ export class AbilityLogic {
 		if (hero) {
 			text = text.replace('a number of squares equal to your speed', 'up to your speed');
 			text = text.replace('a number of squares up to your speed', 'up to your speed');
-			const speedRegex = /up to[^,.;:]your speed/gi;
+			const speedRegex = /up to[^,.;:]*your speed/gi;
 			[ ...text.matchAll(speedRegex) ].map(r => r[0]).forEach(str => {
+				const dice = FormatLogic.getDice(str);
 				const constant = FormatLogic.getConstant(str);
 				const value = HeroLogic.getSpeed(hero).value;
 				const multiplier = FormatLogic.getMultiplier(str);
-				text = text.replace(str, `up to ${constant + (Math.floor(value * multiplier))} squares`);
+				if (dice) {
+					text = text.replace(str, `up to ${dice} + ${constant + (Math.floor(value * multiplier))} squares`);
+				} else {
+					text = text.replace(str, `up to ${constant + (Math.floor(value * multiplier))} squares`);
+				}
 			});
 		}
 

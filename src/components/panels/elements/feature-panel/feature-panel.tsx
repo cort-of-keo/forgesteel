@@ -466,8 +466,14 @@ export const FeaturePanel = (props: Props) => {
 
 		if (!props.feature.description) {
 			const count = data.count || 1;
-			const names = (Collections.sort(data.options, o => o) || []).concat((Collections.sort(data.listOptions, o => o) || []).map(l => `the ${l} list`)).join(', ');
-			const str = (count > 1 ? `Choose ${count} skills from ${names}.` : `Choose a skill from ${names}.`);
+
+			let str = '';
+			if (data.listOptions.length === 5) {
+				str = (count > 1 ? `Choose ${count} skills.` : 'Choose a skill.');
+			} else {
+				const names = (Collections.sort(data.options, o => o) || []).concat((Collections.sort(data.listOptions, o => o) || []).map(l => `the ${l} list`)).join(', ');
+				str = (count > 1 ? `Choose ${count} skills from ${names}.` : `Choose a skill from ${names}.`);
+			}
 
 			return (
 				<div className='ds-text'>{str}</div>
@@ -657,6 +663,12 @@ export const FeaturePanel = (props: Props) => {
 			}
 		}
 
+		if ((props.feature.type === FeatureType.Malice) || (props.feature.type === FeatureType.MaliceAbility)) {
+			if (props.feature.data.echelon > 1) {
+				tags.push(`Echelon ${props.feature.data.echelon}`);
+			}
+		}
+
 		if (props.feature.type === FeatureType.TaggedFeature) {
 			tags.push(props.feature.data.tag);
 		}
@@ -671,7 +683,7 @@ export const FeaturePanel = (props: Props) => {
 	};
 
 	try {
-		if (props.feature.type === FeatureType.Ability) {
+		if ((props.feature.type === FeatureType.Ability) || (props.feature.type === FeatureType.MaliceAbility)) {
 			return (
 				<AbilityPanel
 					ability={props.feature.data.ability}

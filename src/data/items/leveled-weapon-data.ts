@@ -105,7 +105,7 @@ export class LeveledWeaponData {
 					FactoryLogic.feature.createAbilityDamage({
 						id: 'item-blade-of-quintessence-1a',
 						name: '',
-						keywords: [ AbilityKeyword.Weapon, AbilityKeyword.Melee ],
+						keywords: [ AbilityKeyword.Weapon ],
 						value: 1
 					})
 				]
@@ -120,12 +120,6 @@ export class LeveledWeaponData {
 					}),
 					FactoryLogic.feature.createAbilityDamage({
 						id: 'item-blade-of-quintessence-5a',
-						name: '',
-						keywords: [ AbilityKeyword.Weapon, AbilityKeyword.Ranged ],
-						value: 1
-					}),
-					FactoryLogic.feature.createAbilityDamage({
-						id: 'item-blade-of-quintessence-5b',
 						name: '',
 						keywords: [ AbilityKeyword.Weapon ],
 						value: 1
@@ -342,7 +336,7 @@ export class LeveledWeaponData {
 					FactoryLogic.feature.create({
 						id: 'item-executioners-blade-1',
 						name: '',
-						description: 'Any weapon ability that deals rolled damage using this weapon deals an extra 1 psychic damage if the target is winded. Additionally, the first time in an encounter that you cause an enemy to become winded with an ability using the weapon, you gain 10 temporary Stamina.'
+						description: 'Any weapon ability that deals rolled damage using this weapon deals an extra 1 psychic damage, or an extra 2 psychic damage if the target is winded. Additionally, the first time in an encounter that you cause an enemy to become winded with an ability using the weapon, you gain 10 temporary Stamina.'
 					}),
 					FactoryLogic.feature.createAbilityDamage({
 						id: 'item-executioners-blade-1a',

@@ -40,7 +40,7 @@ interface Props {
 	sourcebooks: Sourcebook[];
 	playbook: Playbook;
 	options: Options;
-	showDirectory: () => void;
+	highlightAbout: boolean;
 	showAbout: () => void;
 	showRoll: () => void;
 	showReference: () => void;
@@ -200,11 +200,11 @@ export const PlaybookEditPage = (props: Props) => {
 		return (
 			<ErrorBoundary>
 				<div className='playbook-edit-page'>
-					<AppHeader subheader={`${getSubheader()} Builder`} showDirectory={props.showDirectory}>
+					<AppHeader subheader={`${getSubheader()} Builder`}>
 						<Button type='primary' icon={<SaveOutlined />} disabled={!dirty} onClick={() => props.saveChanges(kind!, element)}>
 							Save Changes
 						</Button>
-						<Button icon={<CloseOutlined />} onClick={() => navigation.goToPlaybookView(kind!, element.id)}>
+						<Button icon={<CloseOutlined />} onClick={() => navigation.goToPlaybook(kind!, element.id)}>
 							Cancel
 						</Button>
 						{
@@ -240,7 +240,7 @@ export const PlaybookEditPage = (props: Props) => {
 								: null
 						}
 					</div>
-					<AppFooter page='playbook' showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
+					<AppFooter page='playbook' highlightAbout={props.highlightAbout} showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
 				</div>
 			</ErrorBoundary>
 		);

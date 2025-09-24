@@ -126,7 +126,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '6 damage; push 2',
 								tier3: '7 damage; push 3'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** Any target adjacent to two or more clerks is taunted until the end of their next turn')
+							FactoryLogic.createAbilitySectionText('Any target adjacent to two or more clerks is taunted until the end of their next turn')
 						]
 					})
 				}),
@@ -172,7 +172,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '5 fire damage; R < 2 target takes a bane on their next strike',
 								tier3: '6 fire damage; R < 3 target takes a bane on their next strike'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** One non-minion devil within 5 squares of the notary gains an edge on their next strike.')
+							FactoryLogic.createAbilitySectionText('One non-minion devil within 5 squares of the notary gains an edge on their next strike.')
 						]
 					})
 				}),
@@ -218,7 +218,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '5 corruption damage; slowed (EoT)',
 								tier3: '6 corruption damage; slowed (EoT)'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** The scrivener can shift 1 square')
+							FactoryLogic.createAbilitySectionText('The scrivener can shift 1 square')
 						]
 					})
 				}),
@@ -263,7 +263,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '15 fire damage; I < 2 frightened (save ends)',
 								tier3: '18 fire damage; I < 3 frightened (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** The adjudicator can slide a target frightened by this ability up to 2 squares.')
+							FactoryLogic.createAbilitySectionText('The adjudicator can slide a target frightened by this ability up to 2 squares.')
 						]
 					})
 				}),
@@ -276,7 +276,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 						distance: [ FactoryLogic.distance.createRanged(10) ],
 						target: 'One creature',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** The target makes a **Presence test**.'),
+							FactoryLogic.createAbilitySectionText('The target makes a **Presence test**.'),
 							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
 								characteristic: Characteristic.Presence,
 								tier1: 'The target is slowed, takes a bane on power rolls, and can’t regain Stamina (save ends).',
@@ -295,7 +295,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 						distance: [ FactoryLogic.distance.createRanged(10) ],
 						target: 'One ally or frightened creature',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** The adjudicator and the target teleport to switch places.')
+							FactoryLogic.createAbilitySectionText('The adjudicator and the target teleport to switch places.')
 						]
 					})
 				}),
@@ -365,7 +365,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '15 fire damage; A < 2 burning (save ends)',
 								tier3: '18 fire damage; A < 3 burning (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** A burning creature takes 1d6 fire damage at the start of each of their turns. A burning object takes 1d6 fire damage at the end of each round.'),
+							FactoryLogic.createAbilitySectionText('A burning creature takes 1d6 fire damage at the start of each of their turns. A burning object takes 1d6 fire damage at the end of each round.'),
 							FactoryLogic.createAbilitySectionField({
 								name: 'Malice',
 								value: 1,
@@ -390,7 +390,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '10 damage; slide 3',
 								tier3: '12 damage; slide 5'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** If the target has <code>M < 2</code>, the forced distance movement gains a +3 bonus.')
+							FactoryLogic.createAbilitySectionText('If the target has <code>M < 2</code>, the forced distance movement gains a +3 bonus.')
 						]
 					})
 				}),
@@ -403,7 +403,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 						distance: [ FactoryLogic.distance.createRanged(12) ],
 						target: 'One creature',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** If the target is burning (see Fire and Brimstone), they take 6 fire damage.')
+							FactoryLogic.createAbilitySectionText('If the target is burning (see Fire and Brimstone), they take 6 fire damage.')
 						]
 					})
 				}),
@@ -473,7 +473,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '14 damage; A < 2 slowed (save ends)',
 								tier3: '17 damage; A < 3 slowed (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** If the targets are adjacent to each other, this ability deals an extra 3 damage.')
+							FactoryLogic.createAbilitySectionText('If the targets are adjacent to each other, this ability deals an extra 3 damage.')
 						]
 					})
 				}),
@@ -492,7 +492,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '11 damage; M < 2 prone and can’t stand (save ends)',
 								tier3: '14 damage; M < 3 prone and can’t stand (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** If this ability is used as part of the Charge main action, the legate ignores difficult terrain during the charge. Each creature and object whose space the legate moves through takes the damage from this ability, but not its additional effects.')
+							FactoryLogic.createAbilitySectionText('If this ability is used as part of the Charge main action, the legate ignores difficult terrain during the charge. Each creature and object whose space the legate moves through takes the damage from this ability, but not its additional effects.')
 						]
 					})
 				}),
@@ -505,7 +505,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 						distance: [ FactoryLogic.distance.createMelee(1) ],
 						target: 'One creature',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** The target is taunted by the legate (save ends). The legate can have only one creature taunted at a time.')
+							FactoryLogic.createAbilitySectionText('The target is taunted by the legate (save ends). The legate can have only one creature taunted at a time.')
 						]
 					})
 				}),
@@ -575,7 +575,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '15 damage',
 								tier3: '18 damage; R < 3 dazed (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** The magistrate shifts up to 3 squares before or after using this ability, or between each strike.')
+							FactoryLogic.createAbilitySectionText('The magistrate shifts up to 3 squares before or after using this ability, or between each strike.')
 						]
 					})
 				}),
@@ -594,7 +594,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: '17 damage',
 								tier3: '21 damage'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** This ability has a double edge if the magistrate was hidden from the target, and deals an extra 5 damage if the target is dazed.')
+							FactoryLogic.createAbilitySectionText('This ability has a double edge if the magistrate was hidden from the target, and deals an extra 5 damage if the target is dazed.')
 						]
 					})
 				}),
@@ -607,7 +607,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** The magistrate turns invisible until the start of their next turn, and can attempt to hide as a free maneuver before the end of the current turn.')
+							FactoryLogic.createAbilitySectionText('The magistrate turns invisible until the start of their next turn, and can attempt to hide as a free maneuver before the end of the current turn.')
 						]
 					})
 				}),
@@ -700,7 +700,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 								tier2: 'I < 3 the target is charmed (save ends)',
 								tier3: 'I < 4 the target is charmed (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionText('**Effect:** While charmed this way, a creature treats the high judge as an ally, and the high judge can spend 1 Malice on their turn to make that creature move up to 3 squares.')
+							FactoryLogic.createAbilitySectionText('While charmed this way, a creature treats the high judge as an ally, and the high judge can spend 1 Malice on their turn to make that creature move up to 3 squares.')
 						]
 					})
 				}),
@@ -771,7 +771,7 @@ The following are samples of the wonders that a devil can offer—to only the mo
 						],
 						target: 'Self and each ally in the area',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** Each target shifts up to their speed. The high judge can make each creature charmed by All Rise, Compel the Jury, or Devilish Suggestion move up to half that creature’s speed.')
+							FactoryLogic.createAbilitySectionText('Each target shifts up to their speed. The high judge can make each creature charmed by All Rise, Compel the Jury, or Devilish Suggestion move up to half that creature’s speed.')
 						]
 					})
 				}),
@@ -784,98 +784,11 @@ The following are samples of the wonders that a devil can offer—to only the mo
 						distance: [ FactoryLogic.distance.createRanged(12) ],
 						target: 'One creature',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** If the target is an ally or a creature charmed by All Rise, Compel the Jury, or Devilish Suggestion, the high judge and the target teleport to swap places. Each ally within 12 squares of the high judge can then make a free strike against a target of the high judge’s choice. Each creature charmed by All Rise, Compel the Jury, or Devilish Suggestion makes a free strike against a target of the high judge’s choice.')
+							FactoryLogic.createAbilitySectionText('If the target is an ally or a creature charmed by All Rise, Compel the Jury, or Devilish Suggestion, the high judge and the target teleport to swap places. Each ally within 12 squares of the high judge can then make a free strike against a target of the high judge’s choice. Each creature charmed by All Rise, Compel the Jury, or Devilish Suggestion makes a free strike against a target of the high judge’s choice.')
 						]
 					})
 				})
 			]
-		}),
-		FactoryLogic.createMonster({
-			id: 'devil-9',
-			name: 'Devil Defector',
-			level: 5,
-			role: FactoryLogic.createMonsterRole(MonsterOrganizationType.Retainer, MonsterRoleType.Hexer),
-			keywords: [ 'Devil', 'Infernal' ],
-			encounterValue: 23,
-			size: FactoryLogic.createSize(1, 'M'),
-			speed: FactoryLogic.createSpeed(6, 'fly'),
-			stamina: 60,
-			stability: 0,
-			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(3, 2, 3, 1, 2),
-			features: [
-				FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'devil-9-feature-1',
-						name: 'Corrupting Flame',
-						type: FactoryLogic.type.createMain(),
-						cost: 'signature',
-						keywords: [ AbilityKeyword.Magic, AbilityKeyword.Ranged, AbilityKeyword.Strike ],
-						distance: [ FactoryLogic.distance.createRanged(10) ],
-						target: 'One creature or object',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '6 fire or corruption damage',
-								tier2: '10 fire or corruption damage',
-								tier3: '13 fire or corruption damage'
-							}))
-						]
-					})
-				}),
-				FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'devil-9-retainer-2',
-						name: 'Tempting Offer',
-						type: FactoryLogic.type.createTrigger('A sapient enemy is reduced to 0 Stamina.', { free: true, qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Melee, AbilityKeyword.Strike ],
-						distance: [ FactoryLogic.distance.createRanged(10) ],
-						target: 'Triggering creature',
-						sections: [
-							FactoryLogic.createAbilitySectionText('If the creature takes the defector’s offer, the creature is reduced to 1 Stamina instead of 0. If they do so, on their next turn the defector controls the creature’s move action, and the creature must use a Signature Action against a creature of the defector’s choice or immediately die. The Director must spend 3 Malice to have the creature turn down this offer.')
-						]
-					})
-				}),
-				FactoryLogic.feature.create({
-					id: 'devil-9-feature-3',
-					name: 'True Name',
-					description: 'If a creature within 10 squares of the defector speaks the defector’s true name aloud, the defector loses their immunities, the additional effects on their signature attack, and their Tempting Offer triggered action.'
-				})
-			],
-			retainer: {
-				level7: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'devil-9-retainer-7',
-						name: 'Flames of Revenge',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic ],
-						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 3, within: 10 }) ],
-						target: 'All enemies',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '6 corruption damage',
-								tier2: '10 corruption damage',
-								tier3: '14 corruption damage'
-							})),
-							FactoryLogic.createAbilitySectionText('If the defector’s mentor is in the area, they burn with harmless flame until the end of the defector’s next turn. While this fire burns, the mentor has fire immunity 10 and any creature that hits the mentor takes 10 fire damage.')
-						]
-					})
-				}),
-				level10: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'devil-9-retainer-10',
-						name: 'Hell On Earch',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic ],
-						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 5, within: 10 }) ],
-						target: '-',
-						sections: [
-							FactoryLogic.createAbilitySectionText('The area burns with infernal fire until the end of the devil’s next turn. An enemy of the defector that ends their turn in the area takes 10 fire damage and is P (medium) frightened (save ends).')
-						]
-					})
-				})
-			}
 		})
 	],
 	addOns: []

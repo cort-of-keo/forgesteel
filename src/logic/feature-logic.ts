@@ -102,7 +102,19 @@ export class FeatureLogic {
 	static getFeaturesFromCustomization = (hero: Hero) => {
 		const features: { feature: Feature, source: string }[] = [];
 
-		features.push(...hero.features.map(f => ({ feature: f, source: 'Customization' })));
+		features.push(...hero.features.map(f => {
+			let source = 'Customization';
+			switch (f.type) {
+				case FeatureType.TitleChoice:
+					source = f.data.selected.length === 1 ? f.data.selected[0].name : 'Title';
+					break;
+				case FeatureType.Companion:
+				case FeatureType.Follower:
+					source = 'Follower';
+					break;
+			}
+			return ({ feature: f, source: source });
+		}));
 
 		return FeatureLogic.simplifyFeatures(features, hero);
 	};
@@ -779,6 +791,8 @@ export class FeatureLogic {
 				return 'This feature allows you to choose a language.';
 			case FeatureType.Malice:
 				return 'This feature grants you a malice effect.';
+			case FeatureType.MaliceAbility:
+				return 'This feature grants you a malice ability.';
 			case FeatureType.MovementMode:
 				return 'This feature grants you an additional movement mode.';
 			case FeatureType.Multiple:

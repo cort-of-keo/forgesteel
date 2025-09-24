@@ -60,10 +60,10 @@ Six individual draconians are presented in this section—not an adventuring par
 			name: 'Guarding Gale',
 			cost: 3,
 			sections: [
-				'A draconian acting this turn flaps their wings and creates a mighty gale. Each creature adjacent to the draconian is pushed up to 4 squares, and if they have M<2, they are knocked prone.'
+				'A draconian acting this turn flaps their wings and creates a mighty gale. Each creature adjacent to the draconian is pushed up to 4 squares, and if they have <code>M < 2</code>, they are knocked prone.'
 			]
 		}),
-		FactoryLogic.feature.createAbility({
+		FactoryLogic.feature.createMaliceAbility({
 			ability: FactoryLogic.createAbility({
 				id: 'draconian-malice-2',
 				name: 'Breath Weapon',
@@ -83,7 +83,7 @@ Six individual draconians are presented in this section—not an adventuring par
 				]
 			})
 		}),
-		FactoryLogic.feature.createAbility({
+		FactoryLogic.feature.createMaliceAbility({
 			ability: FactoryLogic.createAbility({
 				id: 'draconian-malice-3',
 				name: 'Scaleshatter Burst',
@@ -397,7 +397,7 @@ Six individual draconians are presented in this section—not an adventuring par
 				}),
 				FactoryLogic.feature.createDamageModifier({
 					id: 'draconian-3-feature-6',
-					modifiers: [ FactoryLogic.damageModifier.create({ damageType: DamageType.Acid, modifierType: DamageModifierType.Immunity, value: 6 }) ]
+					modifiers: [ FactoryLogic.damageModifier.create({ damageType: DamageType.Cold, modifierType: DamageModifierType.Immunity, value: 6 }) ]
 				})
 			]
 		}),
@@ -594,7 +594,7 @@ Six individual draconians are presented in this section—not an adventuring par
 				}),
 				FactoryLogic.feature.createDamageModifier({
 					id: 'draconian-5-feature-7',
-					modifiers: [ FactoryLogic.damageModifier.create({ damageType: DamageType.Acid, modifierType: DamageModifierType.Immunity, value: 6 }) ]
+					modifiers: [ FactoryLogic.damageModifier.create({ damageType: DamageType.Fire, modifierType: DamageModifierType.Immunity, value: 6 }) ]
 				})
 			]
 		}),
@@ -691,7 +691,7 @@ Six individual draconians are presented in this section—not an adventuring par
 					ability: FactoryLogic.createAbility({
 						id: 'draconian-6-feature-8',
 						name: 'Roaring Gambit',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(1),
 						keywords: [],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 5 }) ],
 						target: 'Each enemy in the area',
@@ -711,7 +711,7 @@ Six individual draconians are presented in this section—not an adventuring par
 					ability: FactoryLogic.createAbility({
 						id: 'draconian-6-feature-9',
 						name: 'Wings of Second Wind',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(2),
 						keywords: [],
 						distance: [
 							FactoryLogic.distance.createSelf(),
@@ -727,7 +727,7 @@ Six individual draconians are presented in this section—not an adventuring par
 					ability: FactoryLogic.createAbility({
 						id: 'draconian-6-feature-10',
 						name: 'Snap, Crackle, Pop',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(3),
 						keywords: [ AbilityKeyword.Magic, AbilityKeyword.Area ],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 5 }) ],
 						target: 'All allies in the burst',
@@ -737,103 +737,6 @@ Six individual draconians are presented in this section—not an adventuring par
 					})
 				})
 			]
-		}),
-		FactoryLogic.createMonster({
-			id: 'draconian-7',
-			name: 'The Nameless',
-			level: 6,
-			role: FactoryLogic.createMonsterRole(MonsterOrganizationType.Retainer, MonsterRoleType.Defender),
-			keywords: [ 'Draconian', 'Dragon', 'Humanoid' ],
-			encounterValue: 30,
-			size: FactoryLogic.createSize(1, 'M'),
-			speed: FactoryLogic.createSpeed(5, 'fly'),
-			stamina: 66,
-			stability: 4,
-			freeStrikeDamage: 6,
-			characteristics: MonsterLogic.createCharacteristics(3, 2, 1, 1, 2),
-			features: [
-				FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'draconian-7-feature-1',
-						name: 'Baneful Blade',
-						type: FactoryLogic.type.createMain(),
-						cost: 'signature',
-						keywords: [ AbilityKeyword.Charge, AbilityKeyword.Melee, AbilityKeyword.Strike, AbilityKeyword.Weapon ],
-						distance: [ FactoryLogic.distance.createMelee() ],
-						target: 'One creature or object',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '6 damage',
-								tier2: '11 damage',
-								tier3: '14 damage; push 2'
-							}))
-						]
-					})
-				}),
-				FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'draconian-7-retainer-2',
-						name: 'I\'m Not a Steed, You\'re Equipment',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [],
-						distance: [ FactoryLogic.distance.createMelee() ],
-						target: 'The Nameless\'s mentor',
-						sections: [
-							FactoryLogic.createAbilitySectionText('The Nameless’s mentor enters the Nameless’s space and rides on their back. The Nameless or the mentor can move the mentor to an adjacent space as a free maneuver. While in the Nameless’s space, the mentor moves with them and can’t use their move action, and ability rolls against the mentor take a bane.')
-						]
-					})
-				}),
-				FactoryLogic.feature.create({
-					id: 'draconian-7-feature-3',
-					name: 'Wing Block',
-					description: 'Ranged attacks against the Nameless take a bane.'
-				}),
-				FactoryLogic.feature.createDamageModifier({
-					id: 'draconian-7-feature-4',
-					modifiers: [ FactoryLogic.damageModifier.create({ damageType: DamageType.Corruption, modifierType: DamageModifierType.Immunity, value: 6 }) ]
-				})
-			],
-			retainer: {
-				level7: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'draconian-7-retainer-7',
-						name: 'Looming Wings',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Area, AbilityKeyword.Weapon ],
-						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 1 }) ],
-						target: 'Each enemy in the area',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '5 corruption damage; I < [weak] weakened (save ends)',
-								tier2: '9 corruption damage; I < [average] weakened (save ends)',
-								tier3: '12 corruption damage; I < [strong] weakened (save ends)'
-							})),
-							FactoryLogic.createAbilitySectionText('If the Nameless’s mentor is in the area, ability rolls against the mentor have a double bane until the start of their next turn.')
-						]
-					})
-				}),
-				level10: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'draconian-7-retainer-10',
-						name: 'Spew Death',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic ],
-						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 5 }) ],
-						target: 'Each enemy in the area',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '11 corruption damage',
-								tier2: '16 corruption damage',
-								tier3: '21 corruption damage'
-							})),
-							FactoryLogic.createAbilitySectionText('Any living minions reduced to 0 Stamina by this ability regain all their Stamina and become corporeal undead under the Nameless’s control until the end of the Nameless’s next turn, after which they are destroyed.')
-						]
-					})
-				})
-			}
 		})
 	],
 	addOns: []

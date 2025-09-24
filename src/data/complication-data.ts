@@ -49,7 +49,7 @@ export class ComplicationData {
 				id: 'comp-amnesia-b',
 				name: 'Amnesia Benefit',
 				description: 'You have a supernatural possession - a 1st echelon trinket. It might have some connection with your former life.',
-				types: [ ItemType.Trinket ]
+				types: [ ItemType.Trinket1st ]
 			}),
 			FactoryLogic.feature.create({
 				id: 'comp-amnesia-d',
@@ -145,7 +145,7 @@ export class ComplicationData {
 				id: 'comp-betrothed-b',
 				name: 'Betrothed Benefit',
 				description: 'You escaped with a dowry present — a 1st echelon trinket of your choice.',
-				types: [ ItemType.Trinket ]
+				types: [ ItemType.Trinket1st ]
 			}),
 			FactoryLogic.feature.create({
 				id: 'comp-betrothed-d',
@@ -628,7 +628,7 @@ You have a piece of magic jewelry, such as a signet ring. As a maneuver, you can
 	static followingInTheFootsteps: Complication = {
 		id: 'comp-followingInTheFootsteps',
 		name: 'Following in the Footsteps',
-		description: 'Your personal idol was a mighty hero, and you have modeled yourself after them. YFrom studying the many heroic tales told of them, you hope to someday learn their most famous battle technique.',
+		description: 'Your personal idol was a mighty hero, and you have modeled yourself after them. From studying the many heroic tales told of them, you hope to someday learn their most famous battle technique.',
 		features: [
 			FactoryLogic.feature.create({
 				id: 'comp-followingInTheFootsteps-b',
@@ -913,7 +913,7 @@ You can’t take this complication if you can’t be made dazed.`,
 	static infernalContractButLikeBad: Complication = {
 		id: 'comp-infernalContractButLikeBad',
 		name: 'Infernal Contract … But, Like, Bad',
-		description: 'You made a deal with a devil. Not a very good deal, because it wasn’t a very good devil. It’s too late for regrets, thought, because your soul is forfeit unless you find a loophole or convince the devil to void the deal.',
+		description: 'You made a deal with a devil. Not a very good deal, because it wasn’t a very good devil. It’s too late for regrets, though, because your soul is forfeit unless you find a loophole or convince the devil to void the deal.',
 		features: [
 			FactoryLogic.feature.createChoice({
 				id: 'comp-infernalContractButLikeBad-b',
@@ -1032,7 +1032,7 @@ You can’t take this complication if you can’t be made dazed.`,
 	static lostInTime: Complication = {
 		id: 'comp-lostInTime',
 		name: 'Lost in Time',
-		description: 'In a long-ago age, a cataclysm overtook your city. You weren’t killed, but some arcane accident caused you to be suspended in time until now. Alone, you must navigate the world around you with a head full of outdated memories - and a few ancient secrets — and a few ancient secrets.',
+		description: 'In a long-ago age, a cataclysm overtook your city. You weren’t killed, but some arcane accident caused you to be suspended in time until now. Alone, you must navigate the world around you with a head full of outdated memories - and a few ancient secrets.',
 		features: [
 			FactoryLogic.feature.create({
 				id: 'comp-lostInTime-b',
@@ -1546,7 +1546,7 @@ You can’t take this complication if you can’t be made dazed.`,
 				id: 'comp-secretTwin-b',
 				name: 'Secret Twin Benefit',
 				description: 'You have a 1st-echelon trinket of your choice. This was a signature treasure of your twin, and has their name or sigil written, sewn, or emblazoned on it somewhere.',
-				types: [ ItemType.Trinket ]
+				types: [ ItemType.Trinket1st ]
 			}),
 			FactoryLogic.feature.create({
 				id: 'comp-secretTwin-d',
@@ -1790,10 +1790,8 @@ Note: Stormwight furies can’t take this complication.`,
 					distance: [ FactoryLogic.distance.createRanged(10) ],
 					target: 'One ally',
 					sections: [
-						FactoryLogic.createAbilitySectionText(`
-The target can use a triggered action to take a main action, a move action, or a maneuver.
-
-Note: If you have the Strike Now tactician ability, the target can use a free triggered action instead of a triggered action to gain the benefit of this ability.`)
+						FactoryLogic.createAbilitySectionText('**Effect** The target can use a triggered action to take a main action, a maneuver, or a move action.'),
+						FactoryLogic.createAbilitySectionText('**Special** If you have the Strike Now tactician ability, the target can use a free triggered action instead of a triggered action to gain the benefit of this ability.')
 					]
 				})
 			}),

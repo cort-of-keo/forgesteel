@@ -48,7 +48,7 @@ export const olothec: MonsterGroup = {
 				'The olothec takes an additional main action on their turn. They can use this feature even if they are dazed.'
 			]
 		}),
-		FactoryLogic.feature.createAbility({
+		FactoryLogic.feature.createMaliceAbility({
 			ability: FactoryLogic.createAbility({
 				id: 'olothec-malice-2',
 				name: 'Writhing Envelopment',
@@ -84,7 +84,7 @@ export const olothec: MonsterGroup = {
 			level: 6,
 			role: FactoryLogic.createMonsterRole(MonsterOrganizationType.Solo),
 			keywords: [ 'Horror', 'Olothec' ],
-			encounterValue: 84,
+			encounterValue: 96,
 			size: FactoryLogic.createSize(2),
 			speed: FactoryLogic.createSpeed(7, 'fly, swim'),
 			stamina: 450,

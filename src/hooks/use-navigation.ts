@@ -22,14 +22,11 @@ export const useNavigation = () => {
 		goToHeroEdit: (heroID: string, page: HeroEditTab) => {
 			return navigate(`/hero/edit/${heroID}/${page}`);
 		},
-		goToLibraryList: (kind: SourcebookElementKind) => {
-			return navigate(`/library/${kind}`);
-		},
-		goToLibraryView: (kind: SourcebookElementKind, elementID: string, subElementID?: string) => {
-			if (subElementID) {
-				return navigate(`/library/view/${kind}/${elementID}/${subElementID}`);
+		goToLibrary: (kind: SourcebookElementKind, elementID?: string) => {
+			if (elementID) {
+				return navigate(`/library/${kind}/${elementID}`);
 			}
-			return navigate(`/library/view/${kind}/${elementID}`);
+			return navigate(`/library/${kind}`);
 		},
 		goToLibraryEdit: (kind: SourcebookElementKind, sourcebookID: string, elementID: string, subElementID?: string) => {
 			if (subElementID) {
@@ -37,11 +34,11 @@ export const useNavigation = () => {
 			}
 			return navigate(`/library/edit/${kind}/${sourcebookID}/${elementID}`);
 		},
-		goToPlaybookList: (kind: PlaybookElementKind) => {
+		goToPlaybook: (kind: PlaybookElementKind, elementID?: string) => {
+			if (elementID) {
+				return navigate(`/playbook/${kind}/${elementID}`);
+			}
 			return navigate(`/playbook/${kind}`);
-		},
-		goToPlaybookView: (kind: PlaybookElementKind, elementID: string) => {
-			return navigate(`/playbook/view/${kind}/${elementID}`);
 		},
 		goToPlaybookEdit: (kind: PlaybookElementKind, elementID: string) => {
 			return navigate(`/playbook/edit/${kind}/${elementID}`);

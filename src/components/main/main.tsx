@@ -9,14 +9,12 @@ import { AbilityModal } from '../modals/ability/ability-modal';
 import { AboutModal } from '../modals/about/about-modal';
 import { Ancestry } from '../../models/ancestry';
 import { Career } from '../../models/career';
-import { CharacterSheetFormatter } from '../../utils/character-sheet-formatter';
 import { Characteristic } from '../../enums/characteristic';
 import { Collections } from '../../utils/collections';
 import { Complication } from '../../models/complication';
 import { Counter } from '../../models/counter';
 import { Culture } from '../../models/culture';
 import { CultureType } from '../../enums/culture-type';
-import { DirectoryModal } from '../modals/directory/directory-modal';
 import { Domain } from '../../models/domain';
 import { Element } from '../../models/element';
 import { ElementModal } from '../modals/element/element-modal';
@@ -44,7 +42,6 @@ import { ItemType } from '../../enums/item-type';
 import { Kit } from '../../models/kit';
 import { LibraryEditPage } from '../pages/library/library-edit/library-edit-page';
 import { LibraryListPage } from '../pages/library/library-list/library-list-page';
-import { LibraryViewPage } from '../pages/library/library-view/library-view-page';
 import { MainLayout } from './main-layout';
 import { Monster } from '../../models/monster';
 import { MonsterGroup } from '../../models/monster-group';
@@ -52,15 +49,12 @@ import { MonsterModal } from '../modals/monster/monster-modal';
 import { Montage } from '../../models/montage';
 import { Negotiation } from '../../models/negotiation';
 import { Options } from '../../models/options';
-import { PDFExport } from '../../utils/pdf-export';
 import { PartyModal } from '../modals/party/party-modal';
-import { PdfOptions } from '../../models/pdf-options';
 import { Perk } from '../../models/perk';
 import { PlaybookEditPage } from '../pages/playbook/playbook-edit/playbook-edit-page';
 import { PlaybookListPage } from '../pages/playbook/playbook-list/playbook-list-page';
 import { PlaybookLogic } from '../../logic/playbook-logic';
 import { PlaybookUpdateLogic } from '../../logic/update/playbook-update-logic';
-import { PlaybookViewPage } from '../pages/playbook/playbook-view/playbook-view-page';
 import { PlayerViewModal } from '../modals/player-view/player-view-modal';
 import { ReferenceModal } from '../modals/reference/reference-modal';
 import { RollModal } from '../modals/roll/roll-modal';
@@ -79,8 +73,10 @@ import { Title } from '../../models/title';
 import { Utils } from '../../utils/utils';
 import { WelcomePage } from '../pages/welcome/welcome-page';
 import localforage from 'localforage';
+import { useErrorListener } from '../../hooks/use-error-listener';
 import { useMediaQuery } from '../../hooks/use-media-query';
 import { useNavigation } from '../../hooks/use-navigation';
+import { useSyncStatus } from '../../hooks/use-sync-status';
 
 import './main.scss';
 
@@ -97,6 +93,7 @@ export const Main = (props: Props) => {
 	const isSmall = useMediaQuery('(max-width: 1000px)');
 	const navigation = useNavigation();
 	const [ notify, notifyContext ] = notification.useNotification();
+	const { triggerSyncOnChange } = useSyncStatus();
 	const [ heroes, setHeroes ] = useState<Hero[]>(props.heroes);
 	const [ playbook, setPlaybook ] = useState<Playbook>(props.playbook);
 	const [ session, setSession ] = useState<Playbook>(props.session);
@@ -109,10 +106,12 @@ export const Main = (props: Props) => {
 		}
 		return opts;
 	});
-	const [ directory, setDirectory ] = useState<ReactNode>(null);
+	const [ errors, setErrors ] = useState<Event[]>([]);
 	const [ drawer, setDrawer ] = useState<ReactNode>(null);
 	const [ playerView, setPlayerView ] = useState<Window | null>(null);
 	const [ spinning, setSpinning ] = useState(false);
+
+	useErrorListener(event => setErrors([ ...errors, event ]));
 
 	// #region Persistence
 
@@ -145,7 +144,11 @@ export const Main = (props: Props) => {
 						placement: 'top'
 					});
 				}
-			);
+			)
+			.then(() => {
+				// Trigger sync when data changes
+				triggerSyncOnChange();
+			});
 	};
 
 	const persistPlaybook = (playbook: Playbook) => {
@@ -161,7 +164,11 @@ export const Main = (props: Props) => {
 						placement: 'top'
 					});
 				}
-			);
+			)
+			.then(() => {
+				// Trigger sync when data changes
+				triggerSyncOnChange();
+			});
 	};
 
 	const persistSession = (session: Playbook) => {
@@ -182,6 +189,8 @@ export const Main = (props: Props) => {
 				if (playerView) {
 					playerView.location.reload();
 				}
+				// Trigger sync when data changes
+				triggerSyncOnChange();
 			});
 	};
 
@@ -285,26 +294,14 @@ export const Main = (props: Props) => {
 		Utils.export([ hero.id ], hero.name || 'Unnamed Hero', hero, 'hero', format);
 	};
 
-	const exportHeroPdf = (hero: Hero, data: PdfOptions) => {
-		const mode = data.mode;
-		const formFillable = data.formFillable || false;
-		const resolution = data.resolution || 'standard';
-
-		if (mode === 'html') {
-			setSpinning(true);
-			const pageIds: string[] = [];
-			let p = 1;
-			while (document.getElementById(CharacterSheetFormatter.getPageId(hero.id, p)) !== null) {
-				pageIds.push(CharacterSheetFormatter.getPageId(hero.id, p));
-				++p;
-			}
-			Utils.elementsToPdf(pageIds, hero.name || 'Unnamed Hero', options.classicSheetPageSize, resolution)
-				.then(() => {
-					setSpinning(false);
-				});
-		} else {
-			PDFExport.startExport(hero, [ SourcebookData.core, SourcebookData.orden, ...homebrewSourcebooks ], mode, !formFillable);
-		}
+	const exportHeroPdf = (hero: Hero, resolution: 'standard' | 'high') => {
+		setSpinning(true);
+		const pageIds: string[] = [];
+		document.querySelectorAll(`[id^=hero-sheet-${hero.id}-page]`).forEach(elem => pageIds.push(elem.id));
+		Utils.elementsToPdf(pageIds, hero.name || 'Unnamed Hero', options.classicSheetPageSize, resolution)
+			.then(() => {
+				setSpinning(false);
+			});
 	};
 
 	const exportStandardAbilities = () => {
@@ -371,7 +368,7 @@ export const Main = (props: Props) => {
 	};
 
 	const deleteLibraryElement = (kind: SourcebookElementKind, sourcebookID: string, element: Element) => {
-		navigation.goToLibraryList(kind);
+		navigation.goToLibrary(kind);
 
 		const copy = Utils.copy(homebrewSourcebooks);
 		const sourcebook = copy.find(cs => cs.id === sourcebookID);
@@ -475,14 +472,10 @@ export const Main = (props: Props) => {
 			}
 		}
 
-		persistHomebrewSourcebooks(copy).then(() => navigation.goToLibraryView(kind, element.id));
+		persistHomebrewSourcebooks(copy).then(() => navigation.goToLibrary(kind, element.id));
 	};
 
-	const importLibraryElement = (kind: SourcebookElementKind, sourcebookID: string | null, element: Element, createCopy: boolean = false) => {
-		if (createCopy) {
-			element = Utils.copy(element);
-			element.name = `Copy of ${element.name}`;
-		}
+	const importLibraryElement = (kind: SourcebookElementKind, sourcebookID: string | null, element: Element) => {
 		const sourcebooks = [ SourcebookData.core, SourcebookData.orden, ...homebrewSourcebooks ];
 		const elements = [
 			...sourcebooks.flatMap(sb => sb.ancestries),
@@ -577,57 +570,17 @@ export const Main = (props: Props) => {
 		SourcebookUpdateLogic.updateSourcebook(sourcebook);
 
 		setDrawer(null);
-		persistHomebrewSourcebooks(copy).then(() => navigation.goToLibraryList(kind));
-
-		return element;
+		persistHomebrewSourcebooks(copy).then(() => navigation.goToLibrary(kind));
 	};
 
-	const copyLibraryElement = (kind: SourcebookElementKind, sourcebookID: string | null, element: Element) => {
-		importLibraryElement(kind, sourcebookID, element, true);
-	};
-
-	const copyLibrarySubElement = (kind: SourcebookElementKind, sourcebookID: string, parentElementID: string, subElement: Element) => {
-		if (kind === 'class') {
-			const parent = homebrewSourcebooks.flatMap(sb => sb.classes).find(x => x.id === parentElementID);
-			if (parent) {
-				const copy = Utils.copy(subElement as SubClass);
-				copy.id = Utils.guid();
-				parent.subclasses.push(copy);
-				parent.subclasses = Collections.sort(parent.subclasses, sc => sc.name);
-				saveLibraryElement(kind, sourcebookID, parent);
-			}
-		}
-
-		if (kind === 'monster-group') {
-			const parent = homebrewSourcebooks.flatMap(sb => sb.monsterGroups).find(x => x.id === parentElementID);
-			if (parent) {
-				const copy = Utils.copy(subElement as Monster);
-				copy.id = Utils.guid();
-				parent.monsters.push(copy);
-				parent.monsters = Collections.sort(parent.monsters, m => m.name);
-				saveLibraryElement(kind, sourcebookID, parent);
-			}
-		}
-	};
-
-	const exportLibraryElement = (kind: SourcebookElementKind, isSubElement: boolean, element: Element, format: 'image' | 'pdf' | 'json') => {
+	const exportLibraryElement = (kind: SourcebookElementKind, element: Element, format: 'image' | 'pdf' | 'json') => {
 		let name = Format.capitalize(kind);
 		let extension = kind.toString();
 
 		switch (kind) {
-			case 'class':
-				if (isSubElement) {
-					name = 'Subclass';
-					extension = 'subclass';
-				}
-				break;
 			case 'monster-group':
 				name = 'Monster Group';
 				extension = 'monster-group';
-				if (isSubElement) {
-					name = 'Monster';
-					extension = 'monster';
-				}
 				break;
 		};
 
@@ -1048,11 +1001,11 @@ export const Main = (props: Props) => {
 				break;
 		}
 
-		persistPlaybook(copy).then(() => navigation.goToPlaybookView(kind, element.id));
+		persistPlaybook(copy).then(() => navigation.goToPlaybook(kind, element.id));
 	};
 
 	const deletePlaybookElement = (kind: PlaybookElementKind, element: Element) => {
-		navigation.goToPlaybookList(kind);
+		navigation.goToPlaybook(kind);
 
 		const copy = Utils.copy(playbook);
 		switch (kind) {
@@ -1097,19 +1050,15 @@ export const Main = (props: Props) => {
 				break;
 		}
 
-		persistPlaybook(copy).then(() => navigation.goToPlaybookView(kind, element.id));
+		persistPlaybook(copy).then(() => navigation.goToPlaybook(kind, element.id));
 	};
 
-	const importPlaybookElement = (list: { kind: PlaybookElementKind, element: Element }[], createCopy: boolean = false) => {
+	const importPlaybookElement = (list: { kind: PlaybookElementKind, element: Element }[]) => {
 		const copy = Utils.copy(playbook);
 
 		const changedIDs: { fromID: string, toID: string }[] = [];
 
 		list.forEach(item => {
-			if (createCopy) {
-				item.element = Utils.copy(item.element);
-				item.element.name = `Copy of ${item.element.name}`;
-			}
 			const elements = [
 				...playbook.adventures,
 				...playbook.encounters,
@@ -1159,7 +1108,7 @@ export const Main = (props: Props) => {
 		PlaybookUpdateLogic.updatePlaybook(copy);
 
 		setDrawer(null);
-		persistPlaybook(copy).then(() => navigation.goToPlaybookList(list[list.length - 1].kind));
+		persistPlaybook(copy).then(() => navigation.goToPlaybook(list[list.length - 1].kind));
 
 		return list[list.length - 1].element;
 	};
@@ -1185,11 +1134,7 @@ export const Main = (props: Props) => {
 				return { kind: kind, element: e.data };
 			}),
 			{ kind: 'adventure', element: ap.adventure }
-		], false);
-	};
-
-	const copyPlaybookElement = (kind: PlaybookElementKind, element: Element) => {
-		importPlaybookElement([ { kind: kind, element: element } ], true);
+		]);
 	};
 
 	const exportPlaybookElement = (kind: PlaybookElementKind, element: Element, format: 'image' | 'pdf' | 'json') => {
@@ -1363,20 +1308,11 @@ export const Main = (props: Props) => {
 
 	// #region Modals
 
-	const showDirectoryPane = () => {
-		setDirectory(
-			<DirectoryModal
-				heroes={heroes}
-				sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
-				playbook={playbook}
-				onClose={() => setDirectory(null)}
-			/>
-		);
-	};
-
 	const showAbout = () => {
 		setDrawer(
 			<AboutModal
+				errors={errors}
+				clearErrors={() => setErrors([])}
 				onClose={() => setDrawer(null)}
 			/>
 		);
@@ -1401,7 +1337,7 @@ export const Main = (props: Props) => {
 				element={element}
 				options={options}
 				onClose={() => setDrawer(null)}
-				export={format => exportLibraryElement(kind, false, element, format)}
+				export={format => exportLibraryElement(kind, element, format)}
 			/>
 		);
 	};
@@ -1558,10 +1494,7 @@ export const Main = (props: Props) => {
 						path='/'
 						element={
 							<MainLayout
-								section='hero'
-								directory={directory}
 								drawer={drawer}
-								setDirectory={setDirectory}
 								setDrawer={setDrawer}
 							/>
 						}
@@ -1570,7 +1503,7 @@ export const Main = (props: Props) => {
 							index={true}
 							element={
 								<WelcomePage
-									showDirectory={showDirectoryPane}
+									highlightAbout={errors.length > 0}
 									showAbout={showAbout}
 									showRoll={showRoll}
 									showReference={showReference}
@@ -1586,7 +1519,7 @@ export const Main = (props: Props) => {
 										heroes={heroes}
 										sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
 										options={props.options}
-										showDirectory={showDirectoryPane}
+										highlightAbout={errors.length > 0}
 										showAbout={showAbout}
 										showRoll={showRoll}
 										showReference={showReference}
@@ -1604,7 +1537,7 @@ export const Main = (props: Props) => {
 										sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
 										options={options}
 										setOptions={persistOptions}
-										showDirectory={showDirectoryPane}
+										highlightAbout={errors.length > 0}
 										showAbout={showAbout}
 										showRoll={showRoll}
 										exportHero={exportHero}
@@ -1642,7 +1575,7 @@ export const Main = (props: Props) => {
 										heroes={heroes}
 										sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
 										options={options}
-										showDirectory={showDirectoryPane}
+										highlightAbout={errors.length > 0}
 										showAbout={showAbout}
 										showRoll={showRoll}
 										showReference={showReference}
@@ -1673,40 +1606,26 @@ export const Main = (props: Props) => {
 								element={<Navigate to='ancestry' replace={true} />}
 							/>
 							<Route
-								path=':kind'
+								path=':kind/:elementID?'
 								element={
 									<LibraryListPage
 										heroes={heroes}
 										sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
+										playbook={playbook}
 										options={options}
 										hiddenSourcebookIDs={hiddenSourcebookIDs}
-										showDirectory={showDirectoryPane}
+										highlightAbout={errors.length > 0}
 										showAbout={showAbout}
 										showRoll={showRoll}
 										showReference={showReference}
 										showSourcebooks={showSourcebooks}
+										showSubclass={sc => onSelectLibraryElement(sc, 'subclass')}
+										showMonster={onSelectMonster}
 										setOptions={persistOptions}
-										createElement={(kind, sourcebookID) => createLibraryElement(kind, sourcebookID, null)}
+										createElement={(kind, sourcebookID, element) => createLibraryElement(kind, sourcebookID, element)}
 										importElement={importLibraryElement}
-									/>
-								}
-							/>
-							<Route
-								path='view/:kind/:elementID/:subElementID?'
-								element={
-									<LibraryViewPage
-										sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
-										playbook={playbook}
-										options={options}
-										showDirectory={showDirectoryPane}
-										showAbout={showAbout}
-										showRoll={showRoll}
-										showReference={showReference}
-										createElement={createLibraryElement}
-										export={exportLibraryElement}
-										copy={copyLibraryElement}
-										copySubElement={copyLibrarySubElement}
-										delete={deleteLibraryElement}
+										deleteElement={deleteLibraryElement}
+										exportElement={exportLibraryElement}
 									/>
 								}
 							/>
@@ -1717,7 +1636,7 @@ export const Main = (props: Props) => {
 										heroes={heroes}
 										sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
 										options={options}
-										showDirectory={showDirectoryPane}
+										highlightAbout={errors.length > 0}
 										showAbout={showAbout}
 										showRoll={showRoll}
 										showReference={showReference}
@@ -1734,42 +1653,25 @@ export const Main = (props: Props) => {
 								element={<Navigate to='adventure' replace={true} />}
 							/>
 							<Route
-								path=':kind'
+								path=':kind/:elementID?'
 								element={
 									<PlaybookListPage
 										heroes={heroes}
 										sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
 										playbook={playbook}
 										options={options}
-										showDirectory={showDirectoryPane}
-										showAbout={showAbout}
-										showRoll={showRoll}
-										showReference={showReference}
-										createElement={createPlaybookElement}
-										importElement={importPlaybookElement}
-										importAdventurePackage={importAdventurePackage}
-										setOptions={persistOptions}
-									/>
-								}
-							/>
-							<Route
-								path='view/:kind/:elementID'
-								element={
-									<PlaybookViewPage
-										heroes={heroes}
-										sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
-										playbook={playbook}
-										options={options}
-										showDirectory={showDirectoryPane}
+										highlightAbout={errors.length > 0}
 										showAbout={showAbout}
 										showRoll={showRoll}
 										showReference={showReference}
 										showEncounterTools={showEncounterTools}
-										export={exportPlaybookElement}
-										start={startPlaybookElement}
-										copy={copyPlaybookElement}
-										delete={deletePlaybookElement}
 										setOptions={persistOptions}
+										createElement={createPlaybookElement}
+										importElement={(kind, element) => importPlaybookElement([ { kind: kind, element: element } ])}
+										importAdventurePackage={importAdventurePackage}
+										deleteElement={deletePlaybookElement}
+										exportElement={exportPlaybookElement}
+										startElement={startPlaybookElement}
 									/>
 								}
 							/>
@@ -1781,7 +1683,7 @@ export const Main = (props: Props) => {
 										sourcebooks={SourcebookLogic.getSourcebooks(homebrewSourcebooks)}
 										playbook={playbook}
 										options={options}
-										showDirectory={showDirectoryPane}
+										highlightAbout={errors.length > 0}
 										showAbout={showAbout}
 										showRoll={showRoll}
 										showReference={showReference}
@@ -1807,7 +1709,7 @@ export const Main = (props: Props) => {
 										playbook={playbook}
 										session={session}
 										options={options}
-										showDirectory={showDirectoryPane}
+										highlightAbout={errors.length > 0}
 										showAbout={showAbout}
 										showRoll={showRoll}
 										showReference={showReference}
@@ -1837,6 +1739,7 @@ export const Main = (props: Props) => {
 										playbook={playbook}
 										session={session}
 										options={options}
+										highlightAbout={errors.length > 0}
 										showAbout={showAbout}
 										showRoll={showRoll}
 										showReference={showReference}
@@ -1848,7 +1751,7 @@ export const Main = (props: Props) => {
 					</Route>
 				</Routes>
 				{notifyContext}
-				<Spin spinning={spinning} size='large' fullscreen />
+				<Spin spinning={spinning} size='large' fullscreen={true} />
 			</ErrorBoundary>
 		);
 	} catch (ex) {

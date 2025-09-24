@@ -94,7 +94,7 @@ At the start of a combat encounter, you gain a number of surges equal to your Vi
 					id: 'elementalist-sub-2-4-1',
 					name: 'Mantle of Essence: Burning Grounds',
 					description: `
-While you have 3 or more essence and are not dying, you exude an aura of magic whose distance is equal to your Reason score. The effects within the area of the aura are based on your specialization, as shown on the Mantle of Essence Specialization Effects table. You can activate and deactivate the aura at will (no action required).
+While you have 3 or more essence and are not dying, you exude an aura of magic whose distance is equal to your Reason score. You can activate and deactivate the aura at will (no action required).
 
 At the end of each of your turns, each enemy in the area takes fire damage equal to your Reason score.`
 				})
@@ -112,6 +112,10 @@ You can use 1 square of movement to walk into an area of fire your size or large
 Additionally, whenever you use a fire ability or are targeted by an ability that deals fire damage, each enemy adjacent to you takes fire damage equal to your Reason score.`
 				})
 			]
+		},
+		{
+			level: 6,
+			features: []
 		},
 		{
 			level: 7,

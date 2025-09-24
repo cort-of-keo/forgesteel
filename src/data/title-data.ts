@@ -34,6 +34,22 @@ export class TitleData {
 		selectedFeatureID: ''
 	};
 
+	static angler: Title = {
+		id: 'title-angler',
+		name: 'Angler',
+		description: 'You gain the following benefit',
+		echelon: 1,
+		prerequisites: '120 project points spent on the Tackle table while Fishing.',
+		features: [
+			FactoryLogic.feature.create({
+				id: 'title-angler-1',
+				name: 'Angler',
+				description: 'You gain an edge on all Fishing project rolls.'
+			})
+		],
+		selectedFeatureID: ''
+	};
+
 	static battleaxeDiplomat: Title = {
 		id: 'title-battleaxe-diplomat',
 		name: 'Battleaxe Diplomat',
@@ -237,6 +253,22 @@ You recruit up to three minions with levels no greater than your own, of a type 
 When you’re negotiating with a member of your faction, their starting Patience increases by 2, up to a maximum of 5.
 
 You find an agent who can provide you with three pieces of information about the settlement you’re in, such as the location of a hidden person, a secret entrance into a guarded area, or the negotiation motivation or pitfall of an important person.`
+			})
+		],
+		selectedFeatureID: ''
+	};
+
+	static goldenrod: Title = {
+		id: 'title-goldenrod',
+		name: 'Goldenrod',
+		description: 'You gain the following benefit',
+		echelon: 1,
+		prerequisites: '300 project points spent on the Tackle table while Fishing.',
+		features: [
+			FactoryLogic.feature.create({
+				id: 'title-goldenrod-1',
+				name: 'Goldenrod',
+				description: 'Each time you undertake the Fishing project, you can reroll one project roll.'
 			})
 		],
 		selectedFeatureID: ''
@@ -1498,7 +1530,7 @@ Once per day, you can spend 10 uninterrupted minutes to magically alter mundane 
 	static planarVoyager: Title = {
 		id: 'title-planar-voyager',
 		name: 'Planar Voyager',
-		description: '“Technically, I’m called Lord Morninghill these days. I did a little favor for Duke Kenway at the Battle of Black Forest.I’ve seen skywhales floating above the seas of Primordius. I’ve seen star freighters dancing around the moons of Axiom. So I guess you’re right, I’m not from around these parts.”',
+		description: '“I’ve seen skywhales floating above the seas of Primordius. I’ve seen star freighters dancing around the moons of Axiom. So I guess you’re right, I’m not from around these parts.”',
 		echelon: 3,
 		prerequisites: 'You voyage in strange vehicles on different worlds.',
 		features: [
@@ -1617,35 +1649,56 @@ Once per day, you can spend 10 uninterrupted minutes to magically alter mundane 
 		echelon: 4,
 		prerequisites: 'You have the Godsworn title, and hundreds of worshipful mortals complete a divine ritual in your name.',
 		features: [
-			FactoryLogic.feature.create({
+			FactoryLogic.feature.createMultiple({
 				id: 'title-demigod-1',
-				name: 'Immortal Excellence',
-				description: 'A characteristic of your choice increases by 1 (to a maximum of 6).'
-			}),
-			FactoryLogic.feature.create({
-				id: 'title-demigod-2',
-				name: 'Longevity',
-				description: 'Your natural lifespan doubles and you can appear to be any age.'
-			}),
-			FactoryLogic.feature.create({
-				id: 'title-demigod-3',
-				name: 'Worshippers',
-				description: 'You magically hear prayers directed to you.'
-			}),
-			FactoryLogic.feature.create({
-				id: 'title-demigod-4',
-				name: 'Acolytes',
-				description: 'The number of followers you can recruit increases by two.'
-			}),
-			FactoryLogic.feature.create({
-				id: 'title-demigod-5',
-				name: 'Divine Weapons',
-				description: 'Whenever you use a damage-dealing weapon ability, that ability can deal corruption or holy damage instead of its usual damage type.'
-			}),
-			FactoryLogic.feature.create({
-				id: 'title-demigod-6',
-				name: 'Missionaries',
-				description: 'You earn 2 Renown.'
+				name: 'Demigod',
+				features: [
+					FactoryLogic.feature.create({
+						id: 'title-demigod-1a',
+						name: 'Immortal Excellence',
+						description: 'A characteristic of your choice increases by 1 (to a maximum of 6).'
+					}),
+					FactoryLogic.feature.create({
+						id: 'title-demigod-1b',
+						name: 'Longevity',
+						description: 'Your natural lifespan doubles and you can appear to be any age.'
+					}),
+					FactoryLogic.feature.create({
+						id: 'title-demigod-1c',
+						name: 'Worshippers',
+						description: 'You magically hear prayers directed to you.'
+					}),
+					FactoryLogic.feature.createChoice({
+						id: 'title-demigod-1d',
+						name: 'Option',
+						options: [
+							{
+								feature: FactoryLogic.feature.create({
+									id: 'title-demigod-1da',
+									name: 'Acolytes',
+									description: 'The number of followers you can recruit increases by two.'
+								}),
+								value: 1
+							},
+							{
+								feature: FactoryLogic.feature.create({
+									id: 'title-demigod-1db',
+									name: 'Divine Weapons',
+									description: 'Whenever you use a damage-dealing weapon ability, that ability can deal corruption or holy damage instead of its usual damage type.'
+								}),
+								value: 1
+							},
+							{
+								feature: FactoryLogic.feature.create({
+									id: 'title-demigod-1dc',
+									name: 'Missionaries',
+									description: 'You earn 2 Renown.'
+								}),
+								value: 1
+							}
+						]
+					})
+				]
 			})
 		],
 		selectedFeatureID: ''

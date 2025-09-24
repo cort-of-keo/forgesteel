@@ -2,13 +2,13 @@ import { Divider, Drawer, FloatButton, Segmented, Space } from 'antd';
 import { useMemo, useState } from 'react';
 import { Career } from '../../../../models/career';
 import { CareerCard } from '../../../panels/hero-sheet/career-card/career-card';
-import { CharacterSheetBuilder } from '../../../../utils/sheet-builder';
 import { ComplicationCard } from '../../../panels/hero-sheet/complication-card/complication-card';
 import { FactoryLogic } from '../../../../logic/factory-logic';
 import { Hero } from '../../../../models/hero';
 import { HeroSheetPage } from './hero-sheet-page';
 import { Options } from '../../../../models/options';
 import { SettingFilled } from '@ant-design/icons';
+import { SheetBuilder } from '../../../../logic/hero-sheet/sheet-builder';
 import { SheetPageSize } from '../../../../enums/sheet-page-size';
 import { Sourcebook } from '../../../../models/sourcebook';
 import { SourcebookLogic } from '../../../../logic/sourcebook-logic';
@@ -119,7 +119,9 @@ export const HeroSheetPreviewPage = (props: Props) => {
 		setPreviewOptions(type);
 		const element = document.getElementById('hero-sheet-page');
 		const canvasElem = document.getElementById('pdf-canvas');
+		const prevDpr = window.devicePixelRatio;
 		if (element && canvasElem) {
+			const initialW = element.clientWidth;
 			switch (type) {
 				case 'html':
 					element.className = '';
@@ -127,11 +129,14 @@ export const HeroSheetPreviewPage = (props: Props) => {
 					break;
 				case 'canvas':
 					element.className = '';
+					window.devicePixelRatio = 4;
 					Utils.elementToCanvas(element)
 						.then(function (canvas) {
+							canvas.style.width = initialW + 'px';
 							canvasElem.replaceChildren(canvas);
 							canvasElem.className = '';
 							element.className = 'hidden';
+							window.devicePixelRatio = prevDpr;
 						});
 					break;
 			}
@@ -161,18 +166,18 @@ export const HeroSheetPreviewPage = (props: Props) => {
 				});
 				return withIncidents;
 			})
-			.map(CharacterSheetBuilder.buildCareerSheet);
+			.map(SheetBuilder.buildCareerSheet);
 	};
 
 	const getAllComplications = () => {
 		return SourcebookLogic.getComplications(props.sourcebooks)
-			.map(CharacterSheetBuilder.buildComplicationSheet);
+			.map(SheetBuilder.buildComplicationSheet);
 	};
 
 	const getPreviewPage = () => {
 		if (heroID === 'careers') {
 			return (
-				<main id='hero-sheet-page'>
+				<main id='hero-sheet-page' className='classic-sheet'>
 					<div className={getPageClasses()}>
 						<h2>All Careers</h2>
 						<div className='all-careers'>
@@ -195,7 +200,7 @@ export const HeroSheetPreviewPage = (props: Props) => {
 			);
 		} else if (heroID === 'complications') {
 			return (
-				<main id='hero-sheet-page'>
+				<main id='hero-sheet-page' className='classic-sheet'>
 					<div className={getPageClasses()}>
 						<h2>All Complications</h2>
 						<div className='all-complications'>
@@ -257,7 +262,7 @@ export const HeroSheetPreviewPage = (props: Props) => {
 
 					<Toggle label='Show play state' value={props.options.includePlayState} onChange={setIncludePlayState} />
 					<Toggle label='Use color' value={props.options.colorSheet} onChange={setColorSheet} />
-					<Divider size='small'>Text Color:</Divider>
+					<Divider size='small'>Text Color</Divider>
 					<Segmented
 						name='textColor'
 						block={true}
@@ -269,7 +274,7 @@ export const HeroSheetPreviewPage = (props: Props) => {
 						value={props.options.sheetTextColor}
 						onChange={changeTextColor}
 					/>
-					<Divider size='small'>Include Class Features:</Divider>
+					<Divider size='small'>Include Class Features</Divider>
 					<Segmented
 						name='abilitySort'
 						block={true}

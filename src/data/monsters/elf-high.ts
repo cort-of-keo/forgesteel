@@ -74,7 +74,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				'Until the end of the round, whenever a high elf uses a magic ability, they can use it as if they were occupying the square of another high elf on the encounter map to whom they have line of effect.'
 			]
 		}),
-		FactoryLogic.feature.createAbility({
+		FactoryLogic.feature.createMaliceAbility({
 			ability: FactoryLogic.createAbility({
 				id: 'elf-high-malice-2',
 				name: 'Gift From an Accursed Tome',
@@ -183,7 +183,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				}),
 				FactoryLogic.feature.create({
 					id: 'elf-high-2-feature-2',
-					name: 'Otherwordly Grace',
+					name: 'Otherworldly Grace',
 					description: 'At the start of each of their turns, the dawn mage can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.'
 				})
 			]
@@ -225,7 +225,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				}),
 				FactoryLogic.feature.create({
 					id: 'elf-high-3-feature-2',
-					name: 'Otherwordly Grace',
+					name: 'Otherworldly Grace',
 					description: 'At the start of each of their turns, the quiver can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.'
 				})
 			]
@@ -370,7 +370,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				}),
 				FactoryLogic.feature.create({
 					id: 'elf-high-6-feature-4',
-					name: 'Otherwordly Grace',
+					name: 'Otherworldly Grace',
 					description: 'At the start of each of their turns, the bloodletter can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.'
 				})
 			]
@@ -427,7 +427,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				}),
 				FactoryLogic.feature.create({
 					id: 'elf-high-7-feature-3',
-					name: 'Otherwordly Grace',
+					name: 'Otherworldly Grace',
 					description: 'At the start of each of their turns, the deathtouch can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.'
 				})
 			]
@@ -486,7 +486,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				}),
 				FactoryLogic.feature.create({
 					id: 'elf-high-8-feature-3',
-					name: 'Otherwordly Grace',
+					name: 'Otherworldly Grace',
 					description: 'At the start of each of their turns, the orbweaver can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.'
 				})
 			]
@@ -544,7 +544,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				}),
 				FactoryLogic.feature.create({
 					id: 'elf-high-9-feature-3',
-					name: 'Otherwordly Grace',
+					name: 'Otherworldly Grace',
 					description: 'At the start of each of their turns, the palinode can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.'
 				}),
 				FactoryLogic.feature.createDamageModifier({
@@ -617,7 +617,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				}),
 				FactoryLogic.feature.create({
 					id: 'elf-high-10-feature-4',
-					name: 'Otherwordly Grace',
+					name: 'Otherworldly Grace',
 					description: 'At the start of each of their turns, the wyrd can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.'
 				}),
 				FactoryLogic.feature.createDamageModifier({
@@ -680,7 +680,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				}),
 				FactoryLogic.feature.create({
 					id: 'elf-high-11-feature-4',
-					name: 'Otherwordly Grace',
+					name: 'Otherworldly Grace',
 					description: 'At the start of each of their turns, the zephyr can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.'
 				})
 			]
@@ -780,7 +780,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 					ability: FactoryLogic.createAbility({
 						id: 'elf-high-12-feature-7',
 						name: 'Fountains Roar, Now Free From the Earth',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(1),
 						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic ],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 10 }) ],
 						target: 'Each ally in the area',
@@ -793,7 +793,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 					ability: FactoryLogic.createAbility({
 						id: 'elf-high-12-feature-8',
 						name: 'And the Sun Forsook Her Children',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(2),
 						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic, AbilityKeyword.Ranged ],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 5, within: 10 }) ],
 						target: 'Each enemy in the area',
@@ -813,7 +813,7 @@ Many high elves have also collected extensive libraries of tomes over the centur
 					ability: FactoryLogic.createAbility({
 						id: 'elf-high-12-feature-9',
 						name: 'But We Will Change Her Mind.',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(3),
 						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic ],
 						distance: [	FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 10 }) ],
 						target: 'Self and each ally in the area',
@@ -892,103 +892,10 @@ Many high elves have also collected extensive libraries of tomes over the centur
 				}),
 				FactoryLogic.feature.create({
 					id: 'elf-high-13-feature-4',
-					name: 'Shared Otherwordly Grace',
+					name: 'Shared Otherworldly Grace',
 					description: 'If the ceramic horse’s rider has the Otherworldly Grace trait, the ceramic horse also has that trait.'
 				})
 			]
-		}),
-		FactoryLogic.createMonster({
-			id: 'elf-high-14',
-			name: 'High Elf Weatherwise',
-			level: 1,
-			role: FactoryLogic.createMonsterRole(MonsterOrganizationType.Retainer, MonsterRoleType.Controller),
-			keywords: [ 'Fey', 'High Elf', 'Humanoid' ],
-			encounterValue: 0,
-			size: FactoryLogic.createSize(1, 'M'),
-			speed: FactoryLogic.createSpeed(5),
-			stamina: 21,
-			stability: 0,
-			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(-1, 1, 2, 0, 1),
-			features: [
-				FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'elf-high-14-feature-1',
-						name: 'Summer\'s Bolt',
-						type: FactoryLogic.type.createMain(),
-						cost: 'signature',
-						keywords: [ AbilityKeyword.Magic, AbilityKeyword.Ranged, AbilityKeyword.Strike ],
-						distance: [ FactoryLogic.distance.createRanged(10) ],
-						target: 'One creature or object',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '3 fire damage',
-								tier2: '5 fire damage',
-								tier3: '7 fire damage'
-							})),
-							FactoryLogic.createAbilitySectionText('If the weatherwise targets their mentor, the mentor ignores the damage and instead gains temporary Stamina equal to the damage dealt.')
-						]
-					})
-				}),
-				FactoryLogic.feature.create({
-					id: 'elf-high-14-feature-2',
-					name: 'Otherwordly Grace',
-					description: 'At the start of each of their turns, the weatherwise can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.'
-				})
-			],
-			retainer: {
-				level4: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'elf-high-14-retainer-4',
-						name: 'Winter\'s Breath',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic ],
-						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 3, within: 1 }) ],
-						target: 'Each enemy in the area',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '3 cold damage; push 2',
-								tier2: '5 cold damage; push 3',
-								tier3: '8 cold damage; push 5'
-							})),
-							FactoryLogic.createAbilitySectionText('The weatherwise can teleport up to 5 squares before or after using this ability.')
-						]
-					})
-				}),
-				level7: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'elf-high-14-retainer-7',
-						name: 'Spring’s Rebirth',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic ],
-						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 3 }) ],
-						target: 'Each ally in the area',
-						sections: [
-							FactoryLogic.createAbilitySectionText('Each target can spend a Recovery, and can choose one effect on them that can be ended by a saving throw. That effect instead ends at the end of their turn.')
-						]
-					})
-				}),
-				level10: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'elf-high-14-retainer-10',
-						name: 'Autumn\'s Decay',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic ],
-						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 3, within: 1 }) ],
-						target: 'Each enemy in the area',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '6 corruption damage; P < [weak] prone and can\'t stand (save ends)',
-								tier2: '10 corruption damage; P < [average] prone and can\'t stand (save ends)',
-								tier3: '14 corruption damage; P < [strong] prone and can\'t stand (save ends)'
-							}))
-						]
-					})
-				})
-			}
 		})
 	],
 	addOns: []

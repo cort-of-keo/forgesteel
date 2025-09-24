@@ -86,7 +86,8 @@ export const wodeElfTroubadour = {
 											free: false,
 											trigger: '',
 											time: '',
-											qualifiers: []
+											qualifiers: [],
+											freeStrike: false
 										},
 										keywords: [
 											'Magic',
@@ -118,7 +119,7 @@ export const wodeElfTroubadour = {
 													bonus: 0,
 													tier1: '2 + M or A damage; A < [weak] slowed (save ends)',
 													tier2: '3 + M or A damage; A < [average] slowed (save ends)',
-													tier3: '5 + M or A damage; A < [strong] slowed (save ends)'
+													tier3: '5 + M or A damage; A < [strong] restrained (save ends)'
 												}
 											}
 										],
@@ -428,7 +429,8 @@ export const wodeElfTroubadour = {
 														free: false,
 														trigger: '',
 														time: '',
-														qualifiers: []
+														qualifiers: [],
+														freeStrike: false
 													},
 													keywords: [
 														'Melee',
@@ -513,7 +515,8 @@ export const wodeElfTroubadour = {
 									free: false,
 									trigger: '',
 									time: '',
-									qualifiers: []
+									qualifiers: [],
+									freeStrike: false
 								},
 								keywords: [
 									'Area',
@@ -566,7 +569,8 @@ export const wodeElfTroubadour = {
 									free: false,
 									trigger: '',
 									time: '',
-									qualifiers: []
+									qualifiers: [],
+									freeStrike: false
 								},
 								keywords: [
 									'Area',
@@ -684,7 +688,8 @@ export const wodeElfTroubadour = {
 													free: false,
 													trigger: '',
 													time: '',
-													qualifiers: []
+													qualifiers: [],
+													freeStrike: false
 												},
 												keywords: [],
 												distance: [
@@ -996,7 +1001,8 @@ export const wodeElfTroubadour = {
 									free: false,
 									trigger: '',
 									time: '',
-									qualifiers: []
+									qualifiers: [],
+									freeStrike: false
 								},
 								keywords: [
 									'Area',
@@ -1280,7 +1286,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Melee',
@@ -1344,7 +1351,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic',
@@ -1374,9 +1382,9 @@ export const wodeElfTroubadour = {
 								'Presence'
 							],
 							bonus: 0,
-							tier1: '2 + P psychic damage; p < [weak] , bleeding (save ends)',
-							tier2: '5 + P psychic damage; p < [average] , bleeding (save ends)',
-							tier3: '7 + P psychic damage; p < [strong] , bleeding (save ends)'
+							tier1: '2 + P psychic damage; P < [weak] , bleeding (save ends)',
+							tier2: '5 + P psychic damage; P < [average] , bleeding (save ends)',
+							tier3: '7 + P psychic damage; P < [strong] , bleeding (save ends)'
 						}
 					}
 				],
@@ -1398,7 +1406,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Melee',
@@ -1455,7 +1464,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic',
@@ -1528,7 +1538,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic',
@@ -1594,7 +1605,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Area',
@@ -1622,9 +1634,9 @@ export const wodeElfTroubadour = {
 								'Presence'
 							],
 							bonus: 0,
-							tier1: 'Slide 1; i < [weak], dazed (save ends)',
-							tier2: 'Slide 1; i < [average], dazed (save ends)',
-							tier3: 'Slide 2; i < [strong], dazed (save ends)'
+							tier1: 'Slide 1; I < [weak], dazed (save ends)',
+							tier2: 'Slide 1; I < [average], dazed (save ends)',
+							tier3: 'Slide 2; I < [strong], dazed (save ends)'
 						}
 					},
 					{
@@ -1653,7 +1665,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Area',
@@ -1682,9 +1695,9 @@ export const wodeElfTroubadour = {
 								'Presence'
 							],
 							bonus: 0,
-							tier1: '4 damage; p < [weak], slowed (save ends)',
-							tier2: '5 damage; p < [average], slowed (save ends)',
-							tier3: '6 damage; p < [strong], restrained (save ends)'
+							tier1: '4 damage; P < [weak], slowed (save ends)',
+							tier2: '5 damage; P < [average], slowed (save ends)',
+							tier3: '6 damage; P < [strong], restrained (save ends)'
 						}
 					},
 					{
@@ -1710,7 +1723,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Melee',
@@ -1744,9 +1758,9 @@ export const wodeElfTroubadour = {
 								'Presence'
 							],
 							bonus: 0,
-							tier1: 'Taunted (EoT); a < [weak], prone',
-							tier2: 'Taunted (EoT); a < [average], prone',
-							tier3: 'Taunted (EoT); a < [strong], prone and can’t stand (EoT)'
+							tier1: 'Taunted (EoT); A < [weak], prone',
+							tier2: 'Taunted (EoT); A < [average], prone',
+							tier3: 'Taunted (EoT); A < [strong], prone and can’t stand (EoT)'
 						}
 					}
 				],
@@ -1768,7 +1782,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Area',
@@ -1820,7 +1835,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic'
@@ -1863,7 +1879,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Area',
@@ -1907,7 +1924,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Melee',
@@ -1936,9 +1954,9 @@ export const wodeElfTroubadour = {
 								'Agility'
 							],
 							bonus: 0,
-							tier1: '6 + A damage; p < [weak], weakened (save ends)',
-							tier2: '10 + A damage; p < [weak], weakened (save ends)',
-							tier3: '14 + A damage; p < [weak], weakened (save ends)'
+							tier1: '6 + A damage; P < [weak], weakened (save ends)',
+							tier2: '10 + A damage; P < [weak], weakened (save ends)',
+							tier3: '14 + A damage; P < [weak], weakened (save ends)'
 						}
 					},
 					{
@@ -1964,7 +1982,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Area',
@@ -1992,9 +2011,9 @@ export const wodeElfTroubadour = {
 								'Presence'
 							],
 							bonus: 0,
-							tier1: 'Slide 3; p < [weak], this slide ignores the target’s stability',
-							tier2: 'Slide 5; p < [average], this slide ignores the target’s stability',
-							tier3: 'Slide 7; p < [strong], this slide ignores the target’s stability'
+							tier1: 'Slide 3; P < [weak], this slide ignores the target’s stability',
+							tier2: 'Slide 5; P < [average], this slide ignores the target’s stability',
+							tier3: 'Slide 7; P < [strong], this slide ignores the target’s stability'
 						}
 					},
 					{
@@ -2020,7 +2039,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Area',
@@ -2050,9 +2070,9 @@ export const wodeElfTroubadour = {
 								'Presence'
 							],
 							bonus: 0,
-							tier1: '5 fire damage; a < [weak], weakened (save ends)',
-							tier2: '7 fire damage; a < [average], weakened (save ends)',
-							tier3: '10 fire damage; a < [strong], weakened (save ends)'
+							tier1: '5 fire damage; A < [weak], weakened (save ends)',
+							tier2: '7 fire damage; A < [average], weakened (save ends)',
+							tier3: '10 fire damage; A < [strong], weakened (save ends)'
 						}
 					},
 					{
@@ -2078,7 +2098,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic',
@@ -2145,7 +2166,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic',
@@ -2189,7 +2211,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Area',
@@ -2246,7 +2269,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic',
@@ -2290,7 +2314,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic',
@@ -2334,7 +2359,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic',
@@ -2386,7 +2412,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic'
@@ -2429,7 +2456,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic',
@@ -2473,7 +2501,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Magic'
@@ -2516,7 +2545,8 @@ export const wodeElfTroubadour = {
 					free: false,
 					trigger: '',
 					time: '',
-					qualifiers: []
+					qualifiers: [],
+					freeStrike: false
 				},
 				keywords: [
 					'Area',
@@ -2545,9 +2575,9 @@ export const wodeElfTroubadour = {
 								'Presence'
 							],
 							bonus: 0,
-							tier1: '6 damage; p < [weak], the target can’t willingly leave the area (EoT)',
-							tier2: '8 damage; p < [average], the target can’t willingly leave the area (save ends)',
-							tier3: '12 damage; the target can’t willingly leave the area (EoT); if p < [strong], they can’t willingly leave the area (save ends)'
+							tier1: '6 damage; P < [weak], the target can’t willingly leave the area (EoT)',
+							tier2: '8 damage; P < [average], the target can’t willingly leave the area (save ends)',
+							tier3: '12 damage; the target can’t willingly leave the area (EoT); if P < [strong], they can’t willingly leave the area (save ends)'
 						}
 					},
 					{
@@ -2605,7 +2635,8 @@ export const wodeElfTroubadour = {
 											free: false,
 											trigger: '',
 											time: '',
-											qualifiers: []
+											qualifiers: [],
+											freeStrike: false
 										},
 										keywords: [
 											'Area',
@@ -2658,7 +2689,8 @@ export const wodeElfTroubadour = {
 											free: false,
 											trigger: '',
 											time: '',
-											qualifiers: []
+											qualifiers: [],
+											freeStrike: false
 										},
 										keywords: [
 											'Magic',
@@ -2717,7 +2749,8 @@ export const wodeElfTroubadour = {
 											free: false,
 											trigger: 'The target makes an ability roll that has an edge, a double edge, a bane, or a double bane.',
 											time: '',
-											qualifiers: []
+											qualifiers: [],
+											freeStrike: false
 										},
 										keywords: [
 											'Ranged'
@@ -2788,7 +2821,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Magic',
@@ -2843,7 +2877,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Magic',
@@ -2941,7 +2976,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Area',
@@ -3014,7 +3050,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Area',
@@ -3042,9 +3079,9 @@ export const wodeElfTroubadour = {
 																		'Presence'
 																	],
 																	bonus: 0,
-																	tier1: '2 psychic damage; p < [weak], frightened (save ends)',
-																	tier2: '5 psychic damage; p < [average], frightened (save ends)',
-																	tier3: '7 psychic damage; p < [strong], frightened (save ends)'
+																	tier1: '2 psychic damage; P < [weak], frightened (save ends)',
+																	tier2: '5 psychic damage; P < [average], frightened (save ends)',
+																	tier3: '7 psychic damage; P < [strong], frightened (save ends)'
 																}
 															}
 														],
@@ -3077,7 +3114,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Area',
@@ -3165,7 +3203,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Magic',
@@ -3241,7 +3280,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Magic',
@@ -3333,7 +3373,8 @@ export const wodeElfTroubadour = {
 											free: false,
 											trigger: '',
 											time: '',
-											qualifiers: []
+											qualifiers: [],
+											freeStrike: false
 										},
 										keywords: [
 											'Area',
@@ -3386,7 +3427,8 @@ export const wodeElfTroubadour = {
 											free: false,
 											trigger: '',
 											time: '',
-											qualifiers: []
+											qualifiers: [],
+											freeStrike: false
 										},
 										keywords: [],
 										distance: [
@@ -3442,7 +3484,8 @@ export const wodeElfTroubadour = {
 											free: false,
 											trigger: 'The target takes damage from a melee strike.',
 											time: '',
-											qualifiers: []
+											qualifiers: [],
+											freeStrike: false
 										},
 										keywords: [
 											'Melee'
@@ -3506,7 +3549,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Melee',
@@ -3562,7 +3606,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Melee',
@@ -3673,7 +3718,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Area',
@@ -3746,7 +3792,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Melee',
@@ -3775,9 +3822,9 @@ export const wodeElfTroubadour = {
 																		'Agility'
 																	],
 																	bonus: 0,
-																	tier1: '12 + A damage; m < [weak], bleeding (save ends)',
-																	tier2: '18 + A damage; m < [average], bleeding (save ends)',
-																	tier3: '24 + A damage; bleeding (EoT), or if m < [strong], bleeding (save ends)'
+																	tier1: '12 + A damage; M < [weak], bleeding (save ends)',
+																	tier2: '18 + A damage; M < [average], bleeding (save ends)',
+																	tier3: '24 + A damage; bleeding (EoT), or if M < [strong], bleeding (save ends)'
 																}
 															}
 														],
@@ -3810,7 +3857,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Melee',
@@ -3899,7 +3947,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Charge',
@@ -3931,7 +3980,7 @@ export const wodeElfTroubadour = {
 																	bonus: 0,
 																	tier1: '15 + A damage',
 																	tier2: '21 + A damage',
-																	tier3: '28 + A damage; m < [strong], bleeding (save ends)'
+																	tier3: '28 + A damage; M < [strong], bleeding (save ends)'
 																}
 															}
 														],
@@ -3964,7 +4013,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Melee',
@@ -4069,7 +4119,8 @@ export const wodeElfTroubadour = {
 											free: false,
 											trigger: '',
 											time: '',
-											qualifiers: []
+											qualifiers: [],
+											freeStrike: false
 										},
 										keywords: [
 											'Area',
@@ -4136,7 +4187,8 @@ export const wodeElfTroubadour = {
 														free: false,
 														trigger: '',
 														time: '',
-														qualifiers: []
+														qualifiers: [],
+														freeStrike: false
 													},
 													keywords: [
 														'Magic',
@@ -4202,7 +4254,8 @@ export const wodeElfTroubadour = {
 														free: false,
 														trigger: '',
 														time: '',
-														qualifiers: []
+														qualifiers: [],
+														freeStrike: false
 													},
 													keywords: [
 														'Area',
@@ -4258,7 +4311,8 @@ export const wodeElfTroubadour = {
 											free: false,
 											trigger: 'The target uses an ability that targets only one enemy and costs 3 or fewer of their Heroic Resource.',
 											time: '',
-											qualifiers: []
+											qualifiers: [],
+											freeStrike: false
 										},
 										keywords: [
 											'Ranged'
@@ -4329,7 +4383,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Magic',
@@ -4384,7 +4439,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Area',
@@ -4417,9 +4473,9 @@ export const wodeElfTroubadour = {
 																		'Presence'
 																	],
 																	bonus: 0,
-																	tier1: '5 corruption damage; m < [weak], pull 1 toward the center of the area',
-																	tier2: '9 corruption damage; m < [average], pull 2 toward the center of the area',
-																	tier3: '12 corruption damage; m < [strong], pull 3 toward the center of the area'
+																	tier1: '5 corruption damage; M < [weak], pull 1 toward the center of the area',
+																	tier2: '9 corruption damage; M < [average], pull 2 toward the center of the area',
+																	tier3: '12 corruption damage; M < [strong], pull 3 toward the center of the area'
 																}
 															}
 														],
@@ -4468,7 +4524,8 @@ export const wodeElfTroubadour = {
 														free: false,
 														trigger: '',
 														time: '',
-														qualifiers: []
+														qualifiers: [],
+														freeStrike: false
 													},
 													keywords: [
 														'Area',
@@ -4521,7 +4578,8 @@ export const wodeElfTroubadour = {
 														free: false,
 														trigger: '',
 														time: '',
-														qualifiers: []
+														qualifiers: [],
+														freeStrike: false
 													},
 													keywords: [
 														'Area',
@@ -4631,7 +4689,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Area',
@@ -4663,9 +4722,9 @@ export const wodeElfTroubadour = {
 																		'Presence'
 																	],
 																	bonus: 0,
-																	tier1: '7 sonic damage; p < [weak], prone',
-																	tier2: '10 sonic damage; p < [average], prone',
-																	tier3: '13 sonic damage; p < [strong], prone'
+																	tier1: '7 sonic damage; P < [weak], prone',
+																	tier2: '10 sonic damage; P < [average], prone',
+																	tier3: '13 sonic damage; P < [strong], prone'
 																}
 															}
 														],
@@ -4698,7 +4757,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Area',
@@ -4773,7 +4833,8 @@ export const wodeElfTroubadour = {
 														free: false,
 														trigger: '',
 														time: '',
-														qualifiers: []
+														qualifiers: [],
+														freeStrike: false
 													},
 													keywords: [
 														'Area',
@@ -4826,7 +4887,8 @@ export const wodeElfTroubadour = {
 														free: false,
 														trigger: '',
 														time: '',
-														qualifiers: []
+														qualifiers: [],
+														freeStrike: false
 													},
 													keywords: [
 														'Area',
@@ -4895,7 +4957,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Area',
@@ -4962,7 +5025,8 @@ export const wodeElfTroubadour = {
 															free: false,
 															trigger: '',
 															time: '',
-															qualifiers: []
+															qualifiers: [],
+															freeStrike: false
 														},
 														keywords: [
 															'Melee',

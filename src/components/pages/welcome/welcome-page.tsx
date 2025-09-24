@@ -11,7 +11,7 @@ import { useState } from 'react';
 import './welcome-page.scss';
 
 interface Props {
-	showDirectory: () => void;
+	highlightAbout: boolean;
 	showAbout: () => void;
 	showRoll: () => void;
 	showReference: () => void;
@@ -64,7 +64,7 @@ export const WelcomePage = (props: Props) => {
 				return (
 					<div className='welcome-section'>
 						<HeaderText
-							extra={<Button type='primary' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybookList('adventure')}>Playbook</Button>}
+							extra={<Button type='primary' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('adventure')}>Playbook</Button>}
 						>
 							For Directors: Prep Time
 						</HeaderText>
@@ -132,7 +132,7 @@ export const WelcomePage = (props: Props) => {
 				return (
 					<div className='welcome-section'>
 						<HeaderText
-							extra={<Button type='primary' icon={<BookOutlined />} onClick={() => navigation.goToLibraryList('ancestry')}>Library</Button>}
+							extra={<Button type='primary' icon={<BookOutlined />} onClick={() => navigation.goToLibrary('ancestry')}>Library</Button>}
 						>
 							For Content Creators
 						</HeaderText>
@@ -173,7 +173,7 @@ export const WelcomePage = (props: Props) => {
 		return (
 			<ErrorBoundary>
 				<div className={isSmall ? 'welcome-page compact' : 'welcome-page full'}>
-					<AppHeader showDirectory={props.showDirectory} />
+					<AppHeader />
 					<div className='welcome-page-content'>
 						<div className='welcome-column'>
 							<HeaderText level={1}>Welcome to FORGE STEEL</HeaderText>
@@ -225,7 +225,7 @@ export const WelcomePage = (props: Props) => {
 							{getContent(page)}
 						</div>
 					</div>
-					<AppFooter page='welcome' showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
+					<AppFooter page='welcome' highlightAbout={props.highlightAbout} showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
 				</div>
 			</ErrorBoundary>
 		);

@@ -12,7 +12,7 @@ import { Utils } from '../../../utils/utils';
 import './options-panel.scss';
 
 interface Props {
-	mode: 'hero-modern' | 'hero-classic' | 'library' | 'monster' | 'encounter' | 'tactical-map' | 'session' | 'player';
+	mode: 'hero-modern' | 'hero-classic' | 'monster' | 'encounter' | 'tactical-map' | 'session' | 'player';
 	options: Options;
 	heroes: Hero[];
 	setOptions: (options: Options) => void;
@@ -130,12 +130,6 @@ export const OptionsPanel = (props: Props) => {
 	const setCompactView = (value: boolean) => {
 		const copy = Utils.copy(props.options);
 		copy.compactView = value;
-		props.setOptions(copy);
-	};
-
-	const setShowMonstersInGroups = (value: boolean) => {
-		const copy = Utils.copy(props.options);
-		copy.showMonstersInGroups = value;
 		props.setOptions(copy);
 	};
 
@@ -292,7 +286,7 @@ export const OptionsPanel = (props: Props) => {
 						<Toggle label='Show play state' value={props.options.includePlayState} onChange={setIncludePlayState} />
 						<Toggle label='Use color' value={props.options.colorSheet} onChange={setColorSheet} />
 						<Toggle label='Include standard abilities' value={props.options.showStandardAbilities} onChange={setShowStandardAbilities} />
-						<Divider size='small'>Text Color:</Divider>
+						<Divider size='small'>Text Color</Divider>
 						<Segmented
 							name='textColor'
 							block={true}
@@ -304,7 +298,7 @@ export const OptionsPanel = (props: Props) => {
 							value={props.options.sheetTextColor}
 							onChange={changeTextColor}
 						/>
-						<Divider size='small'>Include Class Features:</Divider>
+						<Divider size='small'>Include Class Features</Divider>
 						<Segmented
 							name='abilitySort'
 							block={true}
@@ -347,12 +341,6 @@ export const OptionsPanel = (props: Props) => {
 								onChange={setPageOrientation}
 							/>
 						</Space>
-					</>
-				);
-			case 'library':
-				return (
-					<>
-						<Toggle label='Show monsters in groups' value={props.options.showMonstersInGroups} onChange={setShowMonstersInGroups} />
 					</>
 				);
 			case 'monster':

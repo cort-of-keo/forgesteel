@@ -610,12 +610,13 @@ export class FactoryLogic {
 			description: '',
 			groups: [],
 			terrain: [],
+			heroes: [],
 			objective: null,
 			notes: [],
 			initiative: undefined,
 			round: 0,
 			malice: 0,
-			heroes: []
+			additionalTurnsTaken: []
 		};
 	};
 
@@ -986,8 +987,6 @@ export class FactoryLogic {
 			featuresInclude: 'all',
 			abilitySort: 'size',
 			compactView: false,
-			showMonstersInGroups: true,
-			showContentInTable: false,
 			similarLevel: true,
 			similarRole: true,
 			similarOrganization: true,

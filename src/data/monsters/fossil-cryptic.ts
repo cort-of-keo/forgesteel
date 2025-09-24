@@ -93,13 +93,6 @@ export const fossilCryptic: MonsterGroup = {
 					name: 'the fossil cryptic'
 				}),
 				FactoryLogic.feature.create({
-					id: 'fossil-cryptic-feature-2',
-					name: 'Solo Monster',
-					description: `**End Effect**: At the end of each of their turns, the cryptic can take 5 damage to end one effect on them that can be ended by a saving throw. This damage can’t be reduced in any way.
-	 
-  **Solo Turns**: The cryptic can take two turns each round. They can’t take turns consecutively.`
-				}),
-				FactoryLogic.feature.create({
 					id: 'fossil-cryptic-feature-3',
 					name: 'Churning Trunk',
 					description: 'The cryptic is constantly surrounded by a 1 aura of swirling debris that obscures their form. Ranged abilities that target the cryptic take a bane. Additionally, any enemy who enters the aura for the first time in a round or starts their turn there takes 5 damage.'
@@ -204,7 +197,7 @@ export const fossilCryptic: MonsterGroup = {
 					ability: FactoryLogic.createAbility({
 						id: 'fossil-cryptic-feature-10',
 						name: 'First Warning Quake',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(1),
 						keywords: [ AbilityKeyword.Area ],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 10 }) ],
 						target: 'Each enemy in the area',
@@ -224,7 +217,7 @@ export const fossilCryptic: MonsterGroup = {
 					ability: FactoryLogic.createAbility({
 						id: 'fossil-cryptic-feature-11',
 						name: 'Final Warning Fissure',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(2),
 						keywords: [ AbilityKeyword.Area ],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 5 }) ],
 						target: 'Each enemy in the area',
@@ -244,7 +237,7 @@ export const fossilCryptic: MonsterGroup = {
 					ability: FactoryLogic.createAbility({
 						id: 'fossil-cryptic-feature-12',
 						name: 'No Escape',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(3),
 						keywords: [ AbilityKeyword.Ranged ],
 						distance: [ FactoryLogic.distance.createRanged(10) ],
 						target: 'Two creatures or objects',
@@ -263,7 +256,7 @@ export const fossilCryptic: MonsterGroup = {
 					ability: FactoryLogic.createAbility({
 						id: 'fossil-cryptic-feature-13',
 						name: 'No Escape (part two)',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(3),
 						keywords: [ AbilityKeyword.Ranged ],
 						distance: [ FactoryLogic.distance.createRanged(10) ],
 						target: 'Two creatures or objects on the ground',

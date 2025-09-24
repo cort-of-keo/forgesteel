@@ -63,7 +63,7 @@ Pinna, Hedge Witch, Gravesford`,
 			name: 'Resonating Croak',
 			cost: 5,
 			sections: [
-				'Each angulotl in the encounter puffs out their throat and starts loudly droning Any non-angulotl adjacent to an angulotl makes an **Intuition test**.',
+				'Each angulotl in the encounter puffs out their throat and starts loudly droning. Any non-angulotl adjacent to an angulotl makes an **Intuition test**.',
 				FactoryLogic.createPowerRoll({
 					characteristic: Characteristic.Intuition,
 					tier1: '5 sonic damage; slowed (EoT)',
@@ -115,7 +115,7 @@ Pinna, Hedge Witch, Gravesford`,
 									tier3: '5 damage'
 								})
 							),
-							FactoryLogic.createAbilitySectionText('**Effect:** The cleaver jumps up to 4 squares before or after making this strike.')
+							FactoryLogic.createAbilitySectionText('The cleaver jumps up to 4 squares before or after making this strike.')
 						]
 					})
 				}),
@@ -210,7 +210,7 @@ Pinna, Hedge Witch, Gravesford`,
 									tier3: '5 poison damage'
 								})
 							),
-							FactoryLogic.createAbilitySectionText('**Effect:** The dart gains an edge on this ability against any target who has less than full Stamina.')
+							FactoryLogic.createAbilitySectionText('The dart gains an edge on this ability against any target who has less than full Stamina.')
 						]
 					})
 				}),
@@ -258,7 +258,7 @@ Pinna, Hedge Witch, Gravesford`,
 									tier3: '5 damage; grabbed'
 								})
 							),
-							FactoryLogic.createAbilitySectionText('**Effect:** Any target grabbed this way takes 2 lightning damage at the start of each of their turns.')
+							FactoryLogic.createAbilitySectionText('Any target grabbed this way takes 2 lightning damage at the start of each of their turns.')
 						]
 					})
 				}),
@@ -357,7 +357,7 @@ Pinna, Hedge Witch, Gravesford`,
 									tier3: '7 damage; pull 6'
 								})
 							),
-							FactoryLogic.createAbilitySectionText('**Effect:** The target is wet (save ends). Any ally targeted by this ability ignores the damage, is wet until the end of the encounter, and is pulled up to 6 squares, ignoring stability.')
+							FactoryLogic.createAbilitySectionText('The target is wet (save ends). Any ally targeted by this ability ignores the damage, is wet until the end of the encounter, and is pulled up to 6 squares, ignoring stability.')
 						]
 					})
 				}),
@@ -370,7 +370,7 @@ Pinna, Hedge Witch, Gravesford`,
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** The slink jumps up to 3 squares. If they have cover or concealment when they land, they can attempt to hide.')
+							FactoryLogic.createAbilitySectionText('The slink jumps up to 3 squares. If they have cover or concealment when they land, they can attempt to hide.')
 						]
 					})
 				}),
@@ -422,7 +422,7 @@ Pinna, Hedge Witch, Gravesford`,
 									tier3: '5 holy damage; R < 2 illuminated (save ends)'
 								})
 							),
-							FactoryLogic.createAbilitySectionText('**Effect:** An illuminated creature or object can’t hide or become invisible, and any strike made against an illuminated target gains an edge.')
+							FactoryLogic.createAbilitySectionText('An illuminated creature or object can’t hide or become invisible, and any strike made against an illuminated target gains an edge.')
 						]
 					})
 				}),
@@ -436,7 +436,7 @@ Pinna, Hedge Witch, Gravesford`,
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 2, within: 10, qualifier: 'unoccupied space' }) ],
 						target: 'Special',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** A bubble of toxic gas fills the area, ready to pop. If any creature or object touches the bubble or if the bubble takes damage, it bursts. Each angulotl adjacent to the bubble is wet until the end of the encounter, and each enemy adjacent to the bubble makes a **Might test**.'),
+							FactoryLogic.createAbilitySectionText('A bubble of toxic gas fills the area, ready to pop. If any creature or object touches the bubble or if the bubble takes damage, it bursts. Each angulotl adjacent to the bubble is wet until the end of the encounter, and each enemy adjacent to the bubble makes a **Might test**.'),
 							FactoryLogic.createAbilitySectionRoll(
 								FactoryLogic.createPowerRoll({
 									characteristic: Characteristic.Might,
@@ -491,7 +491,7 @@ Pinna, Hedge Witch, Gravesford`,
 									tier3: '13 acid damage; A < 3 dazed (save ends)'
 								})
 							),
-							FactoryLogic.createAbilitySectionText('**Effect:** The next time the target makes a strike against the daybringer, the target takes 4 acid damage after the strike is resolved.'),
+							FactoryLogic.createAbilitySectionText('The next time the target makes a strike against the daybringer, the target takes 4 acid damage after the strike is resolved.'),
 							FactoryLogic.createAbilitySectionField({
 								name: 'Malice',
 								value: 1,
@@ -508,7 +508,7 @@ Pinna, Hedge Witch, Gravesford`,
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** The daybringer expands their throat to make it resemble the sun until the start of their next turn. During that time, each angulotl who starts their turn within 10 squares of the daybringer regains 5 Stamina and gains a +3 bonus to speed until the end of their turn.')
+							FactoryLogic.createAbilitySectionText('The daybringer expands their throat to make it resemble the sun until the start of their next turn. During that time, each angulotl who starts their turn within 10 squares of the daybringer regains 5 Stamina and gains a +3 bonus to speed until the end of their turn.')
 						]
 					})
 				}),
@@ -520,7 +520,7 @@ Pinna, Hedge Witch, Gravesford`,
 						distance: [ FactoryLogic.distance.createMelee(5) ],
 						target: 'One creature',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** The outcome of the strike’s power roll is reduced by one tier'),
+							FactoryLogic.createAbilitySectionText('The outcome of the strike’s power roll is reduced by one tier'),
 							FactoryLogic.createAbilitySectionField({
 								name: 'Malice',
 								value: 2,
@@ -543,7 +543,7 @@ Pinna, Hedge Witch, Gravesford`,
 						distance: [ FactoryLogic.distance.createRanged(10) ],
 						target: 'Special',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** Four **angulotl pollywogs** erupt from the daybringer’s back and waddle into unoccupied spaces within distance.')
+							FactoryLogic.createAbilitySectionText('Four **angulotl pollywogs** erupt from the daybringer’s back and waddle into unoccupied spaces within distance.')
 						]
 					})
 				}),
@@ -558,7 +558,7 @@ Pinna, Hedge Witch, Gravesford`,
 						],
 						target: 'Self and each ally in the area',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** Each target can jump up to 4 squares. Each non-minion target can make a free strike at the end of the jump.')
+							FactoryLogic.createAbilitySectionText('Each target can jump up to 4 squares. Each non-minion target can make a free strike at the end of the jump.')
 						]
 					})
 				}),
@@ -571,7 +571,7 @@ Pinna, Hedge Witch, Gravesford`,
 						distance: [ FactoryLogic.distance.createSpecial('') ],
 						target: 'Special',
 						sections: [
-							FactoryLogic.createAbilitySectionText('**Effect:** The encounter map dries up and each enemy and object on it is illuminated until the end of the encounter. An illuminated creature or object can’t hide or become invisible, and any strike made against an illuminated target gains an edge. Additionally, each enemy in the encounter who is wet has that effect end and takes 6 acid damage. Each angulotl in the encounter has a double edge on their next strike.')
+							FactoryLogic.createAbilitySectionText('The encounter map dries up and each enemy and object on it is illuminated until the end of the encounter. An illuminated creature or object can’t hide or become invisible, and any strike made against an illuminated target gains an edge. Additionally, each enemy in the encounter who is wet has that effect end and takes 6 acid damage. Each angulotl in the encounter has a double edge on their next strike.')
 						]
 					})
 				}),
@@ -585,109 +585,6 @@ Pinna, Hedge Witch, Gravesford`,
 					modifiers: [ FactoryLogic.damageModifier.create({ damageType: DamageType.Poison, modifierType: DamageModifierType.Immunity, value: 3 }) ]
 				})
 			]
-		}),
-		FactoryLogic.createMonster({
-			id: 'angulotl-9',
-			name: 'Angulotl Hopper',
-			level: 1,
-			role: FactoryLogic.createMonsterRole(MonsterOrganizationType.Retainer, MonsterRoleType.Harrier),
-			keywords: [ 'Angulotl', 'Humanoid' ],
-			encounterValue: 13,
-			size: FactoryLogic.createSize(1, 'S'),
-			speed: FactoryLogic.createSpeed(6, 'swim, climb'),
-			stamina: 30,
-			stability: 0,
-			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(1, 2, 0, 0, 0),
-			features: [
-				FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'angulotl-9-feature-1',
-						name: 'Leapfrog',
-						type: FactoryLogic.type.createMain(),
-						cost: 'signature',
-						keywords: [ AbilityKeyword.Melee, AbilityKeyword.Strike, AbilityKeyword.Weapon ],
-						distance: [ FactoryLogic.distance.createMelee() ],
-						target: 'One creature or object',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(
-								FactoryLogic.createPowerRoll({
-									characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-									tier1: '3 damage',
-									tier2: '5 damage',
-									tier3: '7 damage'
-								})
-							),
-							FactoryLogic.createAbilitySectionText('Before or after attacking, the hopper jumps two squares, or four squares if they jump over their mentor\'s space.')
-						]
-					})
-				}),
-				FactoryLogic.feature.create({
-					id: 'angulotl-9-feature-2',
-					name: 'Toxiferous',
-					description: 'When an adjacent enemy grabs or uses a melee ability against the hopper, they take 3 poison damage.'
-				}),
-				FactoryLogic.feature.createDamageModifier({
-					id: 'angulotl-9-feature-3',
-					modifiers: [ FactoryLogic.damageModifier.create({ damageType: DamageType.Poison, modifierType: DamageModifierType.Immunity, value: 2 }) ]
-				})
-			],
-			retainer: {
-				level4: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'angulotl-9-retainer-4',
-						name: 'Leaping Attack',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Melee, AbilityKeyword.Strike, AbilityKeyword.Weapon ],
-						distance: [ FactoryLogic.distance.createMelee() ],
-						target: 'One creature or object',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(
-								FactoryLogic.createPowerRoll({
-									characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-									tier1: '5 damage; M < [weak] prone',
-									tier2: '9 damage; M < [average] prone',
-									tier3: '12 damage; M < [strong] prone'
-								})
-							),
-							FactoryLogic.createAbilitySectionText('The hopper can jump in a straight line up to their speed before the attack without provoking opportunity attacks. If they jump at least 2 squares this way, they gain a surge.')
-						]
-					})
-				}),
-				level7: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'angulotl-9-retainer-7',
-						name: 'Three-Poison Dart',
-						type: FactoryLogic.type.createMain(),
-						keywords: [ AbilityKeyword.Ranged, AbilityKeyword.Strike, AbilityKeyword.Weapon ],
-						distance: [ FactoryLogic.distance.createRanged(5) ],
-						target: 'One creature',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(
-								FactoryLogic.createPowerRoll({
-									characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-									tier1: '5 damage; M < [weak] weakened (save ends)',
-									tier2: '9 damage; M < [average] slowed and weakened (save ends)',
-									tier3: '12 damage; M < [strong] dazed, slowed, and weakened (save ends)'
-								})
-							)
-						]
-					})
-				}),
-				level10: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'angulotl-9-retainer-10',
-						name: 'Trip of the Tongue',
-						type: FactoryLogic.type.createTrigger('A creature moves to a square within range.', { qualifiers: [ 'encounter' ] }),
-						keywords: [],
-						distance: [ FactoryLogic.distance.createRanged(5) ],
-						target: 'One creature',
-						sections: [
-							FactoryLogic.createAbilitySectionText('The target is M (medium) prone. If they are knocked prone, their movement ends and until they stand up the next attack on them gains 2 surges.')
-						]
-					})
-				})
-			}
 		})
 	],
 	addOns: []

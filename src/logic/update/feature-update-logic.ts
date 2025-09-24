@@ -18,6 +18,9 @@ export class FeatureUpdateLogic {
 				}
 				break;
 			case FeatureType.Choice:
+				if (feature.data.options === undefined) {
+					feature.data.options = [];
+				}
 				feature.data.options.map(f => f.feature).forEach(FeatureUpdateLogic.updateFeature);
 				break;
 			case FeatureType.ClassAbility:
@@ -73,6 +76,11 @@ export class FeatureUpdateLogic {
 				if (feature.data.types.includes('Standard')) {
 					feature.data.types = feature.data.types.filter(t => t !== 'Standard');
 					feature.data.types.push('');
+				}
+				break;
+			case FeatureType.Malice:
+				if (feature.data.echelon === undefined) {
+					feature.data.echelon = 1;
 				}
 				break;
 			case FeatureType.Multiple:

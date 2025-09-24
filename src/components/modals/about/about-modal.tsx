@@ -1,7 +1,12 @@
-import { Divider } from 'antd';
+import { Button, Divider, Space } from 'antd';
+import { CopyOutlined } from '@ant-design/icons';
+import { DangerButton } from '../../controls/danger-button/danger-button';
+import { Expander } from '../../controls/expander/expander';
 import { Field } from '../../controls/field/field';
+import { HeaderText } from '../../controls/header-text/header-text';
 import { LogoPanel } from '../../panels/logo/logo-panel';
 import { Modal } from '../modal/modal';
+import { SelectablePanel } from '../../controls/selectable-panel/selectable-panel';
 
 import pbds from '../../../assets/powered-by-draw-steel.png';
 import pkg from '../../../../package.json';
@@ -9,11 +14,60 @@ import pkg from '../../../../package.json';
 import './about-modal.scss';
 
 interface Props {
+	errors: Event[];
+	clearErrors: () => void;
 	onClose: () => void;
 }
 
 export const AboutModal = (props: Props) => {
 	try {
+		const clearErrors = () => {
+			props.clearErrors();
+			props.onClose();
+		};
+
+		const getError = (event: Event, index: number) => {
+			let message = '';
+			let output = '';
+			const fields: { label: string, value: string }[] = [
+				{ label: 'Type', value: `${event.type}` }
+			];
+
+			if (event.type === 'error') {
+				const error = event as ErrorEvent;
+
+				message = error.message;
+				output = `title ${error.message}, file ${error.filename}, line ${error.lineno}, col ${error.colno}, data ${JSON.stringify(error.error)}`;
+
+				fields.push({ label: 'Location', value: `${error.filename}, line ${error.lineno}, column ${error.colno}` });
+				fields.push({ label: 'Data', value: JSON.stringify(error.error) });
+			}
+
+			if (event.type === 'unhandledrejection') {
+				const error = event as PromiseRejectionEvent;
+
+				message = JSON.stringify(error.reason);
+				output = `reason ${JSON.stringify(error.reason)}`;
+			}
+
+			return (
+				<SelectablePanel key={index}>
+					<HeaderText
+						extra={
+							<Button
+								type='text'
+								icon={<CopyOutlined />}
+								onClick={() => navigator.clipboard.writeText(output)}
+							/>
+						}
+					>
+						{message}
+					</HeaderText>
+					{fields.map((field, n) => <Field key={n} label={field.label} value={field.value} />)}
+				</SelectablePanel>
+			);
+		};
+
 		return (
 			<Modal
 				content={
@@ -51,6 +105,25 @@ export const AboutModal = (props: Props) => {
 						<p>
 							<b>DRAW STEEL</b> © 2024 <a href='https://mcdmproductions.com/' target='_blank'>MCDM Productions, LLC.</a>
 						</p>
+						{
+							props.errors.length > 0 ?
+								<Divider />
+								: null
+						}
+						{
+							props.errors.length > 0 ?
+								<Expander
+									title='Logs'
+									extra={[
+										<DangerButton key='clear' mode='clear' onConfirm={clearErrors} />
+									]}
+								>
+									<Space direction='vertical' style={{ width: '100%', paddingTop: '15px' }}>
+										{props.errors.map(getError)}
+									</Space>
+								</Expander>
+								: null
+						}
 					</div>
 				}
 				onClose={props.onClose}

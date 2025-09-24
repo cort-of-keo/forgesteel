@@ -41,7 +41,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 		}
 	],
 	malice: [
-		FactoryLogic.feature.createAbility({
+		FactoryLogic.feature.createMaliceAbility({
 			ability: FactoryLogic.createAbility({
 				id: 'radenwight-malice-1',
 				name: 'Trouser Cut',
@@ -266,7 +266,8 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 								tier1: '2 damage',
 								tier2: '4 damage',
 								tier3: '5 damage'
-							}))
+							})),
+							FactoryLogic.createAbilitySectionText('One ally of the redeye within 2 squares of the target shifts up to 2 squares.')
 						]
 					})
 				}),
@@ -582,7 +583,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 					ability: FactoryLogic.createAbility({
 						id: 'radenwight-8-feature-5',
 						name: 'Overture',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(1),
 						keywords: [ AbilityKeyword.Area ],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 10 }) ],
 						target: 'Each ally in the area',
@@ -595,7 +596,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 					ability: FactoryLogic.createAbility({
 						id: 'radenwight-8-feature-6',
 						name: 'Solo Act',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(2),
 						keywords: [ AbilityKeyword.Ranged ],
 						distance: [ FactoryLogic.distance.createRanged(15) ],
 						target: 'One creature',
@@ -608,7 +609,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 					ability: FactoryLogic.createAbility({
 						id: 'radenwight-8-feature-7',
 						name: 'Rondo of Rat',
-						type: FactoryLogic.type.createVillainAction(),
+						type: FactoryLogic.type.createVillainAction(3),
 						keywords: [ AbilityKeyword.Area ],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 10 }) ],
 						target: 'Each dead ally in the area',
@@ -618,103 +619,6 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 					})
 				})
 			]
-		}),
-		FactoryLogic.createMonster({
-			id: 'radenwight-9',
-			name: 'Radenwight Sidekick',
-			level: 1,
-			role: FactoryLogic.createMonsterRole(MonsterOrganizationType.Retainer, MonsterRoleType.Support),
-			keywords: [ 'Humanoid', 'Radenwight' ],
-			encounterValue: 13,
-			size: FactoryLogic.createSize(1, 'S'),
-			speed: FactoryLogic.createSpeed(5, 'climb'),
-			stamina: 21,
-			stability: 0,
-			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 1, 0),
-			features: [
-				FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'radenwight-9-feature-1',
-						name: 'Dagger\'s Bite',
-						type: FactoryLogic.type.createMain(),
-						keywords: [ AbilityKeyword.Melee, AbilityKeyword.Ranged, AbilityKeyword.Strike, AbilityKeyword.Weapon ],
-						distance: [
-							FactoryLogic.distance.createMelee(),
-							FactoryLogic.distance.createRanged(5)
-						],
-						target: 'One creature or object',
-						cost: 'signature',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '3 damage',
-								tier2: '5 damage',
-								tier3: '7 damage'
-							}))
-						]
-					})
-				}),
-				FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'radenwight-9-feature-2',
-						name: 'Ready Rodent',
-						type: FactoryLogic.type.createTrigger('An ally deals damage to the target.'),
-						keywords: [ AbilityKeyword.Melee, AbilityKeyword.Weapon ],
-						distance: [ FactoryLogic.distance.createMelee() ],
-						target: 'One creature',
-						sections: [
-							FactoryLogic.createAbilitySectionText('The sidekick makes a free strike against the target.')
-						]
-					})
-				})
-			],
-			retainer: {
-				level4: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'radenwight-9-retainer-4',
-						name: 'Boost',
-						type: FactoryLogic.type.createManeuver(),
-						keywords: [],
-						distance: [ FactoryLogic.distance.createSelf() ],
-						target: 'Self',
-						sections: [
-							FactoryLogic.createAbilitySectionText('If the sidekick’s mentor moves adjacent to the sidekick at any point during the mentor’s turn, the mentor gains a +1 bonus to speed and can automatically climb at full speed while moving until the end of their turn.')
-						]
-					})
-				}),
-				level7: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'radenwight-9-retainer-7',
-						name: 'Bug Bag',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'encounter' ] }),
-						keywords: [ AbilityKeyword.Area, AbilityKeyword.Ranged ],
-						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 3, within: 3 }) ],
-						target: 'All creatures',
-						sections: [
-							FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
-								characteristic: [ Characteristic.Might, Characteristic.Agility, Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
-								tier1: '6 poison damage; M < [weak] weakened (save ends)',
-								tier2: '9 poison damage; M < [medium] weakened (save ends)',
-								tier3: '13 poison damage; M < [strong] weakened (save ends)'
-							}))
-						]
-					})
-				}),
-				level10: FactoryLogic.feature.createAbility({
-					ability: FactoryLogic.createAbility({
-						id: 'radenwight-9-retainer-10',
-						name: 'Triumphant Squeak',
-						type: FactoryLogic.type.createManeuver({ qualifiers: [ 'encounter' ] }),
-						keywords: [],
-						distance: [ FactoryLogic.distance.createRanged(10) ],
-						target: 'Self and each ally',
-						sections: [
-							FactoryLogic.createAbilitySectionText('Each target can spend a Recovery, and ends the dazed, frightened, and weakened conditions on themself.')
-						]
-					})
-				})
-			}
 		})
 	],
 	addOns: []

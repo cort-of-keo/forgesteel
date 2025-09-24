@@ -5,6 +5,7 @@ import { EncounterGroupHero, EncounterGroupMonster, EncounterGroupTerrain } from
 import { AbilityPanel } from '../../elements/ability-panel/ability-panel';
 import { AbilityUsage } from '../../../../enums/ability-usage';
 import { Empty } from '../../../controls/empty/empty';
+import { EncounterDifficultyPanel } from '../../encounter-difficulty/encounter-difficulty-panel';
 import { EncounterLogic } from '../../../../logic/encounter-logic';
 import { EncounterObjectivePanel } from '../../elements/encounter-objective/encounter-objective-panel';
 import { EncounterSlot } from '../../../../models/encounter-slot';
@@ -511,6 +512,11 @@ export const EncounterRunPanel = (props: Props) => {
 						key: 'notes',
 						label: 'Notes',
 						children: getNotes()
+					},
+					{
+						key: 'diff',
+						label: 'Difficulty',
+						children: getDifficulty()
 					}
 				]}
 			/>
@@ -615,6 +621,20 @@ export const EncounterRunPanel = (props: Props) => {
 		);
 	};
 
+	const getDifficulty = () => {
+		return (
+			<div style={{ margin: '0 10px' }}>
+				<EncounterDifficultyPanel
+					encounter={encounter}
+					sourcebooks={props.sourcebooks}
+					heroes={props.heroes}
+					options={props.options}
+					showHeader={false}
+				/>
+			</div>
+		);
+	};
+
 	try {
 		let className = 'encounter-run-panel';
 		if (isSmall) {
@@ -625,7 +645,7 @@ export const EncounterRunPanel = (props: Props) => {
 			<ErrorBoundary>
 				<div className={className} id={encounter.id}>
 					<Flex align='flex-start' gap={20} style={{ height: '100%' }}>
-						<div style={{ flex: '1 1 0', height: '100%', overflowY: 'auto' }}>
+						<div style={{ flex: '1 1 0', height: '100%', padding: '0 5px', overflowY: 'auto' }}>
 							<HeaderText
 								level={1}
 								extra={[
