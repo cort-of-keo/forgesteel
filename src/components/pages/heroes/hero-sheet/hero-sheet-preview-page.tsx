@@ -1,39 +1,50 @@
-import { Divider, Drawer, FloatButton, Segmented, Space } from 'antd';
-import { useMemo, useState } from 'react';
-import { Career } from '../../../../models/career';
-import { CareerCard } from '../../../panels/hero-sheet/career-card/career-card';
-import { ComplicationCard } from '../../../panels/hero-sheet/complication-card/complication-card';
-import { FactoryLogic } from '../../../../logic/factory-logic';
-import { Hero } from '../../../../models/hero';
-import { HeroSheetPage } from './hero-sheet-page';
-import { Options } from '../../../../models/options';
-import { SettingFilled } from '@ant-design/icons';
-import { SheetBuilder } from '../../../../logic/hero-sheet/sheet-builder';
-import { SheetPageSize } from '../../../../enums/sheet-page-size';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { SourcebookLogic } from '../../../../logic/sourcebook-logic';
-import { Toggle } from '../../../controls/toggle/toggle';
-import { Utils } from '../../../../utils/utils';
+import { Divider, Drawer, FloatButton, Segmented, Select, SelectProps, Space, Spin, Tag } from 'antd';
+import { useDataManager, useHeroes, useOptions } from '@/contexts/data-context';
+import { useEffect, useMemo, useState } from 'react';
+import { AbilityData } from '@/data/ability-data';
+import { Career } from '@/models/career';
+import { CareerCard } from '@/components/panels/classic-sheet/career-card/career-card';
+import { ClassicSheetBuilder } from '@/logic/classic-sheet/classic-sheet-builder';
+import { ComplicationCard } from '@/components/panels/classic-sheet/complication-card/complication-card';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { HeroLogic } from '@/logic/hero-logic';
+import { HeroSheetBuilder } from '@/logic/hero-sheet/hero-sheet-builder';
+import { HeroSheetPage } from '@/components/pages/heroes/hero-sheet/hero-sheet-page';
+import { Options } from '@/models/options';
+import { SettingOutlined } from '@ant-design/icons';
+import { SheetFormatter } from '@/logic/classic-sheet/sheet-formatter';
+import { SheetPageSize } from '@/enums/sheet-page-size';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { Toggle } from '@/components/controls/toggle/toggle';
+import { Utils } from '@/utils/utils';
 import { useParams } from 'react-router';
 
 import './hero-sheet-page.scss';
 
 interface Props {
-	heroes: Hero[];
 	sourcebooks: Sourcebook[];
-	options: Options;
-	setOptions: (options: Options) => void;
 }
 
 export const HeroSheetPreviewPage = (props: Props) => {
+	const options = useOptions();
+	const heroes = useHeroes();
 	const { heroID } = useParams<{ heroID: string }>();
 	const hero = useMemo(
-		() => props.heroes.find(h => h.id === heroID)!,
-		[ heroID, props.heroes ]
+		() => heroes.find(h => h.id === heroID)!,
+		[ heroID, heroes ]
 	);
 
 	const [ drawerOpen, setDrawerOpen ] = useState(false);
+	const [ spinning, setSpinning ] = useState(false);
 	const [ previewOptions, setPreviewOptions ] = useState<'html' | 'canvas'>('html');
+
+	const dataManager = useDataManager();
+	const saveOptions = (options: Options) => {
+		dataManager.saveOptions(options);
+	};
 
 	const changeTextColor = (newColor: 'light' | 'default' | 'dark') => {
 		setDrawColor(newColor);
@@ -57,12 +68,12 @@ export const HeroSheetPreviewPage = (props: Props) => {
 		const lightest = `rgb(${value + 68}, ${value + 68}, ${value + 68})`;
 		document.documentElement.style.setProperty('--color-text-lightest', lightest);
 	};
-	setDrawColor(props.options.sheetTextColor);
+	setDrawColor(options.sheetTextColor);
 
 	const setSheetTextColor = (value: 'light' | 'default' | 'dark') => {
-		const copy = Utils.copy(props.options);
+		const copy = Utils.copy(options);
 		copy.sheetTextColor = value;
-		props.setOptions(copy);
+		saveOptions(copy);
 	};
 
 	const showDrawer = () => {
@@ -74,52 +85,56 @@ export const HeroSheetPreviewPage = (props: Props) => {
 	};
 
 	const setIncludePlayState = (value: boolean) => {
-		const copy = Utils.copy(props.options);
+		const copy = Utils.copy(options);
 		copy.includePlayState = value;
-		props.setOptions(copy);
+		saveOptions(copy);
 	};
 
 	const setColorSheet = (value: boolean) => {
-		const copy = Utils.copy(props.options);
+		const copy = Utils.copy(options);
 		copy.colorSheet = value;
-		props.setOptions(copy);
+		saveOptions(copy);
 	};
 
 	const setFeaturesInclude = (value: 'minimal' | 'no-basic' | 'all') => {
-		const copy = Utils.copy(props.options);
+		const copy = Utils.copy(options);
 		copy.featuresInclude = value;
-		props.setOptions(copy);
-	};
-
-	const setAbilitySort = (value: 'size' | 'type') => {
-		const copy = Utils.copy(props.options);
-		copy.abilitySort = value;
-		props.setOptions(copy);
+		saveOptions(copy);
 	};
 
 	const setClassicSheetPageSize = (value: SheetPageSize) => {
-		const copy = Utils.copy(props.options);
+		const copy = Utils.copy(options);
 		copy.classicSheetPageSize = value;
-		props.setOptions(copy);
+		saveOptions(copy);
 	};
 
 	const setPageOrientation = (value: 'portrait' | 'landscape') => {
-		const copy = Utils.copy(props.options);
+		const copy = Utils.copy(options);
 		copy.pageOrientation = value;
-		props.setOptions(copy);
+		saveOptions(copy);
 	};
 
-	const setShowStandardAbilities = (value: boolean) => {
-		const copy = Utils.copy(props.options);
-		copy.showStandardAbilities = value;
-		props.setOptions(copy);
+	const includedStandardAbilitiesChanged = (value: string | string[]) => {
+		const copy = Utils.copy(options);
+		copy.shownStandardAbilities = [ value ].flat(1);
+		saveOptions(copy);
 	};
+
+	const standardAbilityOptions: SelectProps['options'] = [];
+	const standardAbilities = HeroLogic.getAbilities(FactoryLogic.createHero([]), [], AbilityData.standardAbilities.map(a => a.id))
+		.map(a => ClassicSheetBuilder.buildAbilitySheet(a.ability, undefined));
+	standardAbilities.sort(SheetFormatter.sortAbilitiesByType);
+	standardAbilities.forEach(a => {
+		standardAbilityOptions.push({
+			value: a.id,
+			label: <div className='ds-text'>{a.name} <Tag variant='outlined'>{a.actionType}</Tag></div>
+		});
+	});
 
 	const setDisplay = (type: 'html' | 'canvas') => {
 		setPreviewOptions(type);
-		const element = document.getElementById('hero-sheet-page');
+		const element = document.getElementById('classic-sheet');
 		const canvasElem = document.getElementById('pdf-canvas');
-		const prevDpr = window.devicePixelRatio;
 		if (element && canvasElem) {
 			const initialW = element.clientWidth;
 			switch (type) {
@@ -129,14 +144,12 @@ export const HeroSheetPreviewPage = (props: Props) => {
 					break;
 				case 'canvas':
 					element.className = '';
-					window.devicePixelRatio = 4;
-					Utils.elementToCanvas(element)
-						.then(function (canvas) {
-							canvas.style.width = initialW + 'px';
-							canvasElem.replaceChildren(canvas);
+					Utils.elementToImage(element, 2)
+						.then(function (image) {
+							image.style.width = initialW + 'px';
+							canvasElem.replaceChildren(image);
 							canvasElem.className = '';
 							element.className = 'hidden';
-							window.devicePixelRatio = prevDpr;
 						});
 					break;
 			}
@@ -147,8 +160,8 @@ export const HeroSheetPreviewPage = (props: Props) => {
 	const getPageClasses = () => {
 		return [
 			'hero-sheet',
-			props.options.classicSheetPageSize.toLowerCase(),
-			props.options.pageOrientation
+			options.classicSheetPageSize.toLowerCase(),
+			options.pageOrientation
 		].join(' ');
 	};
 
@@ -166,12 +179,12 @@ export const HeroSheetPreviewPage = (props: Props) => {
 				});
 				return withIncidents;
 			})
-			.map(SheetBuilder.buildCareerSheet);
+			.map(HeroSheetBuilder.buildCareerSheet);
 	};
 
 	const getAllComplications = () => {
 		return SourcebookLogic.getComplications(props.sourcebooks)
-			.map(SheetBuilder.buildComplicationSheet);
+			.map(HeroSheetBuilder.buildComplicationSheet);
 	};
 
 	const getPreviewPage = () => {
@@ -226,14 +239,64 @@ export const HeroSheetPreviewPage = (props: Props) => {
 				<HeroSheetPage
 					hero={hero}
 					sourcebooks={props.sourcebooks}
-					options={props.options}
 				/>
 			);
 		}
 	};
 
-	try {
-		return (
+	/* eslint-disable @typescript-eslint/no-explicit-any */
+	const cardEnter = (event: any) => {
+		event.target.style.boxShadow = '0 0 5px #008cff';
+	};
+
+	const cardLeave = (event: any) => {
+		event.target.style.boxShadow = '';
+	};
+
+	const cardClick = async (event: any) => {
+		setSpinning(true);
+		const card = event.target.closest('.page');
+		const initialW = card.clientWidth;
+		const initialH = card.clientHeight;
+
+		const parent = card.parentNode;
+
+		const image = await Utils.elementToImage(card, 2);
+		card.style.display = 'none';
+		image.style.width = initialW + 'px';
+		image.style.height = initialH + 'px';
+		image.addEventListener('click', imageClick);
+		image.addEventListener('mouseenter', imageEnter);
+		image.addEventListener('mouseleave', imageLeave);
+		parent.insertBefore(image, card);
+		setSpinning(false);
+	};
+
+	const imageEnter = (event: any) => {
+		event.target.style.boxShadow = '0 0 5px #ff00dd';
+	};
+
+	const imageLeave = (event: any) => {
+		event.target.style.boxShadow = '';
+	};
+
+	const imageClick = (event: any) => {
+		const card = event.target.nextSibling;
+		card.style.display = '';
+		event.target.remove();
+	};
+
+	useEffect(() => {
+		const cards = document.querySelectorAll('.hero-sheet .page');
+		cards.forEach(card => {
+			card.addEventListener('mouseenter', cardEnter);
+			card.addEventListener('mouseleave', cardLeave);
+			card.addEventListener('click', cardClick);
+		});
+	}, []);
+
+	return (
+		<ErrorBoundary>
 			<div id='pdf-preview'>
 				<div className='menu'>
 					<Segmented
@@ -248,7 +311,7 @@ export const HeroSheetPreviewPage = (props: Props) => {
 				{getPreviewPage()}
 				<div id='pdf-canvas'></div>
 				<FloatButton
-					icon={<SettingFilled />}
+					icon={<SettingOutlined />}
 					onClick={showDrawer}
 					tooltip={<div>Sheet Display Options</div>}
 				/>
@@ -259,9 +322,8 @@ export const HeroSheetPreviewPage = (props: Props) => {
 					open={drawerOpen}
 					style={{ padding: '10px' }}
 				>
-
-					<Toggle label='Show play state' value={props.options.includePlayState} onChange={setIncludePlayState} />
-					<Toggle label='Use color' value={props.options.colorSheet} onChange={setColorSheet} />
+					<Toggle label='Show play state' value={options.includePlayState} onChange={setIncludePlayState} />
+					<Toggle label='Use color' value={options.colorSheet} onChange={setColorSheet} />
 					<Divider size='small'>Text Color</Divider>
 					<Segmented
 						name='textColor'
@@ -271,11 +333,12 @@ export const HeroSheetPreviewPage = (props: Props) => {
 							{ value: 'default', label: 'Default' },
 							{ value: 'light', label: 'Lighter' }
 						]}
-						value={props.options.sheetTextColor}
+						value={options.sheetTextColor}
 						onChange={changeTextColor}
 					/>
 					<Divider size='small'>Include Class Features</Divider>
 					<Segmented
+						style={{ width: '100%' }}
 						name='abilitySort'
 						block={true}
 						options={[
@@ -283,29 +346,23 @@ export const HeroSheetPreviewPage = (props: Props) => {
 							{ value: 'no-basic', label: 'No Simple' },
 							{ value: 'all', label: 'All' }
 						]}
-						value={props.options.featuresInclude}
+						value={options.featuresInclude}
 						onChange={setFeaturesInclude}
 					/>
-					<Divider>Abilities</Divider>
-					<Toggle label='Include standard abilities' value={props.options.showStandardAbilities} onChange={setShowStandardAbilities} />
-					<Divider size='small'>Sort Abilities By</Divider>
-					<Segmented
-						name='abilitySort'
-						block={true}
-						options={[
-							{ value: 'size', label: 'Length' },
-							{ value: 'type', label: 'Action Type' }
-						]}
-						value={props.options.abilitySort}
-						onChange={setAbilitySort}
+					<Divider size='small'>Included Standard Abilities</Divider>
+					<Select
+						mode='tags'
+						placeholder='Included Standard Abilities'
+						onChange={includedStandardAbilitiesChanged}
+						options={standardAbilityOptions}
 					/>
-					<Divider>Layout</Divider>
-					<Space direction='vertical' style={{ width: '100%' }}>
+					<HeaderText level={3}>Layout</HeaderText>
+					<Space orientation='vertical' style={{ width: '100%' }}>
 						<Segmented
 							name='pagesize'
 							block={true}
 							options={[ SheetPageSize.Letter, SheetPageSize.A4 ]}
-							value={props.options.classicSheetPageSize}
+							value={options.classicSheetPageSize}
 							onChange={setClassicSheetPageSize}
 						/>
 						<Segmented
@@ -315,15 +372,13 @@ export const HeroSheetPreviewPage = (props: Props) => {
 								{ value: 'portrait', label: 'Portrait' },
 								{ value: 'landscape', label: 'Landscape' }
 							]}
-							value={props.options.pageOrientation}
+							value={options.pageOrientation}
 							onChange={setPageOrientation}
 						/>
 					</Space>
 				</Drawer>
 			</div>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+			<Spin spinning={spinning} size='large' fullscreen />
+		</ErrorBoundary>
+	);
 };

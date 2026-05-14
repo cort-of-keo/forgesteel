@@ -1,12 +1,12 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureAddOnType } from '../../enums/feature-addon-type';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureAddOnType } from '@/enums/feature-addon-type';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const rival: MonsterGroup = {
 	id: 'monster-group-rival',
@@ -47,6 +47,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			id: 'rival-1st-malice-1',
 			name: 'Work as One',
 			cost: 3,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Until the end of the round, each rival can impose a bane on a strike made against an adjacent rival as a free triggered action.'
 			]
@@ -55,6 +56,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			id: 'rival-1st-malice-2',
 			name: 'We Just Do It Better',
 			cost: 3,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Until the end of the round, whenever any rival makes a power roll against the target of their Rivalry trait, they roll a d3 and add it to the power roll.'
 			]
@@ -63,8 +65,9 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			id: 'rival-1st-malice-3',
 			name: 'Check Out Our Loot',
 			cost: 5,
+			icon: StatBlockIcon.Area,
 			sections: [
-				'One rival pulls out a magic consumable and hurls it, targeting a 5 × 1 line within 1 square of them or a 3 cube within 10 squares of them. Each enemy in the area makes an Agility test. The rival chooses a damage type and a condition for the outcome of the test from one of the following pairs: sonic damage and dazed, poison damange and weakened, or fire damage and frightened.',
+				'One rival pulls out a magic consumable and hurls it, targeting a 5 × 1 line within 1 square of them or a 3 cube within 10 squares of them. Each enemy in the area makes an Agility test. The rival chooses a damage type and a condition for the outcome of the test from one of the following pairs: sonic damage and dazed, poison damage and weakened, or fire damage and frightened.',
 				FactoryLogic.createPowerRoll({
 					characteristic: Characteristic.Agility,
 					tier1: '11 damage; the condition affects the target (save ends)',
@@ -77,6 +80,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			id: 'rival-1st-malice-4',
 			name: 'Calling the Shots',
 			cost: 7,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Each rival regains 10 Stamina. Until the end of the round, whenever a rival uses an ability against an enemy, each other rival adjacent to that enemy can make a free strike against them.'
 			]
@@ -85,6 +89,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			id: 'rival-1st-malice-5',
 			name: 'Coordinated Takedown',
 			cost: 10,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Each rival moves up to their speed and uses a main action or maneuver that doesn’t cost Malice.'
 			]
@@ -103,7 +108,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 80,
 			stability: 1,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(1, 0, 0, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 0, 0, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -166,7 +171,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 60,
 			stability: 1,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(1, 0, 0, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 2, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -193,7 +198,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 						name: 'The Earth Devours',
 						type: FactoryLogic.type.createMain(),
 						keywords: [ AbilityKeyword.Area, AbilityKeyword.Green, AbilityKeyword.Magic, AbilityKeyword.Ranged ],
-						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 3, value2: 10 }) ],
+						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 3, within: 10 }) ],
 						target: 'Each enemy in the area',
 						cost: 3,
 						sections: [
@@ -239,7 +244,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 100,
 			stability: 3,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 1, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -257,8 +262,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '10 damage; push 2',
 								tier3: '13 damage; push 3'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'Each target who has <code>M < 1</code> is slowed (save ends).'
 							})
@@ -309,7 +313,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 80,
 			stability: 3,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 1, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 1, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -334,7 +338,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 					ability: FactoryLogic.createAbility({
 						id: 'rival-1st-4-feature-2',
 						name: 'Numb',
-						type: FactoryLogic.type.createMain(),
+						type: FactoryLogic.type.createManeuver(),
 						keywords: [ AbilityKeyword.Melee, AbilityKeyword.Psionic, AbilityKeyword.Strike, AbilityKeyword.Weapon ],
 						distance: [ FactoryLogic.distance.createMelee(1) ],
 						target: 'One creature or object',
@@ -373,7 +377,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 80,
 			stability: 1,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -391,9 +395,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '11 damage',
 								tier3: '14 damage; A < 2 bleeding (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'The shadow can teleport up to 5 squares, then can attempt to hide.'
 							})
 						]
@@ -404,7 +406,6 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 						id: 'rival-1st-5-feature-2',
 						name: 'Poison the Blade',
 						type: FactoryLogic.type.createManeuver(),
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
@@ -436,7 +437,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 60,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 1, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 1, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -454,8 +455,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '10 damage',
 								tier3: '13 damage'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'Two allies within distance can make a free strike against one of the targets.'
 							})
@@ -514,7 +514,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 60,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 2, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 2, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -587,7 +587,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 140,
 			stability: 1,
 			freeStrikeDamage: 6,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 0, 3, 1),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 0, 3, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -650,7 +650,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 120,
 			stability: 1,
 			freeStrikeDamage: 6,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 3, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 3, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -723,7 +723,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 160,
 			stability: 3,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(3, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(3, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -741,8 +741,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '15 damage; push 3',
 								tier3: '18 damage; push 4'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'Each target who has <code>M < 2</code> is slowed (save ends).'
 							})
@@ -793,7 +792,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 140,
 			stability: 3,
 			freeStrikeDamage: 6,
-			characteristics: MonsterLogic.createCharacteristics(0, 3, 2, 3, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 3, 2, 3, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -857,7 +856,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 140,
 			stability: 1,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(0, 3, 1, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 3, 1, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -875,9 +874,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '15 damage; A < 2 bleeding (save ends)',
 								tier3: '18 damage; A < 3 bleeding (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'The shadow can teleport up to 6 squares, then can attempt to hide.'
 							})
 						]
@@ -888,7 +885,6 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 						id: 'rival-2nd-5-feature-2',
 						name: 'Poison the Blade',
 						type: FactoryLogic.type.createManeuver(),
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
@@ -920,7 +916,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 120,
 			stability: 2,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(3, 0, 2, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(3, 0, 2, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -938,8 +934,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '15 damage',
 								tier3: '18 damage'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Two allies within distance can make a free strike against the same target.'
 							})
@@ -998,7 +993,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 120,
 			stability: 2,
 			freeStrikeDamage: 6,
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 3, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 3, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1071,7 +1066,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 200,
 			stability: 1,
 			freeStrikeDamage: 8,
-			characteristics: MonsterLogic.createCharacteristics(3, 0, 1, 4, 2),
+			characteristics: FactoryLogic.createCharacteristics(3, 0, 1, 4, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1134,7 +1129,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 180,
 			stability: 1,
 			freeStrikeDamage: 8,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 4, 3, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 4, 3, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1207,7 +1202,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 220,
 			stability: 3,
 			freeStrikeDamage: 9,
-			characteristics: MonsterLogic.createCharacteristics(4, 3, 0, 1, 2),
+			characteristics: FactoryLogic.createCharacteristics(4, 3, 0, 1, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1225,8 +1220,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '18 damage; push 4',
 								tier3: '22 damage; push 5'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 4,
 								effect: 'Each target who has <code>M < 3</code> is bleeding and slowed (save ends).'
 							})
@@ -1277,7 +1271,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 200,
 			stability: 3,
 			freeStrikeDamage: 8,
-			characteristics: MonsterLogic.createCharacteristics(2, 4, 3, 4, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 4, 3, 4, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1341,7 +1335,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 200,
 			stability: 1,
 			freeStrikeDamage: 9,
-			characteristics: MonsterLogic.createCharacteristics(0, 4, 2, 0, 3),
+			characteristics: FactoryLogic.createCharacteristics(0, 4, 2, 0, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1359,9 +1353,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '18 damage; A < 3 bleeding (save ends)',
 								tier3: '22 damage; A < 4 bleeding and weakened (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'The shadow can teleport up to 7 squares, then can attempt to hide.'
 							})
 						]
@@ -1372,7 +1364,6 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 						id: 'rival-3rd-5-feature-2',
 						name: 'Poison the Blade',
 						type: FactoryLogic.type.createManeuver(),
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
@@ -1404,7 +1395,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 180,
 			stability: 2,
 			freeStrikeDamage: 9,
-			characteristics: MonsterLogic.createCharacteristics(4, 1, 3, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(4, 1, 3, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1422,8 +1413,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '18 damage; A < 3 prone',
 								tier3: '22 damage; A < 4 prone '
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 4,
 								effect: 'Two allies within distance move up to their speed and can use a signature ability.'
 							})
@@ -1482,7 +1472,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 180,
 			stability: 2,
 			freeStrikeDamage: 8,
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 4, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 4, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1500,8 +1490,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '17 psychic damage',
 								tier3: '21 psychic damage'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Each target shifts up to their speed and can make a free strike against one enemy of the talent’s choice. The target can’t be moved in a way that would harm them.'
 							})
@@ -1560,7 +1549,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 240,
 			stability: 1,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(4, 1, 1, 5, 3),
+			characteristics: FactoryLogic.createCharacteristics(4, 1, 1, 5, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1582,8 +1571,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier3: '24 damage; vertical slide 5; M < 5 9 lightning damage'
 							})),
 							FactoryLogic.createAbilitySectionText('The conduit or one ally within distance regains Stamina equal to half the damage dealt.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'Two additional allies within distance regain the same amount of Stamina.'
 							})
@@ -1628,7 +1616,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 220,
 			stability: 1,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(1, 3, 5, 4, 1),
+			characteristics: FactoryLogic.createCharacteristics(1, 3, 5, 4, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1696,7 +1684,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 260,
 			stability: 3,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(5, 4, 0, 2, 3),
+			characteristics: FactoryLogic.createCharacteristics(5, 4, 0, 2, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1714,8 +1702,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '21 damage; push 4',
 								tier3: '25 damage; push 5'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 4,
 								effect: 'Each target who has <code>M < 3</code> is bleeding and slowed (save ends).'
 							})
@@ -1766,7 +1753,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 240,
 			stability: 3,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(3, 5, 4, 5, 0),
+			characteristics: FactoryLogic.createCharacteristics(3, 5, 4, 5, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1830,7 +1817,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 240,
 			stability: 1,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(0, 5, 3, 2, 4),
+			characteristics: FactoryLogic.createCharacteristics(0, 5, 3, 2, 4),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1848,9 +1835,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '21 damage; A < 4 bleeding (save ends)',
 								tier3: '25 damage; A < 5 bleeding (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'The shadow can teleport up to 10 squares, then can attempt to hide.'
 							})
 						]
@@ -1861,7 +1846,6 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 						id: 'rival-4th-5-feature-2',
 						name: 'Envenomed Steel',
 						type: FactoryLogic.type.createManeuver(),
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
@@ -1893,7 +1877,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 220,
 			stability: 2,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(5, 2, 4, 0, 3),
+			characteristics: FactoryLogic.createCharacteristics(5, 2, 4, 0, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1911,8 +1895,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '21 damage; A < 3 prone and can’t stand (EoT)',
 								tier3: '25 damage; prone; A < 5 can’t stand (EoT)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 5,
 								effect: 'Two allies within distance move up to their speed and can use a signature ability that has a double edge.'
 							})
@@ -1971,7 +1954,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 			stamina: 220,
 			stability: 2,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 5, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 5, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1989,8 +1972,7 @@ Rivals are NPCs built around the mechanics of seven of the classes in Draw Steel
 								tier2: '20 psychic damage',
 								tier3: '24 psychic damage'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 4,
 								effect: 'Each target moves up to their speed and can make a free strike against one enemy of the talent’s choice. The target’s movement can provoke opportunity attacks, but they can’t otherwise be moved in a way that would harm them.'
 							})

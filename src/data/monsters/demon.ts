@@ -1,13 +1,13 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const demon: MonsterGroup = {
 	id: 'monster-group-demon',
@@ -128,7 +128,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 
 • **Vicisitators** (vih-SIS-ih-tay-tors) are dangerous and horrifically unstable, the flesh and bone of their bodies trapped in a state of perpetual agonizing flux. Their very touch results in excruciating pain as it warps flesh, bone, and soul.
 
-• **Aurumvas** (FIK-ten) (or-UM-vahs) the demon king stands alone among named demons for craving not only wealth, but highly avaricious souls. A towering figure with a stack of crowns atop his ophidian head, he is a vision of opulence, excess, and absolute debasement. He lords over other powerful demons by virtue of the wealth held in his vast vaults in the Abyssal Wasteland, acquired through the slaughter of countless creatures. But even as he gazes upon his riches and supernatural treasures, Aurumvas wants for more. He draws lesser demons and wicked mortals to his service with the promise of minor treasures, knowing full well that one needs to spend wealth to make it. If left unchecked, Aurumvas’s servile armies and glittering hoards might one day encompass the entire timescape.`
+• **Aurumvas** (or-UM-vahs) the demon king stands alone among named demons for craving not only wealth, but highly avaricious souls. A towering figure with a stack of crowns atop his ophidian head, he is a vision of opulence, excess, and absolute debasement. He lords over other powerful demons by virtue of the wealth held in his vast vaults in the Abyssal Wasteland, acquired through the slaughter of countless creatures. But even as he gazes upon his riches and supernatural treasures, Aurumvas wants for more. He draws lesser demons and wicked mortals to his service with the promise of minor treasures, knowing full well that one needs to spend wealth to make it. If left unchecked, Aurumvas’s servile armies and glittering hoards might one day encompass the entire timescape.`
 		}
 	],
 	malice: [
@@ -136,6 +136,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			id: 'demon-1st-malice-1',
 			name: 'Soulburn',
 			cost: 3,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Each demon acting this turn has a double edge on their abilities.'
 			]
@@ -144,6 +145,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			id: 'demon-1st-malice-3',
 			name: 'Abyssal Evolution',
 			cost: 7,
+			icon: StatBlockIcon.SpecialArea,
 			sections: [
 				'A demon minion of your choice transforms into a non-minion horde demon of the same level.'
 			]
@@ -152,6 +154,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			id: 'demon-1st-malice-2',
 			name: 'Abyssal Rift',
 			cost: 7,
+			icon: StatBlockIcon.Area,
 			sections: [ 'Two size 2 rifts to the Abyssal Wasteland appear at locations of your choice. Any demon can use an abyssal rift as a portal to another abyssal rift in the encounter, moving into any space in one rift and appearing immediately in any unoccupied space in the other rift. A non-demon who enters a rift for the first time in a round or starts their turn there takes corruption damage equal to the level of the highest-level demon on the encounter map. An abyssal rift is an immovable object that has 25 Stamina, damage immunity 2, and holy weakness 5. The rift closes when there are no demons remaining on the encounter map. Additionally, a creature who has the Magic or Psionics skill can make a **Reason test** or **Intuition test** as a maneuver while adjacent to a rift to destabilize and close it.',
 				FactoryLogic.createPowerRoll({
 					characteristic: [ Characteristic.Reason, Characteristic.Intuition ],
@@ -164,6 +167,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			id: 'demon-2nd-malice-2',
 			name: 'Abyssal Jaunt',
 			cost: 3,
+			icon: StatBlockIcon.Self,
 			sections: [
 				'One demon acting this turn folds space around them, temporarily slipping in and out of the Abyssal Wasteland. Until the start of the demon’s next turn, they ignore difficult terrain, can move through solid matter, and don’t provoke opportunity attacks by moving. If the demon ends their turn inside solid matter, they are shunted out into the space from which they entered it.'
 			],
@@ -173,6 +177,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			id: 'demon-3rd-malice-2',
 			name: 'Seeping Blight',
 			cost: 5,
+			icon: StatBlockIcon.AuraBurst,
 			sections: [
 				'One demon acting this turn expels blight—digested soul juice—onto the ground around them in a 3 burst that lingers until the start of their next turn. Any enemy who enters the area or starts their turn there takes 6 corruption damage, and has a double bane on power rolls until the start of their next turn.'
 			],
@@ -182,6 +187,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			id: 'demon-4th-malice-2',
 			name: 'Soul Flense',
 			cost: 7,
+			icon: StatBlockIcon.AuraBurst,
 			sections: [
 				'One demon acting this turn unleashes their pent-up agony and pain on every non-demon in a 5 burst. Each target makes a **Presence test**.',
 				FactoryLogic.createPowerRoll({
@@ -209,7 +215,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: '+2 bonus to melee distance',
-			characteristics: MonsterLogic.createCharacteristics(2, 0, -1, -1, -1),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, -1, -1, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -255,7 +261,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stability: 0,
 			freeStrikeDamage: 1,
 			withCaptain: '+2 bonus to speed',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, -1, -1, -1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, -1, -1, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -300,7 +306,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: '+2 bonus to speed',
-			characteristics: MonsterLogic.createCharacteristics(-2, 2, -2, -2, -2),
+			characteristics: FactoryLogic.createCharacteristics(-2, 2, -2, -2, -2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -349,7 +355,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 15,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(0, 1, 0, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 1, 0, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -413,7 +419,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 30,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(2, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(2, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -477,7 +483,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 20,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -495,8 +501,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 								tier2: '6 damage; the remasch can teleport up to 3 squares',
 								tier3: '8 damage; the remasch can teleport up to 5 squares'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 5,
 								effect: 'The remasch takes an adjacent creature with them when they teleport. The creature appears in an unoccupied space adjacent to the remasch’s destination.'
 							})
@@ -545,7 +550,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 15,
 			stability: 0,
 			freeStrikeDamage: 1,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -614,7 +619,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 10,
 			stability: 0,
 			freeStrikeDamage: 1,
-			characteristics: MonsterLogic.createCharacteristics(0, 1, 0, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 1, 0, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -677,7 +682,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 120,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 2, 2, 2, 2),
+			characteristics: FactoryLogic.createCharacteristics(2, 2, 2, 2, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -799,7 +804,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stability: 1,
 			freeStrikeDamage: 3,
 			withCaptain: '+2 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(3, 2, -1, -1, -1),
+			characteristics: FactoryLogic.createCharacteristics(3, 2, -1, -1, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -845,7 +850,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: '+2 bonus to speed',
-			characteristics: MonsterLogic.createCharacteristics(-1, 3, 1, 0, -1),
+			characteristics: FactoryLogic.createCharacteristics(-1, 3, 1, 0, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -895,7 +900,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stability: 0,
 			freeStrikeDamage: 3,
 			withCaptain: '+2 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(1, 3, 1, 2, 1),
+			characteristics: FactoryLogic.createCharacteristics(1, 3, 1, 2, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -935,7 +940,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 30,
 			stability: 2,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 3, 3, 3),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 3, 3, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -954,8 +959,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 								tier3: '9 psychic damage'
 							})),
 							FactoryLogic.createAbilitySectionText('The target has corruption weakness 5 (EoT).'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The target has I<2 corruption weakness 5 (save ends).'
 							})
@@ -1011,7 +1015,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 30,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(3, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(3, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1085,7 +1089,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 35,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(2, 2, 2, 1, 3),
+			characteristics: FactoryLogic.createCharacteristics(2, 2, 2, 1, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1149,7 +1153,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 25,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(3, 2, 1, 2, -1),
+			characteristics: FactoryLogic.createCharacteristics(3, 2, 1, 2, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1216,7 +1220,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 45,
 			stability: 2,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(3, 0, 2, 1, 2),
+			characteristics: FactoryLogic.createCharacteristics(3, 0, 2, 1, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1286,7 +1290,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 180,
 			stability: 3,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(4, -1, 1, 2, 2),
+			characteristics: FactoryLogic.createCharacteristics(4, -1, 1, 2, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1304,8 +1308,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 								tier2: '16 corruption damage; A<3 restrained (save ends)',
 								tier3: '19 corruption damage; A<4 restrained (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'Two **ensnarers** appear in unoccupied spaces adjacent to each target. On a tier 3 outcome, four ensnarers appear.'
 							})
@@ -1318,13 +1321,11 @@ A number of lesser demons have been identified across categories 1 to 3:
 						name: 'Demonic Egress',
 						type: FactoryLogic.type.createManeuver(),
 						cost: 2,
-						keywords: [],
 						distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Burst, value: 3 }) ],
 						target: 'Special',
 						sections: [
 							FactoryLogic.createAbilitySectionText('Four level 1 demon minions (most commonly **ensnarers**, **frenzieds**, and **pitlings**) burst forth from the egress and appear in unoccupied squares in the area.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'Four level 4 demon minions (most commonly **orliq**, **grulqins**, and **wobalas**) appear instead.'
 							})
@@ -1419,7 +1420,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stability: 0,
 			freeStrikeDamage: 3,
 			withCaptain: 'Gain an edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(2, 4, 1, 0, -1),
+			characteristics: FactoryLogic.createCharacteristics(2, 4, 1, 0, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1464,7 +1465,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stability: 2,
 			freeStrikeDamage: 4,
 			withCaptain: 'Gain an edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(4, 2, -1, -1, -1),
+			characteristics: FactoryLogic.createCharacteristics(4, 2, -1, -1, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1509,7 +1510,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stability: 0,
 			freeStrikeDamage: 4,
 			withCaptain: 'Gain an edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(0, -1, 4, 4, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, -1, 4, 4, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1554,7 +1555,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 40,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 4, 3, 4),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 4, 3, 4),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1588,8 +1589,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 						sections: [
 							FactoryLogic.createAbilitySectionText('**Special:** The blight phage must create the cube beneath themself.'),
 							FactoryLogic.createAbilitySectionText('The blight phage spins and sheds corruptive blight to fill the area, which is treated as if affected by **Seeping Blight**.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The blight phage chooses three 2 cube areas within 10 squares of the phage. Each area is covered with blight and treated as if affected by **Seeping Blight**.'
 							})
@@ -1624,7 +1624,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 90,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(4, 0, 2, 1, 2),
+			characteristics: FactoryLogic.createCharacteristics(4, 0, 2, 1, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1688,7 +1688,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 45,
 			stability: 1,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(2, 4, 0, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 4, 0, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1757,7 +1757,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 45,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(2, 4, 0, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 4, 0, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1821,7 +1821,7 @@ A number of lesser demons have been identified across categories 1 to 3:
 			stamina: 50,
 			stability: 0,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(3, 0, 2, 2, 4),
+			characteristics: FactoryLogic.createCharacteristics(3, 0, 2, 2, 4),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'demon-3rd-8-feature-1',
@@ -1878,7 +1878,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 			stamina: 240,
 			stability: 2,
 			freeStrikeDamage: 9,
-			characteristics: MonsterLogic.createCharacteristics(5, -1, 3, 3, 2),
+			characteristics: FactoryLogic.createCharacteristics(5, -1, 3, 3, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1925,8 +1925,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 						target: 'Special',
 						sections: [
 							FactoryLogic.createAbilitySectionText('Two soulraker minions appear within distance.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'A **soulraker praetorian** also appears within distance.'
 							})
@@ -2013,7 +2012,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 			stability: 0,
 			freeStrikeDamage: 5,
 			withCaptain: '+4 bonus to speed',
-			characteristics: MonsterLogic.createCharacteristics(1, 3, 1, 5, 1),
+			characteristics: FactoryLogic.createCharacteristics(1, 3, 1, 5, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2054,7 +2053,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 			stability: 0,
 			freeStrikeDamage: 4,
 			withCaptain: '+4 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(2, 5, 0, 3, -1),
+			characteristics: FactoryLogic.createCharacteristics(2, 5, 0, 3, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2105,7 +2104,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 			stability: 3,
 			freeStrikeDamage: 5,
 			withCaptain: 'Have a double edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(5, 5, -1, -1, -1),
+			characteristics: FactoryLogic.createCharacteristics(5, 5, -1, -1, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2150,7 +2149,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 			stamina: 55,
 			stability: 0,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 5, 2, 4),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 5, 2, 4),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2169,8 +2168,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 								tier3: '14 psychic damage; R<5 restrained (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('The izyak can slide any target restrained this way up to 3 squares.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'The izyak can vertical slide any target restrained this way up to 6 squares instead. A target left in midair doesn’t fall until the restrained condition ends.'
 							})
@@ -2194,8 +2192,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 								tier3: '9 psychic damage; I<5 dazed (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('Any target dazed this way must use a move action to move their speed toward the izyak on their next turn.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The area increases to a 6 cube.'
 							})
@@ -2230,7 +2227,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 			stamina: 60,
 			stability: 0,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(4, 5, -1, -2, -3),
+			characteristics: FactoryLogic.createCharacteristics(4, 5, -1, -2, -3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2300,7 +2297,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 			stamina: 260,
 			stability: 2,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(5, 2, 5, 3, 5),
+			characteristics: FactoryLogic.createCharacteristics(5, 2, 5, 3, 5),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'demon-4th-6-feature-1',
@@ -2323,8 +2320,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 								tier2: '20 corruption damage; R<5 weakened (save ends)',
 								tier3: '24 corruption damage; R<6 weakened (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'Aurumvas regains Stamina equal to the damage dealt.'
 							})
@@ -2347,8 +2343,7 @@ The Find a Cure downtime project in *Draw Steel: Heroes* can be used to find a c
 								tier2: '20 psychic damage; P<5 dazed (save ends)',
 								tier3: '24 psychic damage; P<6 dazed (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'While dazed this way, a target can’t gain Heroic Resources.'
 							})

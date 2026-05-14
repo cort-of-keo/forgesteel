@@ -1,10 +1,10 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const shamblingMound: MonsterGroup = {
 	id: 'monster-group-shambling-mound',
@@ -42,14 +42,16 @@ One must also be wary of the area around a shambling mound. Their vines reach ou
 			id: 'shambling-mound-malice-1',
 			name: 'Poisoned Vines',
 			cost: 3,
+			icon: StatBlockIcon.Self,
 			sections: [
 				'The shambling mound seeps noxious residue from their vines. The next time they use their Vine Lash ability before the end of their next turn, they deal an extra 12 poison damage to each target.'
 			]
 		}),
 		FactoryLogic.feature.createMalice({
 			id: 'shambling-mound-malice-2',
-			name: 'Grasp and Squeeze',
+			name: 'Frenzy Lash',
 			cost: 5,
+			icon: StatBlockIcon.AuraBurst,
 			sections: [
 				'The shambling mound lashes out at each enemy within 10 squares of them, driving them back or into the air. Each target makes an **Agility test**.',
 				FactoryLogic.createPowerRoll({
@@ -64,6 +66,7 @@ One must also be wary of the area around a shambling mound. Their vines reach ou
 			id: 'shambling-mound-malice-3',
 			name: 'Solo Action',
 			cost: 5,
+			icon: StatBlockIcon.Villain,
 			sections: [
 				'The shambling mound takes an additional main action on their turn. They can use this feature even if they are dazed.'
 			]
@@ -72,6 +75,7 @@ One must also be wary of the area around a shambling mound. Their vines reach ou
 			id: 'shambling-mound-malice-4',
 			name: 'Leeching Wilds',
 			cost: 7,
+			icon: StatBlockIcon.AuraBurst,
 			sections: [
 				'Until the end of the shambling mound’s next turn, the area within 10 squares of them is difficult terrain for enemies, and any enemy in the area takes a bane on power rolls. Any enemy who starts their turn in the area takes 4 acid damage, and the shambling mound regains an equal amount of Stamina.'
 			]
@@ -90,7 +94,7 @@ One must also be wary of the area around a shambling mound. Their vines reach ou
 			stamina: 400,
 			stability: 5,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(4, -1, 0, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(4, -1, 0, 1, 0),
 			features: [
 				FactoryLogic.feature.createSoloMonster({
 					id: 'shambling-mound-feature-1',
@@ -118,13 +122,11 @@ One must also be wary of the area around a shambling mound. Their vines reach ou
 								tier2: '16 damage; A<4 grabbed',
 								tier3: '19 damage; grabbed'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The shambling mound can slide each target up to 6 squares.'
 							}),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Each target takes 7 poison damage.'
 							})
@@ -160,8 +162,7 @@ One must also be wary of the area around a shambling mound. Their vines reach ou
 						cost: 2,
 						sections: [
 							FactoryLogic.createAbilitySectionText('The target must be size 1L or smaller. The shambling mound reaches out with writhing vines, and if the target has A<3, they are engulfed into the shambling mound’s sack. If the target is grabbed by the shambling mound, the potency increases by 1. An engulfed creature is restrained, takes 3 poison damage at the start of each turn, and can’t take damage from abilities used from outside the sack. When the shambling mound moves, the engulfed creature moves with them. If the shambling mound dies or their sack is destroyed, each engulfed creature is freed and appears in an unoccupied space within 2 squares of the shambling mound.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								repeatable: true,
 								effect: 'The shambling mound can engulf one additional target for each 2 Malice spent.'

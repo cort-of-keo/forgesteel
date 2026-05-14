@@ -1,7 +1,7 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const sailor: Career = {
 	id: 'career-sailor',
@@ -10,7 +10,6 @@ export const sailor: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'career-sailor-feature-1',
-			listOptions: [ SkillList.Exploration ],
 			selected: [ 'Swim' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -60,7 +59,6 @@ export const sailor: Career = {
 				description: 'A catastrophic storm hit while you were at sea, destroying your ship and leaving you as the only survivor. Once you recovered, you tried to sign on with another ship, but the thought of the open water turned your legs to jelly. Instead, you’ve taken on the role of a traveling hero to make ends meet.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };

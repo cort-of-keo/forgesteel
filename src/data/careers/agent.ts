@@ -1,7 +1,7 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const agent: Career = {
 	id: 'career-agent',
@@ -10,7 +10,6 @@ export const agent: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'career-agent-feature-1',
-			listOptions: [ SkillList.Intrigue ],
 			selected: [ 'Sneak' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -63,7 +62,6 @@ export const agent: Career = {
 				description: 'You spent your life in service of your country or an organization that upheld your values. During your undercover operations, you discovered everything you were told was a lie. Whether you confronted your superiors or were exposed, you were stripped of your service medals before you left to become a true hero.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };

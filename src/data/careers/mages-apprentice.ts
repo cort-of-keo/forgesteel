@@ -1,8 +1,8 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureField } from '../../enums/feature-field';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const magesApprentice: Career = {
 	id: 'career-mages-apprentice',
@@ -11,7 +11,6 @@ export const magesApprentice: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'mages-apprentice-feature-1',
-			listOptions: [ SkillList.Lore ],
 			selected: [ 'Magic' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -65,7 +64,6 @@ export const magesApprentice: Career = {
 				description: 'The mage you worked for was a kindly old soul, but the basic magic they taught you always seemed like a small part of something bigger. It wasn’t until you met an adventuring elementalist that you realized hitting the road as a hero was the only way to truly improve and hone your skills. You resigned your apprenticeship and found yourself walking the path of a hero the next day.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };

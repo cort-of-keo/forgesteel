@@ -1,13 +1,17 @@
 import { Button, Flex, Space } from 'antd';
-import { CheckCircleFilled, CheckOutlined, CloseCircleFilled, CloseOutlined, EllipsisOutlined, SyncOutlined } from '@ant-design/icons';
-import { Montage, MontageChallenge, MontageSection } from '../../../../models/montage';
-import { Collections } from '../../../../utils/collections';
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { Field } from '../../../controls/field/field';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { Markdown } from '../../../controls/markdown/markdown';
-import { Pill } from '../../../controls/pill/pill';
-import { Utils } from '../../../../utils/utils';
+import { CheckOutlined, CloseOutlined, SyncOutlined } from '@ant-design/icons';
+import { Montage, MontageChallenge, MontageSection } from '@/models/montage';
+import { useHeroes, useOptions } from '@/contexts/data-context';
+import { CheckIcon } from '@/components/controls/check-icon/check-icon';
+import { Collections } from '@/utils/collections';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Field } from '@/components/controls/field/field';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { Markdown } from '@/components/controls/markdown/markdown';
+import { MontageLogic } from '@/logic/montage-logic';
+import { Pill } from '@/components/controls/pill/pill';
+import { StatsRow } from '@/components/panels/stats-row/stats-row';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './montage-run-panel.scss';
@@ -19,6 +23,8 @@ interface Props {
 
 export const MontageRunPanel = (props: Props) => {
 	const [ montage, setMontage ] = useState<Montage>(Utils.copy(props.montage));
+	const options = useOptions();
+	const heroes = useHeroes();
 
 	const getChallenge = (challenge: MontageChallenge, sectionIndex: number, challengeIndex: number) => {
 		const addSuccess = () => {
@@ -59,15 +65,15 @@ export const MontageRunPanel = (props: Props) => {
 			const icons = [];
 
 			for (let n = 0; n < challenge.successes; ++n) {
-				icons.push(<CheckCircleFilled key={`s${n}`} style={{ color: 'rgb(0, 120, 0)' }} />);
+				icons.push(<CheckIcon key={`success-${n}`} state='success' />);
 			}
 
 			for (let n = 0; n < challenge.failures; ++n) {
-				icons.push(<CloseCircleFilled key={`f${n}`} style={{ color: 'rgb(200, 0, 0)' }} />);
+				icons.push(<CheckIcon key={`failure-${n}`} state='failure' />);
 			}
 
 			while (icons.length < challenge.uses) {
-				icons.push(<EllipsisOutlined key={`x${icons.length}`} />);
+				icons.push(<CheckIcon key={`pending-${icons.length}`} />);
 			}
 
 			return icons;
@@ -79,14 +85,21 @@ export const MontageRunPanel = (props: Props) => {
 					<div className='status'>
 						{getIcons()}
 					</div>
-					{challenge.uses > 1 ? <Pill>x{challenge.uses}</Pill> : null}
-					<Field
-						style={{ flex: '1 1 0', opacity: (challenge.successes + challenge.failures) >= challenge.uses ? 0.3 : 1 }}
-						label={challenge.name}
-						value={
-							<Markdown text={challenge.description} useSpan={true} />
-						}
-					/>
+					<Flex orientation='vertical' style={{ flex: '1 1 0' }}>
+						<Field
+							style={{ flex: '1 1 0', opacity: (challenge.successes + challenge.failures) >= challenge.uses ? 0.3 : 1 }}
+							label={challenge.name}
+							labelTag={challenge.uses > 1 ? <Pill>x{challenge.uses}</Pill> : null}
+							value={
+								<Markdown text={challenge.description} useSpan={true} />
+							}
+						/>
+						<ul>
+							{challenge.characteristics.length > 0 ? <li><Field label='Characteristics' value={challenge.characteristics.join(', ')} /></li> : null}
+							{challenge.skills.length > 0 ? <li><Field label='Skills' value={challenge.skills} /></li> : null}
+							{challenge.abilities.length > 0 ? <li><Field label='Abilities' value={challenge.abilities} /></li> : null}
+						</ul>
+					</Flex>
 					<Flex gap={3}>
 						<Button title='Add a success' icon={<CheckOutlined />} onClick={addSuccess} />
 						<Button title='Add a failure' icon={<CloseOutlined />} onClick={addFailure} />
@@ -105,14 +118,14 @@ export const MontageRunPanel = (props: Props) => {
 			<div key={section.id} className='montage-section'>
 				<HeaderText>{section.name}</HeaderText>
 				<Markdown text={section.description} />
-				<div className='stats'>
+				<StatsRow>
 					<Field
 						orientation='vertical'
 						label='Successes'
 						value={(
 							<Space>
 								{successes}
-								<CheckCircleFilled style={{ color: 'rgb(0, 120, 0)' }} />
+								<CheckIcon state='success' />
 							</Space>
 						)}
 					/>
@@ -122,11 +135,11 @@ export const MontageRunPanel = (props: Props) => {
 						value={(
 							<Space>
 								{failures}
-								<CloseCircleFilled style={{ color: 'rgb(200, 0, 0)' }} />
+								<CheckIcon state='failure' />
 							</Space>
 						)}
 					/>
-				</div>
+				</StatsRow>
 				<HeaderText>{section.name || 'Montage'} Challenges</HeaderText>
 				{section.challenges.map((c, n) => getChallenge(c, index, n))}
 				{(section.twists.length > 0) || (section.twistInfo !== '') ? <HeaderText>Optional Twists</HeaderText> : null}
@@ -146,26 +159,59 @@ export const MontageRunPanel = (props: Props) => {
 		);
 	};
 
-	try {
-		return (
-			<ErrorBoundary>
-				<div className='montage-run-panel' id={montage.id}>
-					<HeaderText level={1}>{montage.name || 'Unnamed Montage'}</HeaderText>
-					<Markdown text={montage.description} />
-					<HeaderText>Setting the Scene</HeaderText>
-					<Markdown text={montage.scene} />
-					{montage.sections.map(getSection)}
-					<div>
-						<HeaderText>Montage Test Outcomes</HeaderText>
-						<Field label='Total Success' value={<Markdown text={montage.outcomes.totalSuccess} useSpan={true} />} />
-						<Field label='Partial Success' value={<Markdown text={montage.outcomes.partialSuccess} useSpan={true} />} />
-						<Field label='Total Failure' value={<Markdown text={montage.outcomes.totalFailure} useSpan={true} />} />
-					</div>
+	const successes = Collections.sum(montage.sections, s => Collections.sum(s.challenges, c => c.successes));
+	const failures = Collections.sum(montage.sections, s => Collections.sum(s.challenges, c => c.failures));
+	const successLimit = MontageLogic.getSuccessLimit(props.montage, heroes, options);
+	const failureLimit = MontageLogic.getFailureLimit(props.montage, heroes, options);
+	const outcome = MontageLogic.getOutcome(props.montage, heroes, options);
+
+	return (
+		<ErrorBoundary>
+			<div className='montage-run-panel' id={montage.id}>
+				<HeaderText level={1}>{montage.name || 'Unnamed Montage'}</HeaderText>
+				<Markdown text={montage.description} />
+				<StatsRow>
+					<Field
+						orientation='vertical'
+						label='Difficulty'
+						value={props.montage.difficulty}
+					/>
+					<Field
+						orientation='vertical'
+						label='Successes'
+						value={(
+							<Space>
+								{successes} / {successLimit}
+								<CheckIcon state='success' />
+							</Space>
+						)}
+					/>
+					<Field
+						orientation='vertical'
+						label='Failures'
+						value={(
+							<Space>
+								{failures} / {failureLimit}
+								<CheckIcon state='failure' />
+							</Space>
+						)}
+					/>
+					<Field
+						orientation='vertical'
+						label='Outcome'
+						value={outcome}
+					/>
+				</StatsRow>
+				<HeaderText>Setting the Scene</HeaderText>
+				<Markdown text={montage.scene} />
+				{montage.sections.map(getSection)}
+				<div>
+					<HeaderText>Montage Test Outcomes</HeaderText>
+					<Field label='Total Success' value={<Markdown text={montage.outcomes.totalSuccess} useSpan={true} />} />
+					<Field label='Partial Success' value={<Markdown text={montage.outcomes.partialSuccess} useSpan={true} />} />
+					<Field label='Total Failure' value={<Markdown text={montage.outcomes.totalFailure} useSpan={true} />} />
 				</div>
-			</ErrorBoundary>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+			</div>
+		</ErrorBoundary>
+	);
 };

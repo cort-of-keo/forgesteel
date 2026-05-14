@@ -1,4 +1,4 @@
-import { RulesItem } from '../models/rules-item';
+import { RulesItem } from '@/models/rules-item';
 
 export class RulesData {
 	static abilityDistance: RulesItem = {
@@ -167,10 +167,31 @@ You can’t score a critical hit with an ability roll made as a maneuver or any 
 Areas of acid, fire, sharp rocks, lava, or any other terrain that causes damage to creatures within it is damaging terrain. The damage dealt by damaging terrain is noted in the terrain’s description or in the description of the effect that creates the terrain.`
 	};
 
+	static damageAndEffect: RulesItem = {
+		label: 'Damage and Effect',
+		content: `
+Strikes and area abilities can deal damage and have an additional effect on a target. The damage and the strength of the effect are determined by the ability roll.
+
+To keep things moving quickly and to make abilities easy to read during play, damage and effects are separated with a semicolon in a power roll tier entry, with effects abbreviated whenever possible. An effect determined by a power roll always applies to the target unless otherwise specified. For example, the Brutal Slam ability mentioned above has the following power roll setup in the ability format:
+
+**Power Roll + Might**:
+
+* **11-**: 3 + M damage; push 1
+* **12-16**: 6 + M damage; push 2
+* **17+**: 9 + M damage; push 4
+
+Unless otherwise indicated, any effects that are determined by a power roll’s tier outcome occur after the power roll’s damage has been dealt to all targets. If an ability roll deals damage to multiple targets but its effect targets the creature using the ability or the Director, such as Muse of Fire, then the effect only occurs once, not once per target. If different tiered outcomes affect multiple targets, the creature using the ability picks which tier of rolled effect applies to them or the Director. If an ability creates multiple effects, those effects resolve in the order in which they are presented.`
+	};
+
 	static difficultTerrain: RulesItem = {
 		label: 'Difficult Terrain',
 		content: `
 Areas of thick underbrush, rubble, spiderwebs, or other obstacles to movement create difficult terrain. It costs 1 additional square of movement to enter a square of difficult terrain.`
+	};
+
+	static duringTheMove: RulesItem = {
+		label: 'During the Move',
+		content: 'Certain ability effects allow you to move and affect other creatures or objects during that move, such as the shadow’s One Hundred Throats ability. For such abilities, the move begins in the space you first leave when you start the move and ends in the last space you move into.'
 	};
 
 	static dyingAndDeath: RulesItem = {
@@ -206,7 +227,7 @@ You must have line of effect to the enemy and be able to take triggered actions 
 	static flying: RulesItem = {
 		label: 'Flying',
 		content: `
-A creature who has “hover” in their speed entry (most commonly alongside “fly” or “teleport”), or who gains the temporary ability to hover, can remain motionless in midair. They don’t fall even if they are knocked prone or their speed is reduced to 0.`
+A creature who has “fly” in their speed entry, or who gains the temporary ability to fly, can move through the air vertically or horizontally at full speed and remain in midair. If a flying creature is knocked prone or has their speed reduced to 0, they fall.`
 	};
 
 	static forcedMovement: RulesItem = {
@@ -270,7 +291,7 @@ A creature can gain this benefit while climbing only if they have “climb” in
 	static hover: RulesItem = {
 		label: 'Hover',
 		content: `
-A creature who has “fly” in their speed entry, or who gains the temporary ability to fly, can move through the air vertically or horizon- tally at full speed and remain in midair. If a flying creature is knocked prone or has their speed reduced to 0, they fall.`
+A creature who has “hover” in their speed entry (most commonly alongside “fly” or “teleport”), or who gains the temporary ability to hover, can remain motionless in midair. They don’t fall even if they are knocked prone or their speed is reduced to 0.`
 	};
 
 	static invisibility: RulesItem = {

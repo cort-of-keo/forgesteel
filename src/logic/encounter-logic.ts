@@ -1,17 +1,19 @@
-import { Encounter, EncounterGroup } from '../models/encounter';
-import { EncounterSlot, EncounterSlotCustomization } from '../models/encounter-slot';
-import { Collections } from '../utils/collections';
-import { FactoryLogic } from './factory-logic';
-import { FeatureType } from '../enums/feature-type';
-import { MonsterLogic } from './monster-logic';
-import { MonsterOrganizationType } from '../enums/monster-organization-type';
-import { Options } from '../models/options';
-import { Sourcebook } from '../models/sourcebook';
-import { SourcebookLogic } from './sourcebook-logic';
-import { Utils } from '../utils/utils';
+import { Encounter, EncounterGroup } from '@/models/encounter';
+import { EncounterSlot, EncounterSlotCustomization } from '@/models/encounter-slot';
+import { Collections } from '@/utils/collections';
+import { EncounterDifficultyLogic } from '@/logic/encounter-difficulty-logic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { Feature } from '@/models/feature';
+import { FeatureType } from '@/enums/feature-type';
+import { MonsterData } from '@/data/monster-data';
+import { MonsterLogic } from '@/logic/monster-logic';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { Utils } from '@/utils/utils';
 
 export class EncounterLogic {
-	static getMonsterCount = (encounter: Encounter, sourcebooks: Sourcebook[], options: Options) => {
+	static getMonsterCount = (encounter: Encounter, sourcebooks: Sourcebook[]) => {
 		let total = 0;
 
 		encounter.groups.forEach(g => {
@@ -20,7 +22,7 @@ export class EncounterLogic {
 
 				const monster = SourcebookLogic.getMonster(sourcebooks, s.monsterID);
 				if (monster) {
-					count *= MonsterLogic.getRoleMultiplier(monster.role.organization, options);
+					count *= MonsterLogic.getRoleMultiplier(monster.role.organization);
 				}
 
 				total += count;
@@ -85,6 +87,34 @@ export class EncounterLogic {
 			.map(data => SourcebookLogic.getMonsterGroup(sourcebooks, data.monsterID))
 			.filter(group => !!group);
 		return Collections.distinct(groups, item => item.id);
+	};
+
+	static getContentIDs = (encounter: Encounter, sourcebooks: Sourcebook[]) => {
+		const ids: string[] = [];
+
+		encounter.groups.forEach(g => {
+			g.slots.forEach(s => {
+				const monsterGroup = SourcebookLogic.getMonsterGroup(sourcebooks, s.monsterID);
+				if (monsterGroup) {
+					if (!ids.includes(monsterGroup.id)) {
+						ids.push(monsterGroup.id);
+					}
+				}
+				s.customization.itemIDs.forEach(id => {
+					if (!ids.includes(id)) {
+						ids.push(id);
+					}
+				});
+			});
+		});
+
+		encounter.terrain.forEach(ts => {
+			if (!ids.includes(ts.terrainID)) {
+				ids.push(ts.terrainID);
+			}
+		});
+
+		return ids;
 	};
 
 	static getCustomizedMonster = (monsterID: string, customization: EncounterSlotCustomization, sourcebooks: Sourcebook[]) => {
@@ -153,10 +183,18 @@ export class EncounterLogic {
 					.flatMap(a => a.sections)
 					.filter(s => s.type === 'roll')
 					.forEach(s => {
-						s.roll.bonus += characteristicMod;
-						s.roll.tier1 += tier1Mod;
-						s.roll.tier2 += tier2Mod;
-						s.roll.tier3 += tier3Mod;
+						if (s.roll.bonus > 0) {
+							s.roll.bonus += characteristicMod;
+						}
+						if (tier1Mod !== 0 && s.roll.tier1.includes('damage')) {
+							s.roll.tier1 = `${s.roll.tier1}; ${tier1Mod > 0 ? '+' : ''}${tier1Mod} damage`;
+						}
+						if (tier2Mod !== 0 && s.roll.tier2.includes('damage')) {
+							s.roll.tier2 = `${s.roll.tier2}; ${tier2Mod > 0 ? '+' : ''}${tier2Mod} damage`;
+						}
+						if (tier3Mod !== 0 && s.roll.tier3.includes('damage')) {
+							s.roll.tier3 = `${s.roll.tier3}; ${tier3Mod > 0 ? '+' : ''}${tier3Mod} damage`;
+						}
 					});
 			}
 
@@ -211,6 +249,20 @@ export class EncounterLogic {
 		return malice;
 	};
 
+	static getAllMaliceFeatures = (encounter: Encounter, sourcebooks: Sourcebook[]): { group: string, features: Feature[] }[] => {
+		const monsterGroups = this.getMonsterGroups(encounter, sourcebooks);
+		const result: { group: string, features: Feature[] }[] = [
+			{ group: 'Basic', features: MonsterData.malice }
+		];
+		monsterGroups.filter(group => group.malice.length > 0)
+			.forEach(group => {
+				result.push(
+					{ group: group.name, features: group.malice }
+				);
+			});
+		return result;
+	};
+
 	static getCombatants = (encounter: Encounter) => {
 		const combatants: { type: 'group' | 'hero', id: string, section: 'ready' | 'current' | 'finished' | 'defeated' }[] = [];
 
@@ -243,5 +295,34 @@ export class EncounterLogic {
 		}
 
 		return null;
+	};
+
+	static generateEncounter = (encounter: Encounter, sourcebooks: Sourcebook[], keywords: string[], minStrength: number, minLevel: number, maxLevel: number) => {
+		const monsters = SourcebookLogic.getMonsters(sourcebooks)
+			.filter(m => (keywords.length === 0) || keywords.some(k => m.keywords.includes(k)))
+			.filter(m => (m.level >= minLevel) && (m.level <= maxLevel));
+
+		if (monsters.length === 0) {
+			return;
+		}
+
+		while (EncounterDifficultyLogic.getStrength(encounter, sourcebooks) < minStrength) {
+			const monster = Collections.draw(monsters);
+
+			const slot = FactoryLogic.createEncounterSlotFromMonster(monster);
+			switch (monster.role.organization) {
+				case MonsterOrganizationType.Minion:
+					slot.count = 4;
+					break;
+				case MonsterOrganizationType.Horde:
+					slot.count = 2;
+					break;
+			}
+
+			const group = FactoryLogic.createEncounterGroup();
+			group.slots.push(slot);
+
+			encounter.groups.push(group);
+		}
 	};
 }

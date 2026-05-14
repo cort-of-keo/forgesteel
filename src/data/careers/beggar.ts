@@ -1,7 +1,7 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const beggar: Career = {
 	id: 'career-beggar',
@@ -10,7 +10,6 @@ export const beggar: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'career-beggar-feature-1',
-			listOptions: [ SkillList.Lore ],
 			selected: [ 'Rumors' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -63,7 +62,6 @@ export const beggar: Career = {
 				description: 'You saw something you weren’t meant to see. Others would kill you if they knew, and they might be searching for you even now. You remain on the move, terrified of remaining in one place too long lest it all catch up to you. Perhaps if you make a big enough name for yourself, you can become untouchable and can finally speak of what you saw without fear.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };

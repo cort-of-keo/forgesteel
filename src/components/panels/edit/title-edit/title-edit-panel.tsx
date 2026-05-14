@@ -1,22 +1,17 @@
-import { Button, Input, Space, Tabs } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, PlusOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { Collections } from '../../../../utils/collections';
-import { DangerButton } from '../../../controls/danger-button/danger-button';
-import { Empty } from '../../../controls/empty/empty';
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { Expander } from '../../../controls/expander/expander';
-import { FactoryLogic } from '../../../../logic/factory-logic';
-import { Feature } from '../../../../models/feature';
-import { FeatureEditPanel } from '../feature-edit/feature-edit-panel';
-import { FeatureLogic } from '../../../../logic/feature-logic';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { MultiLine } from '../../../controls/multi-line/multi-line';
-import { NameGenerator } from '../../../../utils/name-generator';
-import { NumberSpin } from '../../../controls/number-spin/number-spin';
-import { Options } from '../../../../models/options';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { Title } from '../../../../models/title';
-import { Utils } from '../../../../utils/utils';
+import { Space, Tabs } from 'antd';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Feature } from '@/models/feature';
+import { FeatureListEditPanel } from '@/components/panels/edit/feature-list-edit/feature-list-edit-panel';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { NameDescEditPanel } from '@/components/panels/edit/name-desc-edit/name-desc-edit-panel';
+import { NumberSpin } from '@/components/controls/number-spin/number-spin';
+import { PanelMode } from '@/enums/panel-mode';
+import { SelectablePanel } from '@/components/controls/selectable-panel/selectable-panel';
+import { Sourcebook } from '@/models/sourcebook';
+import { TextInput } from '@/components/controls/text-input/text-input';
+import { Title } from '@/models/title';
+import { TitlePanel } from '@/components/panels/elements/title-panel/title-panel';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './title-edit-panel.scss';
@@ -24,155 +19,85 @@ import './title-edit-panel.scss';
 interface Props {
 	title: Title;
 	sourcebooks: Sourcebook[];
-	options: Options;
+	mode?: PanelMode;
 	onChange: (title: Title) => void;
 }
 
 export const TitleEditPanel = (props: Props) => {
 	const [ title, setTitle ] = useState<Title>(props.title);
+	const [ revision, setRevision ] = useState<number>(0);
 
-	try {
-		const getNameAndDescriptionSection = () => {
-			const setName = (value: string) => {
-				const copy = Utils.copy(title);
-				copy.name = value;
-				setTitle(copy);
-				props.onChange(copy);
-			};
+	const updateTitle = (value: Title) => {
+		setTitle(value);
+		setRevision(revision + 1);
+		props.onChange(value);
+	};
 
-			const setDescription = (value: string) => {
-				const copy = Utils.copy(title);
-				copy.description = value;
-				setTitle(copy);
-				props.onChange(copy);
-			};
-
-			return (
-				<Space direction='vertical' style={{ width: '100%' }}>
-					<HeaderText>Name</HeaderText>
-					<Input
-						status={title.name === '' ? 'warning' : ''}
-						placeholder='Name'
-						allowClear={true}
-						addonAfter={<ThunderboltOutlined className='random-btn' onClick={() => setName(NameGenerator.generateName())} />}
-						value={title.name}
-						onChange={e => setName(e.target.value)}
-					/>
-					<HeaderText>Description</HeaderText>
-					<MultiLine value={title.description} onChange={setDescription} />
-				</Space>
-			);
-		};
-
-		const getTitleEditSection = () => {
-			const setEchelon = (value: number) => {
-				const copy = Utils.copy(title);
-				copy.echelon = value;
-				setTitle(copy);
-				props.onChange(copy);
-			};
-
-			const setPrerequisites = (value: string) => {
-				const copy = Utils.copy(title);
-				copy.prerequisites = value;
-				setTitle(copy);
-				props.onChange(copy);
-			};
-
-			return (
-				<Space direction='vertical' style={{ width: '100%' }}>
-					<HeaderText>Echelon</HeaderText>
-					<NumberSpin min={1} max={4} value={title.echelon} onChange={setEchelon} />
-					<HeaderText>Prerequisites</HeaderText>
-					<Input
-						placeholder='Prerequisites'
-						allowClear={true}
-						value={title.prerequisites}
-						onChange={e => setPrerequisites(e.target.value)}
-					/>
-				</Space>
-			);
-		};
-
-		const getFeaturesEditSection = () => {
-			const addFeature = () => {
-				const copy = Utils.copy(title);
-				copy.features.push(FactoryLogic.feature.create({
-					id: Utils.guid(),
-					name: '',
-					description: ''
-				}));
-				setTitle(copy);
-				props.onChange(copy);
-			};
-
-			const changeFeature = (feature: Feature) => {
-				const copy = Utils.copy(title);
-				const index = copy.features.findIndex(f => f.id === feature.id);
-				if (index !== -1) {
-					copy.features[index] = feature;
-				}
-				setTitle(copy);
-				props.onChange(copy);
-			};
-
-			const moveFeature = (feature: Feature, direction: 'up' | 'down') => {
-				const copy = Utils.copy(title);
-				const index = copy.features.findIndex(f => f.id === feature.id);
-				copy.features = Collections.move(copy.features, index, direction);
-				setTitle(copy);
-				props.onChange(copy);
-			};
-
-			const deleteFeature = (feature: Feature) => {
-				const copy = Utils.copy(title);
-				copy.features = copy.features.filter(f => f.id !== feature.id);
-				setTitle(copy);
-				props.onChange(copy);
-			};
-
-			return (
-				<Space direction='vertical' style={{ width: '100%' }}>
-					<HeaderText
-						extra={
-							<Button type='text' icon={<PlusOutlined />} onClick={addFeature} />
-						}
-					>
-						Features
-					</HeaderText>
-					{
-						title.features.map(f => (
-							<Expander
-								key={f.id}
-								title={f.name || 'Unnamed Feature'}
-								tags={[ FeatureLogic.getFeatureTag(f) ]}
-								extra={[
-									<Button key='up' type='text' title='Move Up' icon={<CaretUpOutlined />} onClick={e => { e.stopPropagation(); moveFeature(f, 'up'); }} />,
-									<Button key='down' type='text' title='Move Down' icon={<CaretDownOutlined />} onClick={e => { e.stopPropagation(); moveFeature(f, 'down'); }} />,
-									<DangerButton key='delete' mode='clear' onConfirm={e => { e.stopPropagation(); deleteFeature(f); }} />
-								]}
-							>
-								<FeatureEditPanel
-									feature={f}
-									sourcebooks={props.sourcebooks}
-									options={props.options}
-									onChange={changeFeature}
-								/>
-							</Expander>
-						))
-					}
-					{
-						title.features.length === 0 ?
-							<Empty />
-							: null
-					}
-				</Space>
-			);
+	const getNameAndDescriptionSection = () => {
+		const onChange = (name: string, desc: string) => {
+			const copy = Utils.copy(title);
+			copy.name = name;
+			copy.description = desc;
+			updateTitle(copy);
 		};
 
 		return (
-			<ErrorBoundary>
-				<div className='title-edit-panel'>
+			<NameDescEditPanel
+				element={title}
+				onChange={onChange}
+			/>
+		);
+	};
+
+	const getTitleEditSection = () => {
+		const setEchelon = (value: number) => {
+			const copy = Utils.copy(title);
+			copy.echelon = value;
+			updateTitle(copy);
+		};
+
+		const setPrerequisites = (value: string) => {
+			const copy = Utils.copy(title);
+			copy.prerequisites = value;
+			updateTitle(copy);
+		};
+
+		return (
+			<Space orientation='vertical' style={{ width: '100%' }}>
+				<HeaderText>Echelon</HeaderText>
+				<NumberSpin min={1} max={4} value={title.echelon} onChange={setEchelon} />
+				<HeaderText>Prerequisites</HeaderText>
+				<TextInput
+					placeholder='Prerequisites'
+					allowClear={true}
+					value={title.prerequisites}
+					onChange={setPrerequisites}
+				/>
+			</Space>
+		);
+	};
+
+	const getFeaturesEditSection = () => {
+		const onChange = (features: Feature[]) => {
+			const copy = Utils.copy(title);
+			copy.features = Utils.copy(features);
+			updateTitle(copy);
+		};
+
+		return (
+			<FeatureListEditPanel
+				title='Features'
+				features={title.features}
+				sourcebooks={props.sourcebooks}
+				onChange={onChange}
+			/>
+		);
+	};
+
+	return (
+		<ErrorBoundary>
+			<div className='title-edit-panel'>
+				<div className='title-workspace-column'>
 					<Tabs
 						items={[
 							{
@@ -193,10 +118,31 @@ export const TitleEditPanel = (props: Props) => {
 						]}
 					/>
 				</div>
-			</ErrorBoundary>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+				{
+					props.mode === PanelMode.Full ?
+						<div className='title-preview-column'>
+							<Tabs
+								items={[
+									{
+										key: '1',
+										label: 'Preview',
+										children: (
+											<SelectablePanel>
+												<TitlePanel
+													key={revision}
+													title={title}
+													sourcebooks={props.sourcebooks}
+													mode={PanelMode.Full}
+												/>
+											</SelectablePanel>
+										)
+									}
+								]}
+							/>
+						</div>
+						: null
+				}
+			</div>
+		</ErrorBoundary>
+	);
 };

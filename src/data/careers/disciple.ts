@@ -1,8 +1,8 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureField } from '../../enums/feature-field';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const disciple: Career = {
 	id: 'career-disciple',
@@ -11,7 +11,6 @@ export const disciple: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'career-disciple-feature-1',
-			listOptions: [ SkillList.Lore ],
 			selected: [ 'Religion' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -62,7 +61,6 @@ export const disciple: Career = {
 				description: 'The faith-based organization you were once part of became corrupt. It used its status in the community to accumulate wealth through tithes and its leaders sought political appointments. During a season of drought, the institution stockpiled resources and refused to give aid, resulting in the deaths of many. You became a hero to fight against such corruption and to honor your dearly departed.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };

@@ -1,6 +1,8 @@
-import { Ancestry } from '../../models/ancestry';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { SkillList } from '../../enums/skill-list';
+import { EnvironmentData, OrganizationData, UpbringingData } from '@/data/culture-data';
+import { Ancestry } from '@/models/ancestry';
+import { CultureType } from '@/enums/culture-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { SkillList } from '@/enums/skill-list';
 
 export const devil: Ancestry = {
 	id: 'ancestry-devil',
@@ -50,11 +52,8 @@ export const devil: Ancestry = {
 							name: 'Glowing Eyes',
 							description: 'Your eyes are a solid, vibrant color that flares to show your excitement or rage.',
 							type: FactoryLogic.type.createTrigger('You take damage from a creature'),
-							keywords: [],
-							distance: [ FactoryLogic.distance.createSelf() ],
-							target: 'Self',
 							sections: [
-								FactoryLogic.createAbilitySectionText('You curse your attacker for daring to do you harm. The creature takes 1d10 + your level psychic damage.')
+								FactoryLogic.createAbilitySectionText('Whenever you take damage from a creature, you can use a triggered action to deal that creature psychic damage equal to 1d10 + your level.')
 							]
 						})
 					}),
@@ -69,10 +68,11 @@ export const devil: Ancestry = {
 					value: 1
 				},
 				{
-					feature: FactoryLogic.feature.create({
+					feature: FactoryLogic.feature.createSaveThreshold({
 						id: 'devil-feature-2-5',
 						name: 'Impressive Horns',
-						description: 'Your cherished horns are larger than your average devil’s, and a hardened representation of your force of will. Whenever you make a saving throw, you succeed on a roll of 5 or higher.'
+						description: 'Your cherished horns are larger than your average devil’s, and a hardened representation of your force of will. Whenever you make a saving throw, you succeed on a roll of 5 or higher.',
+						value: 5
 					}),
 					value: 2
 				},
@@ -85,10 +85,20 @@ export const devil: Ancestry = {
 					value: 2
 				},
 				{
-					feature: FactoryLogic.feature.create({
+					feature: FactoryLogic.feature.createMultiple({
 						id: 'devil-feature-2-7',
 						name: 'Wings',
-						description: 'You possess wings powerful enough to take you airborne. While using your wings to fly, you can stay aloft for a number of rounds equal to your Might score (minimum 1 round) before you fall. While using your wings to fly at 3rd level or lower, you have damage weakness 5.'
+						features: [
+							FactoryLogic.feature.create({
+								id: 'devil-feature-2-7a',
+								name: 'Wings',
+								description: 'You possess wings powerful enough to take you airborne. While using your wings to fly, you can stay aloft for a number of rounds equal to your Might score (minimum 1 round) before you fall. While using your wings to fly at 3rd level or lower, you have damage weakness 5.'
+							}),
+							FactoryLogic.feature.createMovementMode({
+								id: 'devil-feature-2-7b',
+								mode: 'Fly'
+							})
+						]
 					}),
 					value: 2
 				}
@@ -96,5 +106,6 @@ export const devil: Ancestry = {
 			count: 'ancestry'
 		})
 	],
-	ancestryPoints: 3
+	ancestryPoints: 3,
+	culture: FactoryLogic.createCulture('Devil', 'Urban, bureaucratic, academic.', CultureType.Ancestral, EnvironmentData.urban, OrganizationData.bureaucratic, UpbringingData.academic, 'Anjali')
 };

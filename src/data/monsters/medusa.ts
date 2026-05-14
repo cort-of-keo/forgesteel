@@ -1,10 +1,10 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const medusa: MonsterGroup = {
 	id: 'monster-group-medusa',
@@ -70,6 +70,7 @@ Followers of the gods who impose this punishment spread terrifying myths about m
 			id: 'medusa-malice-2',
 			name: 'Solo Action',
 			cost: 5,
+			icon: StatBlockIcon.Villain,
 			sections: [
 				'The medusa takes an additional main action on their turn. They can use this feature even if they are dazed.'
 			]
@@ -98,6 +99,7 @@ Followers of the gods who impose this punishment spread terrifying myths about m
 			id: 'medusa-malice-4',
 			name: 'Shatter Victims',
 			cost: 7,
+			icon: StatBlockIcon.AuraBurst,
 			sections: [
 				'The medusa causes three stone statues within 10 squares of them to each shatter in a 2-cube explosion. Each enemy in one of those areas makes a **Might test**. An enemy restrained or slowed by the medusa’s Petrify ability has a double bane on the test.',
 				FactoryLogic.createPowerRoll({
@@ -122,7 +124,7 @@ Followers of the gods who impose this punishment spread terrifying myths about m
 			stamina: 420,
 			stability: 5,
 			freeStrikeDamage: 8,
-			characteristics: MonsterLogic.createCharacteristics(2, 4, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 4, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createSoloMonster({
 					id: 'medusa-feature-2',
@@ -163,8 +165,7 @@ Followers of the gods who impose this punishment spread terrifying myths about m
 								tier2: '16 damage; push 5',
 								tier3: '19 damage; push 7'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'The medusa targets two additional creatures or objects.'
 							})

@@ -1,236 +1,423 @@
-import { BookOutlined, PlayCircleOutlined, ReadOutlined, TeamOutlined } from '@ant-design/icons';
-import { Button, Flex, Segmented } from 'antd';
-import { AppFooter } from '../../panels/app-footer/app-footer';
-import { AppHeader } from '../../panels/app-header/app-header';
-import { ErrorBoundary } from '../../controls/error-boundary/error-boundary';
-import { HeaderText } from '../../controls/header-text/header-text';
-import { useMediaQuery } from '../../../hooks/use-media-query';
-import { useNavigation } from '../../../hooks/use-navigation';
+import { AppFooter, FooterParams } from '@/components/panels/app-footer/app-footer';
+import { BookOutlined, BulbFilled, BulbOutlined, DoubleLeftOutlined, DoubleRightOutlined, EllipsisOutlined, PlayCircleOutlined, TeamOutlined } from '@ant-design/icons';
+import { Button, Divider, Flex, Popover, Segmented, Space } from 'antd';
+import { AppHeader } from '@/components/panels/app-header/app-header';
+import { ButtonGroup } from '@/components/controls/button-group/button-group';
+import { Collections } from '@/utils/collections';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { Hero } from '@/models/hero';
+import { PregenData } from '@/data/pregen-data';
+import { PregenInfo } from '@/components/panels/token/token';
+import { PregenLogic } from '@/logic/pregen-logic';
+import { SelectablePanel } from '@/components/controls/selectable-panel/selectable-panel';
+import { Sourcebook } from '@/models/sourcebook';
+import { Tip } from '@/models/tip';
+import { TipData } from '@/data/tip-data';
+import { TipPanel } from '@/components/panels/tip/tip-panel';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { useNavigation } from '@/hooks/use-navigation';
+import { useOptions } from '@/contexts/data-context';
 import { useState } from 'react';
 
 import './welcome-page.scss';
 
+type WelcomeType = 'player' | 'director-prep' | 'director-run' | 'creator';
+
 interface Props {
-	highlightAbout: boolean;
-	showAbout: () => void;
-	showRoll: () => void;
-	showReference: () => void;
+	sourcebooks: Sourcebook[];
+	params: FooterParams;
+	onNewHero: () => void;
+	onPregen: (hero: Hero) => void;
+	onNewEncounter: () => void;
 }
 
 export const WelcomePage = (props: Props) => {
 	const isSmall = useMediaQuery('(max-width: 1000px)');
+	const [ tips ] = useState<Tip[]>([
+		...Collections.shuffle(TipData.getTips().filter(t => t.isNew)),
+		...Collections.shuffle(TipData.getTips().filter(t => !t.isNew))
+	]);
+	const [ showTips, setShowTips ] = useState<boolean>(true);
+	const [ tipIndex, setTipIndex ] = useState<number>(0);
 	const navigation = useNavigation();
-	const [ page, setPage ] = useState<'player' | 'director-prep' | 'director-run' | 'creator'>('player');
 
-	const getContent = (type: 'player' | 'director-prep' | 'director-run' | 'creator') => {
-		switch (type) {
+	const topNav = (
+		<ButtonGroup
+			buttons={[
+				{
+					type: 'dropdown',
+					icon: <EllipsisOutlined />,
+					popover: (
+						<Space orientation='vertical'>
+							<Button block={true} type='text' onClick={() => navigation.goToHeroList()}>Heroes</Button>
+							<Button block={true} type='text' onClick={() => navigation.goToLibrary('ancestry')}>Library</Button>
+							<Button block={true} type='text' onClick={() => navigation.goToSession()}>Session</Button>
+							<Divider size='small' />
+							<Button block={true} type='text' onClick={() => navigation.goToBackup()}>Backup</Button>
+							<Button block={true} type='text' onClick={() => navigation.goToClocktower()}>Clocktower</Button>
+						</Space>
+					)
+				}
+			]}
+		/>
+	);
+
+	if (isSmall) {
+		return (
+			<ErrorBoundary name='welcome-page'>
+				<div className='welcome-page'>
+					<AppHeader>
+						{topNav}
+					</AppHeader>
+					<ErrorBoundary>
+						<div className='welcome-page-content compact'>
+							<div className='welcome-column'>
+								<Welcome
+									sourcebooks={props.sourcebooks}
+									onNewHero={props.onNewHero}
+									onPregen={props.onPregen}
+									onNewEncounter={props.onNewEncounter}
+								/>
+							</div>
+						</div>
+					</ErrorBoundary>
+					<AppFooter
+						page='welcome'
+						params={props.params}
+					/>
+				</div>
+			</ErrorBoundary>
+		);
+	}
+
+	return (
+		<ErrorBoundary name='welcome-page'>
+			<div className='welcome-page'>
+				<AppHeader>
+					{topNav}
+				</AppHeader>
+				<div className='welcome-page-content'>
+					<div className='welcome-column'>
+						<Welcome
+							sourcebooks={props.sourcebooks}
+							onNewHero={props.onNewHero}
+							onPregen={props.onPregen}
+							onNewEncounter={props.onNewEncounter}
+						/>
+					</div>
+					{
+						showTips ?
+							<div className='tip-column'>
+								<Flex justify='center'>
+									<ButtonGroup
+										buttons={[
+											{
+												type: 'button',
+												tooltip: 'Previous Tip',
+												icon: <DoubleLeftOutlined />,
+												disabled: tipIndex <= 0,
+												onClick: () => setTipIndex(tipIndex - 1)
+											},
+											{
+												type: 'button',
+												tooltip: 'Hide Tips',
+												icon: <BulbFilled style={{ color: 'rgba(64, 150, 255)' }} />,
+												onClick: () => setShowTips(false)
+											},
+											{
+												type: 'button',
+												tooltip: 'Next Tip',
+												icon: <DoubleRightOutlined />,
+												onClick: () => setTipIndex(tipIndex + 1)
+											}
+										]}
+									/>
+								</Flex>
+								<TipPanel tip={tips[tipIndex % tips.length]} />
+							</div>
+							:
+							<Button
+								type='text'
+								icon={<BulbOutlined />}
+								title='Show Tips'
+								onClick={() => setShowTips(true)}
+							/>
+					}
+				</div>
+				<AppFooter
+					page='welcome'
+					params={props.params}
+				/>
+			</div>
+		</ErrorBoundary>
+	);
+};
+
+interface WelcomeProps {
+	sourcebooks: Sourcebook[];
+	onNewHero: () => void;
+	onPregen: (hero: Hero) => void;
+	onNewEncounter: () => void;
+}
+
+const Welcome = (props: WelcomeProps) => {
+	const navigation = useNavigation();
+	const [ page, setPage ] = useState<WelcomeType>('player');
+	const options = useOptions();
+
+	const getContent = () => {
+		switch (page) {
 			case 'player':
 				return (
 					<div className='welcome-section'>
-						<HeaderText
-							extra={<Button type='primary' icon={<TeamOutlined />} onClick={() => navigation.goToHeroList()}>Heroes</Button>}
-						>
-							For Players
-						</HeaderText>
-						<div className='ds-text'>
-							If you're a <b>DRAW STEEL</b> player, you've come to the right place.
+						<div>
+							<HeaderText
+								extra={
+									<Button icon={<TeamOutlined />} onClick={() => navigation.goToHeroList()}>Go to your Heroes</Button>
+								}
+							>
+								For Players
+							</HeaderText>
+							<div className='ds-text'>
+								If you're a <b>DRAW STEEL</b> player, you've come to the right place.
+							</div>
+							<div className='ds-text'>
+								In the <b>HEROES</b> screen you can easily create your characters; the hero builder leads you through the process step-by-step.
+							</div>
+							<ul>
+								<li>
+									All the official content is included, and you can also use any homebrew content your director has created.
+								</li>
+								<li>
+									You can use the app to track your hero's stamina, conditions, surges, and so on.
+								</li>
+								<li>
+									If you're playing offline, you can export your heroes in PNG or PDF formats (either portrait or landscape).
+								</li>
+								<li>
+									Want something a little different? You can customize any of your abilities to make them more unique to your hero.
+								</li>
+								<li>
+									Need to tweak your hero in a way that's not strictly by the book? No problem! You can customize your hero in any number of ways - an extra ability, bonuses to your characteristics, extra skills, retainers, etc.
+								</li>
+							</ul>
+							<div className='ds-text'>
+								In addition, you can quickly look up rules at any time using the Reference button at the bottom right of the screen.
+							</div>
 						</div>
-						<div className='ds-text'>
-							In the <b>HEROES</b> screen you can easily create your characters; the hero builder leads you through the process step-by-step.
-						</div>
-						<ul>
-							<li>
-								All the official content is included, and you can also use any homebrew content your director has created.
-							</li>
-							<li>
-								You can use the app to track your hero's stamina, conditions, surges, and so on.
-							</li>
-							<li>
-								If you're playing offline, you can export your heroes in PNG or PDF formats (either portrait or landscape).
-							</li>
-							<li>
-								Want something a little different? You can customize any of your abilities to make them more unique to your hero.
-							</li>
-							<li>
-								Need to tweak your hero in a way that's not strictly by the book? No problem! You can customize your hero in any number of ways - an extra ability, bonuses to your characteristics, extra skills, retainers, etc.
-							</li>
-						</ul>
-						<div className='ds-text'>
-							In addition, you can quickly look up rules at any time using the Reference button at the bottom right of the screen.
+						<div className='welcome-buttons'>
+							<Flex align='center' justify='center' gap={10}>
+								<Button type='primary' onClick={props.onNewHero}>Create a New Hero</Button>
+								<Popover
+									trigger='click'
+									content={
+										<Space orientation='vertical' style={{ width: '300px', maxHeight: '330px', overflowY: 'auto' }}>
+											{
+												PregenData.getPregens().map(p => (
+													<Button
+														key={p.id}
+														className='container-button'
+														block={true}
+														onClick={() => {
+															const hero = PregenLogic.pregenToHero(p, props.sourcebooks, options);
+															props.onPregen(hero);
+														}}
+													>
+														<PregenInfo pregen={p} />
+													</Button>
+												))
+											}
+										</Space>
+									}
+								>
+									<Button>Use a Premade Hero</Button>
+								</Popover>
+							</Flex>
 						</div>
 					</div>
 				);
 			case 'director-prep':
 				return (
 					<div className='welcome-section'>
-						<HeaderText
-							extra={<Button type='primary' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('adventure')}>Playbook</Button>}
-						>
-							For Directors: Prep Time
-						</HeaderText>
-						<div className='ds-text'>
-							In your <b>PLAYBOOK</b>, you can build anything you might need for your games:
+						<div>
+							<HeaderText
+								extra={
+									<Button icon={<BookOutlined />} onClick={() => navigation.goToLibrary('encounter')}>Go to the Library</Button>
+								}
+							>
+								For Directors: Prep Time
+							</HeaderText>
+							<div className='ds-text'>
+								In your <b>LIBRARY</b>, you can build anything you might need for your games:
+							</div>
+							<ul>
+								<li>
+									You can build <b>encounters</b>, ensuring that they're perfectly balanced for your heroes.
+									Add monsters and terrain objects, and the app will automatically calculate the encounter's difficulty - or let the app generate a random encounter for you.
+									You can specify the encounter's objectives, or you can use one of the predefined options.
+								</li>
+								<li>
+									You can build <b>montage tests</b>, laying out all the options the players can take and how many times they can take them.
+								</li>
+								<li>
+									You can build <b>negotiations</b>, specifying motivations, pitfalls, and outcomes.
+								</li>
+								<li>
+									You can choose from a set of predefined encounters, montages, and negotiations - or use them as a starting point for your own creations.
+								</li>
+								<li>
+									You can also create detailed <b>tactical maps</b> for your heroes to explore, adding tiles and walls and overlays - or you can generate a random map of whatever size you need.
+									You can use battlemap images for your maps - even animated maps!
+								</li>
+							</ul>
+							<div className='ds-text'>
+								All of these elements can be bundled together into an <b>adventure</b>.
+							</div>
 						</div>
-						<ul>
-							<li>
-								You can build <b>encounters</b>, ensuring that they're perfectly balanced for your heroes.
-								Add monsters and terrain objects, and the app will automatically calculate the encounter's difficulty.
-								You can specify the encounter objectives, or you can use one of the predefined options.
-							</li>
-							<li>
-								You can build <b>montage tests</b> - or copy a predefined one - laying out all the options the players can take and how many times they can take them.
-							</li>
-							<li>
-								You can build <b>negotiations</b> - or copy a predefined one - specifying all the motivations and pitfalls.
-							</li>
-							<li>
-								You can also create detailed <b>tactical maps</b> for your heroes to explore, adding tiles and walls and overlays - or you can generate a random map of whatever size you need.
-								You can use battlemap images for your maps - even animated maps!
-							</li>
-						</ul>
-						<div className='ds-text'>
-							All of these elements can be bundled together into an <b>adventure</b>.
+						<div className='welcome-buttons'>
+							<Flex align='center' justify='center' gap={10}>
+								<Button type='primary' onClick={props.onNewEncounter}>Create a New Encounter</Button>
+							</Flex>
 						</div>
 					</div>
 				);
 			case 'director-run':
 				return (
 					<div className='welcome-section'>
-						<HeaderText
-							extra={<Button type='primary' icon={<PlayCircleOutlined />} onClick={() => navigation.goToSession()}>Session</Button>}
-						>
-							For Directors: Game Time
-						</HeaderText>
-						<div className='ds-text'>
-							In the <b>SESSION</b> screen, you can run your encounters, montages, negotiations, and maps.
-						</div>
-						<ul>
-							<li>
-								In an <b>encounter</b> you can see at a glance the current stamina and conditions of all your monsters (and heroes) and you can add a captain to your minions.
-								When you start a round the app will automatically grant you the appropriate amount of malice.
-								It lists all the ways in which you can spend malice, and it provides a cheat sheet for any triggered actions your monsters or terrain objects have.
-							</li>
-							<li>
-								In a <b>montage</b> you can see which skills the heroes have used, and how many successes and failures they have accumulated.
-							</li>
-							<li>
-								In a <b>negotiation</b> you can track the interest and negotiation stats, and see all the details for motivations and pitfalls.
-							</li>
-							<li>
-								In a <b>tactical map</b> you can modify the fog of war and even edit the map on the fly.
-							</li>
-							<li>
-								You can also create a <b>counter</b> that can count down (or up) to track time, alert levels, or anything else you might need.
-							</li>
-						</ul>
-						<div className='ds-text'>
-							Any of these elements can be shared with your players by opening the <b>player view</b>, a separate tab that you can share (using Discord etc).
+						<div>
+							<HeaderText
+								extra={
+									<Button icon={<PlayCircleOutlined />} onClick={() => navigation.goToSession()}>Go to the Session</Button>
+								}
+							>
+								For Directors: Game Time
+							</HeaderText>
+							<div className='ds-text'>
+								In the <b>SESSION</b> screen, you can run your encounters, montages, negotiations, and maps.
+							</div>
+							<ul>
+								<li>
+									In an <b>encounter</b> you can see at a glance the current stamina and conditions of all your monsters (and heroes) and you can add a captain to your minions.
+									When you start a round the app will automatically grant you the appropriate amount of malice.
+									It lists all the ways in which you can spend malice, and it provides a cheat sheet for any triggered actions your monsters or terrain objects have.
+								</li>
+								<li>
+									In a <b>montage</b> you can see which skills the heroes have used, and how many successes and failures they have accumulated.
+								</li>
+								<li>
+									In a <b>negotiation</b> you can track the interest and negotiation stats, and see all the details for motivations and pitfalls.
+								</li>
+								<li>
+									In a <b>tactical map</b> you can modify the fog of war and even edit the map on the fly.
+								</li>
+								<li>
+									You can also create a <b>counter</b> that can count down (or up) to track time, alert levels, or anything else you might need.
+								</li>
+							</ul>
+							<div className='ds-text'>
+								Any of these elements can be shared with your players by opening the <b>player view</b>, a separate tab that you can share (using Discord etc).
+							</div>
 						</div>
 					</div>
 				);
 			case 'creator':
 				return (
 					<div className='welcome-section'>
-						<HeaderText
-							extra={<Button type='primary' icon={<BookOutlined />} onClick={() => navigation.goToLibrary('ancestry')}>Library</Button>}
-						>
-							For Content Creators
-						</HeaderText>
-						<div className='ds-text'>
-							In the <b>LIBRARY</b>, you can browse the collections of official <b>DRAW STEEL</b> content.
+						<div>
+							<HeaderText
+								extra={
+									<Button icon={<BookOutlined />} onClick={() => navigation.goToLibrary('ancestry')}>Go to the Library</Button>
+								}
+							>
+								For Content Creators
+							</HeaderText>
+							<div className='ds-text'>
+								In the <b>LIBRARY</b>, you can browse the collections of official <b>DRAW STEEL</b> content.
+							</div>
+							<ul>
+								<li>
+									For heroes: ancestries, careers, classes, complications, cultures, domains, kits, perks, titles
+								</li>
+								<li>
+									For directors: magic items, monsters, terrain objects
+								</li>
+							</ul>
+							<div className='ds-text'>
+								When you're creating your own homebrew content, you can create a copy of an existing element and modify it to suit your needs, or you can create it from scratch.
+							</div>
+							<div className='ds-text'>
+								If you're creating a monster, <b>FORGE STEEL</b> provides lots of extra tools so you can build exactly the monster you're imagining, and gauge exactly how much of a challenge it will be.
+							</div>
+							<ul>
+								<li>
+									Want to quickly re-use an ability from an existing monster? You can do that with a click.
+								</li>
+								<li>
+									Need to check how your monster compares to others of the same level? You can do that with a click.
+								</li>
+								<li>
+									Want to create a monster that's a mashup of two or three existing monsters? You can do that with a click.
+								</li>
+							</ul>
 						</div>
-						<ul>
-							<li>
-								For heroes: ancestries, careers, classes, complications, cultures, domains, kits, perks, titles
-							</li>
-							<li>
-								For directors: magic items, monsters, terrain objects
-							</li>
-						</ul>
-						<div className='ds-text'>
-							When you're creating your own homebrew content, you can create a copy of an existing element and modify it to suit your needs, or you can create it from scratch.
-						</div>
-						<div className='ds-text'>
-							If you're creating a monster, <b>FORGE STEEL</b> provides lots of extra tools so you can build exactly the monster you're imagining, and gauge exactly how much of a challenge it will be.
-						</div>
-						<ul>
-							<li>
-								Want to quickly re-use an ability from an existing monster? You can do that with a click.
-							</li>
-							<li>
-								Need to check how your monster compares to others of the same level? You can do that with a click.
-							</li>
-							<li>
-								Want to create a monster that's a mashup of two or three existing monsters? You can do that with a click.
-							</li>
-						</ul>
 					</div>
 				);
 		}
 	};
 
-	try {
-		return (
-			<ErrorBoundary>
-				<div className={isSmall ? 'welcome-page compact' : 'welcome-page full'}>
-					<AppHeader />
-					<div className='welcome-page-content'>
-						<div className='welcome-column'>
-							<HeaderText level={1}>Welcome to FORGE STEEL</HeaderText>
-							<div className='ds-text'>
-								<b>FORGE STEEL</b> is an app for <b>DRAW STEEL</b> players, directors, and content creators.
-							</div>
-							<Flex justify='center' style={{ margin: '15px 0 10px 0' }}>
-								<Segmented
-									options={[
-										{
-											value: 'player',
-											label: (
-												<div className='welcome-tab-button'>
-													<div className='title'>Players</div>
-												</div>
-											)
-										},
-										{
-											value: 'director-prep',
-											label: (
-												<div className='welcome-tab-button'>
-													<div className='title'>Directors</div>
-													<div className='subtitle'>Prep Time</div>
-												</div>
-											)
-										},
-										{
-											value: 'director-run',
-											label: (
-												<div className='welcome-tab-button'>
-													<div className='title'>Directors</div>
-													<div className='subtitle'>Game Time</div>
-												</div>
-											)
-										},
-										{
-											value: 'creator',
-											label: (
-												<div className='welcome-tab-button'>
-													<div className='title'>Creators</div>
-												</div>
-											)
-										}
-									]}
-									value={page}
-									onChange={setPage}
-								/>
-							</Flex>
-							{getContent(page)}
-						</div>
-					</div>
-					<AppFooter page='welcome' highlightAbout={props.highlightAbout} showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
+	return (
+		<ErrorBoundary>
+			<div>
+				<div className='ds-text centered-text'>
+					<b>FORGE STEEL</b> is an app for <b>DRAW STEEL</b> players, directors, and content creators.
 				</div>
-			</ErrorBoundary>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+				<Segmented
+					style={{ margin: '15px 0' }}
+					block={true}
+					options={[
+						{
+							value: 'player',
+							label: (
+								<div className='welcome-tab-button'>
+									<div className='title'>Players</div>
+								</div>
+							)
+						},
+						{
+							value: 'director-prep',
+							label: (
+								<div className='welcome-tab-button'>
+									<div className='title'>Directors</div>
+									<div className='subtitle'>Prep Time</div>
+								</div>
+							)
+						},
+						{
+							value: 'director-run',
+							label: (
+								<div className='welcome-tab-button'>
+									<div className='title'>Directors</div>
+									<div className='subtitle'>Game Time</div>
+								</div>
+							)
+						},
+						{
+							value: 'creator',
+							label: (
+								<div className='welcome-tab-button'>
+									<div className='title'>Creators</div>
+								</div>
+							)
+						}
+					]}
+					value={page}
+					onChange={setPage}
+				/>
+				<SelectablePanel>
+					{getContent()}
+				</SelectablePanel>
+			</div>
+		</ErrorBoundary>
+	);
 };

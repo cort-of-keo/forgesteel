@@ -1,47 +1,39 @@
 import { CSSProperties, ReactNode } from 'react';
-import { Button } from 'antd';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Property } from 'csstype';
 
 import './selectable-panel.scss';
 
 interface Props {
 	children: ReactNode;
 	watermark?: string;
-	showShadow?: boolean;
+	watermarkFit?: Property.ObjectFit;
 	disabled?: boolean;
 	selected?: boolean;
 	style?: CSSProperties;
-	action?: {
-		label: string;
-		onClick: () => void;
-	};
+	action?: ReactNode;
 	onSelect?: () => void;
 };
 
 export const SelectablePanel = (props: Props) => {
-	try {
-		let className = 'selectable-panel';
-		if (props.onSelect) {
-			className += ' selectable';
-		}
-		if (props.selected) {
-			className += ' selected';
-		}
-		if (props.disabled) {
-			className += ' disabled';
-		}
-		if ((props.showShadow !== false) && !props.disabled) {
-			className += ' shadow';
-		}
-
-		return (
-			<div className={className} style={props.style} onClick={props.disabled ? undefined : props.onSelect}>
-				{props.watermark ? <img className='watermark' src={props.watermark} /> : null}
-				{props.children}
-				{props.action ? <Button className='action-button' onClick={e => { e.stopPropagation(); props.action!.onClick(); }}>{props.action.label}</Button> : null}
-			</div>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
+	let className = 'selectable-panel';
+	if (props.onSelect) {
+		className += ' selectable';
 	}
+	if (props.selected) {
+		className += ' selected';
+	}
+	if (props.disabled) {
+		className += ' disabled';
+	}
+
+	return (
+		<ErrorBoundary>
+			<div className={className} style={props.style} onClick={props.disabled ? undefined : props.onSelect}>
+				{props.watermark ? <img className='watermark' src={props.watermark} style={{ objectFit: props.watermarkFit || 'cover' }} /> : null}
+				{props.children}
+				{props.action ? <div className='action-button'>{props.action}</div> : null}
+			</div>
+		</ErrorBoundary>
+	);
 };

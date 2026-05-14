@@ -1,41 +1,96 @@
-import { Montage, MontageChallenge, MontageSection } from '../../../../models/montage';
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { Field } from '../../../controls/field/field';
-import { Flex } from 'antd';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { Markdown } from '../../../controls/markdown/markdown';
-import { PanelMode } from '../../../../enums/panel-mode';
-import { Pill } from '../../../controls/pill/pill';
+import { Flex, Segmented, Space } from 'antd';
+import { Montage, MontageChallenge, MontageSection } from '@/models/montage';
+import { useHeroes, useOptions } from '@/contexts/data-context';
+import { CheckIcon } from '@/components/controls/check-icon/check-icon';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Field } from '@/components/controls/field/field';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { Markdown } from '@/components/controls/markdown/markdown';
+import { MontageLogic } from '@/logic/montage-logic';
+import { PanelMode } from '@/enums/panel-mode';
+import { Pill } from '@/components/controls/pill/pill';
+import { SheetFormatter } from '@/logic/classic-sheet/sheet-formatter';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { SourcebookType } from '@/enums/sourcebook-type';
+import { StatsRow } from '@/components/panels/stats-row/stats-row';
+import { useState } from 'react';
 
 import './montage-panel.scss';
 
 interface Props {
 	montage: Montage;
+	sourcebooks: Sourcebook[];
 	mode?: PanelMode;
 }
 
 export const MontagePanel = (props: Props) => {
-	const getChallenge = (challenge: MontageChallenge) => {
+	const [ page, setPage ] = useState<string>('overview');
+	const options = useOptions();
+	const heroes = useHeroes();
+
+	const getOverview = () => {
 		return (
-			<div key={challenge.id} className='montage-challenge'>
-				<Flex align='center' justify='space-between' gap={10}>
-					{challenge.uses > 1 ? <Pill>x{challenge.uses}</Pill> : null}
+			<>
+				<Markdown text={props.montage.description} />
+				<StatsRow>
 					<Field
-						style={{ flex: '1 1 0', opacity: (challenge.successes + challenge.failures) >= challenge.uses ? 0.3 : 1 }}
-						label={challenge.name}
-						value={
-							<Markdown text={challenge.description} useSpan={true} />
-						}
+						orientation='vertical'
+						label='Difficulty'
+						value={props.montage.difficulty}
 					/>
-				</Flex>
-			</div>
+					<Field
+						orientation='vertical'
+						label='Success Limit'
+						value={(
+							<Space>
+								{MontageLogic.getSuccessLimit(props.montage, heroes, options)}
+								<CheckIcon state='success' />
+							</Space>
+						)}
+					/>
+					<Field
+						orientation='vertical'
+						label='Failure Limit'
+						value={(
+							<Space>
+								{MontageLogic.getFailureLimit(props.montage, heroes, options)}
+								<CheckIcon state='failure' />
+							</Space>
+						)}
+					/>
+				</StatsRow>
+				<HeaderText>Setting the Scene</HeaderText>
+				<Markdown text={props.montage.scene} />
+			</>
 		);
 	};
 
 	const getSection = (section: MontageSection) => {
+		const getChallenge = (challenge: MontageChallenge) => {
+			return (
+				<div key={challenge.id} className='montage-challenge'>
+					<Flex align='center' justify='space-between' gap={10}>
+						<Field
+							style={{ flex: '1 1 0', opacity: (challenge.successes + challenge.failures) >= challenge.uses ? 0.3 : 1 }}
+							label={challenge.name}
+							labelTag={challenge.uses > 1 ? <Pill>x{challenge.uses}</Pill> : null}
+							value={
+								<Markdown text={challenge.description} useSpan={true} />
+							}
+						/>
+					</Flex>
+					<ul>
+						{challenge.characteristics.length > 0 ? <li><Field label='Characteristics' value={challenge.characteristics.join(', ')} /></li> : null}
+						{challenge.skills.length > 0 ? <li><Field label='Skills' value={challenge.skills} /></li> : null}
+						{challenge.abilities.length > 0 ? <li><Field label='Abilities' value={challenge.abilities} /></li> : null}
+					</ul>
+				</div>
+			);
+		};
+
 		return (
 			<div key={section.id} className='montage-section'>
-				<HeaderText>{section.name}</HeaderText>
 				<Markdown text={section.description} />
 				<HeaderText>{section.name || 'Montage'} Challenges</HeaderText>
 				{section.challenges.map(getChallenge)}
@@ -56,32 +111,73 @@ export const MontagePanel = (props: Props) => {
 		);
 	};
 
-	try {
+	const getOutcomes = () => {
 		return (
-			<ErrorBoundary>
-				<div className={props.mode === PanelMode.Full ? 'montage-panel' : 'montage-panel compact'} id={props.mode === PanelMode.Full ? props.montage.id : undefined}>
-					<HeaderText level={1}>{props.montage.name || 'Unnamed Montage'}</HeaderText>
-					<Markdown text={props.montage.description} />
-					{
-						props.mode === PanelMode.Full ?
-							<>
-								<HeaderText>Setting the Scene</HeaderText>
-								<Markdown text={props.montage.scene} />
-								{props.montage.sections.map(getSection)}
-								<div>
-									<HeaderText>Montage Test Outcomes</HeaderText>
-									<Field label='Total Success' value={<Markdown text={props.montage.outcomes.totalSuccess} useSpan={true} />} />
-									<Field label='Partial Success' value={<Markdown text={props.montage.outcomes.partialSuccess} useSpan={true} />} />
-									<Field label='Total Failure' value={<Markdown text={props.montage.outcomes.totalFailure} useSpan={true} />} />
-								</div>
-							</>
-							: null
-					}
-				</div>
-			</ErrorBoundary>
+			<>
+				<Field label='Total Success' value={<Markdown text={props.montage.outcomes.totalSuccess} useSpan={true} />} />
+				<Field label='Partial Success' value={<Markdown text={props.montage.outcomes.partialSuccess} useSpan={true} />} />
+				<Field label='Total Failure' value={<Markdown text={props.montage.outcomes.totalFailure} useSpan={true} />} />
+			</>
 		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
+	};
+
+	const getContent = () => {
+		let content;
+		switch (page) {
+			case 'overview':
+				content = getOverview();
+				break;
+			case 'outcomes':
+				content = getOutcomes();
+				break;
+			default:
+				content = getSection(props.montage.sections.find(s => s.id === page) as MontageSection);
+				break;
+		}
+
+		return (
+			<>
+				<Segmented
+					style={{ marginBottom: '20px' }}
+					block={true}
+					options={[
+						{ value: 'overview', label: 'Overview' },
+						...props.montage.sections.map(s => ({ value: s.id, label: s.name || 'Details' })),
+						{ value: 'outcomes', label: 'Outcomes' }
+					]}
+					value={page}
+					onChange={setPage}
+				/>
+				{content}
+			</>
+		);
+	};
+
+	const tags = [];
+	if (props.sourcebooks.length > 0) {
+		const sourcebookType = SourcebookLogic.getMontageSourcebook(props.sourcebooks, props.montage)?.type || SourcebookType.Official;
+		if (sourcebookType !== SourcebookType.Official) {
+			tags.push(sourcebookType);
+		}
 	}
+
+	if (props.mode !== PanelMode.Full) {
+		return (
+			<div className='montage-panel compact'>
+				<HeaderText level={1} tags={tags}>
+					{props.montage.name || 'Unnamed Montage'}
+				</HeaderText>
+				<Markdown text={props.montage.description} />
+			</div>
+		);
+	}
+
+	return (
+		<ErrorBoundary>
+			<div className='montage-panel' id={SheetFormatter.getPageId('montage', props.montage.id)}>
+				<HeaderText level={1} tags={tags}>{props.montage.name || 'Unnamed Montage'}</HeaderText>
+				{getContent()}
+			</div>
+		</ErrorBoundary>
+	);
 };

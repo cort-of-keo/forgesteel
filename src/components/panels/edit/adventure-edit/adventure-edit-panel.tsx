@@ -1,35 +1,30 @@
-import { Button, Input, Space, Tabs } from 'antd';
+import { Button, Space, Tabs } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Adventure } from '../../../../models/adventure';
-import { Collections } from '../../../../utils/collections';
-import { DangerButton } from '../../../controls/danger-button/danger-button';
-import { Empty } from '../../../controls/empty/empty';
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { Expander } from '../../../controls/expander/expander';
-import { FactoryLogic } from '../../../../logic/factory-logic';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { Hero } from '../../../../models/hero';
-import { Markdown } from '../../../controls/markdown/markdown';
-import { MultiLine } from '../../../controls/multi-line/multi-line';
-import { NumberSpin } from '../../../controls/number-spin/number-spin';
-import { Options } from '../../../../models/options';
-import { Playbook } from '../../../../models/playbook';
-import { PlaybookLogic } from '../../../../logic/playbook-logic';
-import { Plot } from '../../../../models/plot';
-import { PlotEditPanel } from '../plot-edit/plot-edit-panel';
-import { PlotGraphPanel } from '../../plot-graph/plot-graph-panel';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { Utils } from '../../../../utils/utils';
+import { Markdown, MarkdownEditor } from '@/components/controls/markdown/markdown';
+import { Adventure } from '@/models/adventure';
+import { AdventureLogic } from '@/logic/adventure-logic';
+import { Collections } from '@/utils/collections';
+import { DangerButton } from '@/components/controls/danger-button/danger-button';
+import { Empty } from '@/components/controls/empty/empty';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Expander } from '@/components/controls/expander/expander';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { NameDescEditPanel } from '@/components/panels/edit/name-desc-edit/name-desc-edit-panel';
+import { NumberSpin } from '@/components/controls/number-spin/number-spin';
+import { Plot } from '@/models/plot';
+import { PlotEditPanel } from '@/components/panels/edit/plot-edit/plot-edit-panel';
+import { PlotGraphPanel } from '@/components/panels/plot-graph/plot-graph-panel';
+import { Sourcebook } from '@/models/sourcebook';
+import { TextInput } from '@/components/controls/text-input/text-input';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './adventure-edit-panel.scss';
 
 interface Props {
 	adventure: Adventure;
-	playbook: Playbook;
 	sourcebooks: Sourcebook[];
-	heroes: Hero[];
-	options: Options;
 	onChange: (adventure: Adventure) => void;
 }
 
@@ -40,7 +35,7 @@ export const AdventureEditPanel = (props: Props) => {
 
 	const addPlotPoint = (previousID?: string) => {
 		const copy = Utils.copy(adventure);
-		const currentPlotCopy = PlaybookLogic.getPlotPoint(copy.plot, currentPlot.id);
+		const currentPlotCopy = AdventureLogic.getPlotPoint(copy.plot, currentPlot.id);
 
 		if (currentPlotCopy) {
 			const plot = FactoryLogic.createAdventurePlot();
@@ -68,7 +63,7 @@ export const AdventureEditPanel = (props: Props) => {
 
 	const deletePlotPoint = (id: string) => {
 		const copy = Utils.copy(adventure);
-		const currentPlotCopy = PlaybookLogic.getPlotPoint(copy.plot, currentPlot.id);
+		const currentPlotCopy = AdventureLogic.getPlotPoint(copy.plot, currentPlot.id);
 
 		if (currentPlotCopy) {
 			currentPlotCopy.plots = currentPlotCopy.plots.filter(p => p.id !== id);
@@ -88,19 +83,11 @@ export const AdventureEditPanel = (props: Props) => {
 	};
 
 	const getAdventureEditor = () => {
-		const setName = (value: string) => {
+		const setNameDesc = (name: string, desc: string) => {
 			const copy = Utils.copy(adventure);
-			copy.name = value;
-			copy.plot.name = value;
-			setAdventure(copy);
-			if (props.onChange) {
-				props.onChange(copy);
-			}
-		};
-
-		const setDescription = (value: string) => {
-			const copy = Utils.copy(adventure);
-			copy.description = value;
+			copy.name = name;
+			copy.plot.name = name;
+			copy.description = desc;
 			setAdventure(copy);
 			if (props.onChange) {
 				props.onChange(copy);
@@ -188,25 +175,17 @@ export const AdventureEditPanel = (props: Props) => {
 						key: '1',
 						label: 'Adventure',
 						children: (
-							<Space direction='vertical' style={{ width: '100%' }}>
-								<HeaderText>Name</HeaderText>
-								<Input
-									status={adventure.name === '' ? 'warning' : ''}
-									placeholder='Name'
-									allowClear={true}
-									value={adventure.name}
-									onChange={e => setName(e.target.value)}
-								/>
-								<HeaderText>Description</HeaderText>
-								<MultiLine value={adventure.description} onChange={setDescription} />
-							</Space>
+							<NameDescEditPanel
+								element={adventure}
+								onChange={setNameDesc}
+							/>
 						)
 					},
 					{
 						key: '2',
 						label: 'Party',
 						children: (
-							<Space direction='vertical' style={{ width: '100%' }}>
+							<Space orientation='vertical' style={{ width: '100%' }}>
 								<HeaderText>Party</HeaderText>
 								<NumberSpin label='Number of Heroes' min={1} value={adventure.party.count} onChange={setCount} />
 								<NumberSpin label='Hero Level' min={1} max={10} value={adventure.party.level} onChange={setLevel} />
@@ -217,7 +196,7 @@ export const AdventureEditPanel = (props: Props) => {
 						key: '3',
 						label: 'Sections',
 						children: (
-							<Space direction='vertical' style={{ width: '100%' }}>
+							<Space orientation='vertical' style={{ width: '100%' }}>
 								<HeaderText
 									extra={
 										<Button type='text' icon={<PlusOutlined />} onClick={addSection} />
@@ -237,15 +216,15 @@ export const AdventureEditPanel = (props: Props) => {
 											]}
 										>
 											<HeaderText>Section</HeaderText>
-											<Space direction='vertical' style={{ width: '100%' }}>
-												<Input
+											<Space orientation='vertical' style={{ width: '100%' }}>
+												<TextInput
 													status={section.name === '' ? 'warning' : ''}
 													placeholder='Name'
 													allowClear={true}
 													value={section.name}
-													onChange={e => setSectionName(n, e.target.value)}
+													onChange={value => setSectionName(n, value)}
 												/>
-												<MultiLine placeholder='Description' value={section.description} onChange={value => setSectionDescription(n, value)} />
+												<MarkdownEditor placeholder='Description' value={section.description} onChange={value => setSectionDescription(n, value)} />
 											</Space>
 										</Expander>
 									))
@@ -262,7 +241,7 @@ export const AdventureEditPanel = (props: Props) => {
 						key: '4',
 						label: 'Plot Points',
 						children: (
-							<Space direction='vertical' style={{ width: '100%' }}>
+							<Space orientation='vertical' style={{ width: '100%' }}>
 								<HeaderText
 									extra={
 										<Button type='text' icon={<PlusOutlined />} onClick={() => addPlotPoint()} />
@@ -303,7 +282,7 @@ export const AdventureEditPanel = (props: Props) => {
 	const getPlotEditor = (plot: Plot) => {
 		const changePlotPoint = (plot: Plot) => {
 			const copy = Utils.copy(adventure);
-			const currentPlotCopy = PlaybookLogic.getPlotPoint(copy.plot, currentPlot.id);
+			const currentPlotCopy = AdventureLogic.getPlotPoint(copy.plot, currentPlot.id);
 
 			if (currentPlotCopy) {
 				const index = currentPlotCopy.plots.findIndex(p => p.id === plot.id);
@@ -327,10 +306,7 @@ export const AdventureEditPanel = (props: Props) => {
 				key={plot.id}
 				plot={plot}
 				adventure={adventure}
-				playbook={props.playbook}
 				sourcebooks={props.sourcebooks}
-				heroes={props.heroes}
-				options={props.options}
 				onChange={changePlotPoint}
 				onAddAfter={addPlotPoint}
 				onDelete={deletePlotPoint}
@@ -350,32 +326,28 @@ export const AdventureEditPanel = (props: Props) => {
 		return getAdventureEditor();
 	};
 
-	try {
-		return (
-			<ErrorBoundary>
-				<div className='adventure-edit-panel'>
-					<div className='plot-workspace'>
-						<PlotGraphPanel
-							label={currentPlot === adventure.plot ? adventure.name || 'Unnamed Adventure' : currentPlot.name || 'Unnamed Plot Point'}
-							plot={currentPlot}
-							adventure={adventure}
-							selectedPlot={selectedPlot || undefined}
-							onSelect={setSelectedPlot}
-							onOpen={plot => {
-								setSelectedPlot(null);
-								setCurrentPlot(plot);
-							}}
-							onCreate={addPlotPoint}
-						/>
-					</div>
-					<div className='plot-editor'>
-						{getEditor()}
-					</div>
+	return (
+		<ErrorBoundary>
+			<div className='adventure-edit-panel'>
+				<div className='plot-workspace'>
+					<PlotGraphPanel
+						label={currentPlot === adventure.plot ? adventure.name || 'Unnamed Adventure' : currentPlot.name || 'Unnamed Plot Point'}
+						tags={[]}
+						plot={currentPlot}
+						adventure={adventure}
+						selectedPlot={selectedPlot || undefined}
+						onSelect={setSelectedPlot}
+						onOpen={plot => {
+							setSelectedPlot(null);
+							setCurrentPlot(plot);
+						}}
+						onCreate={addPlotPoint}
+					/>
 				</div>
-			</ErrorBoundary>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+				<div className='plot-editor'>
+					{getEditor()}
+				</div>
+			</div>
+		</ErrorBoundary>
+	);
 };

@@ -1,9 +1,8 @@
-import { AbilityDistanceType } from '../../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { Characteristic } from '../../../enums/characteristic';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { SkillList } from '../../../enums/skill-list';
-import { SubClass } from '../../../models/subclass';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { SubClass } from '@/models/subclass';
 
 export const auteur: SubClass = {
 	id: 'u3JAwbvGQEHPi6cY',
@@ -15,7 +14,6 @@ export const auteur: SubClass = {
 			features: [
 				FactoryLogic.feature.createSkillChoice({
 					id: '63GSnAtLidKQThSw',
-					listOptions: [ SkillList.Interpersonal ],
 					selected: [ 'Brag' ]
 				}),
 				FactoryLogic.feature.createAbility({
@@ -46,9 +44,7 @@ export const auteur: SubClass = {
 * You orate a rousing tale of victory. One ally within distance gains an edge on the next power roll they make before the start of your next turn.
 * You weave a tale of high-stakes heroics. One ally within distance gains 1 surge.
 * You insult a foe where they’re most vulnerable. One enemy within distance takes a bane on the next power roll they make before the end of their next turn.`),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'You can choose two targets for the chosen effect.'
 							})
 						]
@@ -65,8 +61,7 @@ export const auteur: SubClass = {
 						target: 'One creature',
 						sections: [
 							FactoryLogic.createAbilitySectionText('An edge on the triggering roll becomes a bane, or a double edge becomes an edge. A bane becomes an edge, or a double bane becomes a bane.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'An edge on the triggering roll becomes a double bane, or a double edge is negated. A bane becomes a double edge, or a double bane is negated.'
 							})
@@ -303,5 +298,6 @@ export const auteur: SubClass = {
 			features: []
 		}
 	],
+	abilities: [],
 	selected: false
 };

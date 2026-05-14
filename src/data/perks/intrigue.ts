@@ -1,7 +1,7 @@
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureType } from '../../enums/feature-type';
-import { Perk } from '../../models/perk';
-import { PerkList } from '../../enums/perk-list';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureType } from '@/enums/feature-type';
+import { Perk } from '@/models/perk';
+import { PerkList } from '@/enums/perk-list';
 
 export class IntriguePerkData {
 	static criminalContacts: Perk = {
@@ -33,7 +33,6 @@ export class IntriguePerkData {
 				name: 'Gum Up The Works',
 				description: 'You prevent a trap from activating.',
 				type: FactoryLogic.type.createTrigger('A mundane trap activates within 3 squares of you.'),
-				keywords: [],
 				distance: [ FactoryLogic.distance.createSelf() ],
 				target: 'Self',
 				sections: [

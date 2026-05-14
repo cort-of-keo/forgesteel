@@ -1,6 +1,5 @@
-import { HeroEditTab } from '../models/hero';
-import { PlaybookElementKind } from '../models/playbook';
-import { SourcebookElementKind } from '../models/sourcebook';
+import { HeroEditTab } from '@/models/hero';
+import { SourcebookElementKind } from '@/models/sourcebook';
 import { useNavigate } from 'react-router';
 
 export const useNavigation = () => {
@@ -34,20 +33,23 @@ export const useNavigation = () => {
 			}
 			return navigate(`/library/edit/${kind}/${sourcebookID}/${elementID}`);
 		},
-		goToPlaybook: (kind: PlaybookElementKind, elementID?: string) => {
-			if (elementID) {
-				return navigate(`/playbook/${kind}/${elementID}`);
-			}
-			return navigate(`/playbook/${kind}`);
-		},
-		goToPlaybookEdit: (kind: PlaybookElementKind, elementID: string) => {
-			return navigate(`/playbook/edit/${kind}/${elementID}`);
+		goToLibraryPrint: (kind: SourcebookElementKind, sourcebookID: string, elementID: string) => {
+			return navigate(`/library/print/${kind}/${sourcebookID}/${elementID}`);
 		},
 		goToSession: () => {
 			return navigate('/session/director');
 		},
 		goToPlayerView: () => {
 			return navigate('/session/player');
+		},
+		goToTransfer: () => {
+			return navigate('/transfer');
+		},
+		goToBackup: () => {
+			return navigate('/backup');
+		},
+		goToClocktower: () => {
+			return navigate('/clocktower');
 		}
 	};
 };

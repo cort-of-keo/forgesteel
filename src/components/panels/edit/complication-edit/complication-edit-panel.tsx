@@ -1,21 +1,14 @@
-import { Button, Input, Space, Tabs } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, PlusOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { Collections } from '../../../../utils/collections';
-import { Complication } from '../../../../models/complication';
-import { DangerButton } from '../../../controls/danger-button/danger-button';
-import { Empty } from '../../../controls/empty/empty';
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { Expander } from '../../../controls/expander/expander';
-import { FactoryLogic } from '../../../../logic/factory-logic';
-import { Feature } from '../../../../models/feature';
-import { FeatureEditPanel } from '../feature-edit/feature-edit-panel';
-import { FeatureLogic } from '../../../../logic/feature-logic';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { MultiLine } from '../../../controls/multi-line/multi-line';
-import { NameGenerator } from '../../../../utils/name-generator';
-import { Options } from '../../../../models/options';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { Utils } from '../../../../utils/utils';
+import { Complication } from '@/models/complication';
+import { ComplicationPanel } from '@/components/panels/elements/complication-panel/complication-panel';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Feature } from '@/models/feature';
+import { FeatureListEditPanel } from '@/components/panels/edit/feature-list-edit/feature-list-edit-panel';
+import { NameDescEditPanel } from '@/components/panels/edit/name-desc-edit/name-desc-edit-panel';
+import { PanelMode } from '@/enums/panel-mode';
+import { SelectablePanel } from '@/components/controls/selectable-panel/selectable-panel';
+import { Sourcebook } from '@/models/sourcebook';
+import { Tabs } from 'antd';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './complication-edit-panel.scss';
@@ -23,125 +16,52 @@ import './complication-edit-panel.scss';
 interface Props {
 	complication: Complication;
 	sourcebooks: Sourcebook[];
-	options: Options;
+	mode?: PanelMode;
 	onChange: (complication: Complication) => void;
 }
 
 export const ComplicationEditPanel = (props: Props) => {
 	const [ complication, setComplication ] = useState<Complication>(props.complication);
 
-	try {
-		const getNameAndDescriptionSection = () => {
-			const setName = (value: string) => {
-				const copy = Utils.copy(complication);
-				copy.name = value;
-				setComplication(copy);
-				props.onChange(copy);
-			};
-
-			const setDescription = (value: string) => {
-				const copy = Utils.copy(complication);
-				copy.description = value;
-				setComplication(copy);
-				props.onChange(copy);
-			};
-
-			return (
-				<Space direction='vertical' style={{ width: '100%' }}>
-					<HeaderText>Name</HeaderText>
-					<Input
-						status={complication.name === '' ? 'warning' : ''}
-						placeholder='Name'
-						allowClear={true}
-						addonAfter={<ThunderboltOutlined className='random-btn' onClick={() => setName(NameGenerator.generateName())} />}
-						value={complication.name}
-						onChange={e => setName(e.target.value)}
-					/>
-					<HeaderText>Description</HeaderText>
-					<MultiLine value={complication.description} onChange={setDescription} />
-				</Space>
-			);
-		};
-
-		const getFeaturesEditSection = () => {
-			const addFeature = () => {
-				const copy = Utils.copy(complication);
-				copy.features.push(FactoryLogic.feature.create({
-					id: Utils.guid(),
-					name: '',
-					description: ''
-				}));
-				setComplication(copy);
-				props.onChange(copy);
-			};
-
-			const changeFeature = (feature: Feature) => {
-				const copy = Utils.copy(complication);
-				const index = copy.features.findIndex(f => f.id === feature.id);
-				if (index !== -1) {
-					copy.features[index] = feature;
-				}
-				setComplication(copy);
-				props.onChange(copy);
-			};
-
-			const moveFeature = (feature: Feature, direction: 'up' | 'down') => {
-				const copy = Utils.copy(complication);
-				const index = copy.features.findIndex(f => f.id === feature.id);
-				copy.features = Collections.move(copy.features, index, direction);
-				setComplication(copy);
-				props.onChange(copy);
-			};
-
-			const deleteFeature = (feature: Feature) => {
-				const copy = Utils.copy(complication);
-				copy.features = copy.features.filter(f => f.id !== feature.id);
-				setComplication(copy);
-				props.onChange(copy);
-			};
-
-			return (
-				<Space direction='vertical' style={{ width: '100%' }}>
-					<HeaderText
-						extra={
-							<Button type='text' icon={<PlusOutlined />} onClick={addFeature} />
-						}
-					>
-						Features
-					</HeaderText>
-					{
-						complication.features.map(f => (
-							<Expander
-								key={f.id}
-								title={f.name || 'Unnamed Feature'}
-								tags={[ FeatureLogic.getFeatureTag(f) ]}
-								extra={[
-									<Button key='up' type='text' title='Move Up' icon={<CaretUpOutlined />} onClick={e => { e.stopPropagation(); moveFeature(f, 'up'); }} />,
-									<Button key='down' type='text' title='Move Down' icon={<CaretDownOutlined />} onClick={e => { e.stopPropagation(); moveFeature(f, 'down'); }} />,
-									<DangerButton key='delete' mode='clear' onConfirm={e => { e.stopPropagation(); deleteFeature(f); }} />
-								]}
-							>
-								<FeatureEditPanel
-									feature={f}
-									sourcebooks={props.sourcebooks}
-									options={props.options}
-									onChange={changeFeature}
-								/>
-							</Expander>
-						))
-					}
-					{
-						complication.features.length === 0 ?
-							<Empty />
-							: null
-					}
-				</Space>
-			);
+	const getNameAndDescriptionSection = () => {
+		const onChange = (name: string, desc: string) => {
+			const copy = Utils.copy(complication);
+			copy.name = name;
+			copy.description = desc;
+			setComplication(copy);
+			props.onChange(copy);
 		};
 
 		return (
-			<ErrorBoundary>
-				<div className='complication-edit-panel'>
+			<NameDescEditPanel
+				element={complication}
+				onChange={onChange}
+			/>
+		);
+	};
+
+	const getFeaturesEditSection = () => {
+		const onChange = (features: Feature[]) => {
+			const copy = Utils.copy(complication);
+			copy.features = Utils.copy(features);
+			setComplication(copy);
+			props.onChange(copy);
+		};
+
+		return (
+			<FeatureListEditPanel
+				title='Features'
+				features={complication.features}
+				sourcebooks={props.sourcebooks}
+				onChange={onChange}
+			/>
+		);
+	};
+
+	return (
+		<ErrorBoundary>
+			<div className='complication-edit-panel'>
+				<div className='complication-workspace-column'>
 					<Tabs
 						items={[
 							{
@@ -157,10 +77,30 @@ export const ComplicationEditPanel = (props: Props) => {
 						]}
 					/>
 				</div>
-			</ErrorBoundary>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+				{
+					props.mode === PanelMode.Full ?
+						<div className='complication-preview-column'>
+							<Tabs
+								items={[
+									{
+										key: '1',
+										label: 'Preview',
+										children: (
+											<SelectablePanel>
+												<ComplicationPanel
+													complication={complication}
+													sourcebooks={props.sourcebooks}
+													mode={PanelMode.Full}
+												/>
+											</SelectablePanel>
+										)
+									}
+								]}
+							/>
+						</div>
+						: null
+				}
+			</div>
+		</ErrorBoundary>
+	);
 };

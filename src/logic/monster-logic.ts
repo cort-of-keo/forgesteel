@@ -1,21 +1,29 @@
-import { FeatureMalice, FeatureMaliceAbility } from '../models/feature';
-import { Characteristic } from '../enums/characteristic';
-import { Collections } from '../utils/collections';
-import { ConditionType } from '../enums/condition-type';
-import { DamageModifierType } from '../enums/damage-modifier-type';
-import { FeatureLogic } from './feature-logic';
-import { FeatureType } from '../enums/feature-type';
-import { Monster } from '../models/monster';
-import { MonsterData } from '../data/monster-data';
-import { MonsterFeatureCategory } from '../enums/monster-feature-category';
-import { MonsterFilter } from '../models/filter';
-import { MonsterGroup } from '../models/monster-group';
-import { MonsterOrganizationType } from '../enums/monster-organization-type';
-import { MonsterRoleType } from '../enums/monster-role-type';
-import { MonsterState } from '../models/monster-state';
-import { Options } from '../models/options';
-import { Random } from '../utils/random';
-import { Utils } from '../utils/utils';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { Characteristic } from '@/enums/characteristic';
+import { Collections } from '@/utils/collections';
+import { ConditionType } from '@/enums/condition-type';
+import { CreatureLogic } from '@/logic/creature-logic';
+import { EncounterSlot } from '@/models/encounter-slot';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { Feature } from '@/models/feature';
+import { FeatureField } from '@/enums/feature-field';
+import { FeatureLogic } from '@/logic/feature-logic';
+import { FeatureType } from '@/enums/feature-type';
+import { ModifierLogic } from '@/logic/modifier-logic';
+import { Monster } from '@/models/monster';
+import { MonsterData } from '@/data/monster-data';
+import { MonsterFeatureCategory } from '@/enums/monster-feature-category';
+import { MonsterFilter } from '@/models/filter';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { MonsterState } from '@/models/monster-state';
+import { Random } from '@/utils/random';
+import { Skill } from '@/models/skill';
+import { SkillList } from '@/enums/skill-list';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { Utils } from '@/utils/utils';
 
 export class MonsterLogic {
 	static getMonsterName = (monster: Monster, group?: MonsterGroup) => {
@@ -43,31 +51,38 @@ export class MonsterLogic {
 
 		if (monster.role.type === MonsterRoleType.NoRole) {
 			if (monster.role.organization === MonsterOrganizationType.NoOrganization) {
-				return `Level ${lvl}`;
+				return lvl ? `Level ${lvl}` : '';
 			} else {
-				return `Level ${lvl} ${monster.role.organization}`;
+				return lvl ? `Level ${lvl} ${monster.role.organization}` : `${monster.role.organization}`;
 			}
 		}
 
 		if (monster.role.organization === MonsterOrganizationType.NoOrganization) {
-			return `Level ${lvl} ${monster.role.type}`;
+			return lvl ? `Level ${lvl} ${monster.role.type}` : `${monster.role.type}`;
 		}
 
 		const orgGoesLast = [
 			MonsterOrganizationType.Retainer
 		].includes(monster.role.organization);
 		if (orgGoesLast) {
-			return `Level ${lvl} ${monster.role.type} ${monster.role.organization}`;
+			return lvl ? `Level ${lvl} ${monster.role.type} ${monster.role.organization}` : `${monster.role.type} ${monster.role.organization}`;
 		}
 
-		return `Level ${lvl} ${monster.role.organization} ${monster.role.type}`;
+		return lvl ? `Level ${lvl} ${monster.role.organization} ${monster.role.type}` : `${monster.role.organization} ${monster.role.type}`;
 	};
 
 	static getStamina = (monster: Monster) => {
 		let stamina = monster.stamina;
 
+		MonsterLogic.getFeatures(monster)
+			.filter(f => f.type === FeatureType.Bonus)
+			.filter(f => f.data.field === FeatureField.Stamina)
+			.forEach(f => {
+				stamina += ModifierLogic.calculateModifierValue(f.data, monster);
+			});
+
 		if (monster.retainer && monster.retainer.level) {
-			stamina += 10 * (monster.retainer.level - monster.level);
+			stamina += 9 * (monster.retainer.level - monster.level);
 		}
 
 		return stamina;
@@ -99,12 +114,34 @@ export class MonsterLogic {
 	static getFreeStrikeDamage = (monster: Monster) => {
 		let damage = monster.freeStrikeDamage;
 
+		MonsterLogic.getFeatures(monster)
+			.filter(f => f.type === FeatureType.Bonus)
+			.filter(f => f.data.field === FeatureField.FreeStrikeDamage)
+			.forEach(f => {
+				damage += ModifierLogic.calculateModifierValue(f.data, monster);
+			});
+
 		if (monster.retainer && monster.retainer.level) {
 			const levels = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ].filter(lvl => (lvl > monster.level) && (lvl <= monster.retainer!.level));
 			damage += levels.filter(lvl => lvl % 3 === 0).length * 2;
 		}
 
 		return damage;
+	};
+
+	static getFreeStrikeDistance = (monster: Monster) => {
+		const distance = monster.features.filter(f => f.type === FeatureType.Ability)
+			.filter(f => f.data.ability.cost === 'signature')
+			.map(f => f.data.ability)
+			.reduce((distance, a) => {
+				const abilityRangedDistance = a.distance.filter(d => d.type === AbilityDistanceType.Ranged)
+					.reduce((rd, ad) => {
+						return Math.max(rd, ad.value);
+					}, 0);
+				return Math.max(distance, abilityRangedDistance);
+			}, 5);
+
+		return distance;
 	};
 
 	static getFeatures = (monster: Monster) => {
@@ -187,10 +224,10 @@ export class MonsterLogic {
 		return true;
 	};
 
-	static getRoleMultiplier = (organization: MonsterOrganizationType, options: Options) => {
+	static getRoleMultiplier = (organization: MonsterOrganizationType) => {
 		switch (organization) {
 			case MonsterOrganizationType.Minion:
-				return options.minionCount;
+				return 4;
 		}
 
 		return 1;
@@ -215,8 +252,28 @@ export class MonsterLogic {
 		return value;
 	};
 
+	static getStability = (monster: Monster) => {
+		let stability = monster.stability;
+
+		MonsterLogic.getFeatures(monster)
+			.filter(f => f.type === FeatureType.Bonus)
+			.filter(f => f.data.field === FeatureField.Stability)
+			.forEach(f => {
+				stability += ModifierLogic.calculateModifierValue(f.data, monster);
+			});
+
+		return stability;
+	};
+
 	static getSpeed = (monster: Monster) => {
 		let value = monster.speed.value;
+
+		MonsterLogic.getFeatures(monster)
+			.filter(f => f.type === FeatureType.Bonus)
+			.filter(f => f.data.field === FeatureField.Speed)
+			.forEach(f => {
+				value += ModifierLogic.calculateModifierValue(f.data, monster);
+			});
 
 		if (monster.state.conditions.some(c => [ ConditionType.Grabbed, ConditionType.Restrained ].includes(c.type))) {
 			value = 0;
@@ -256,61 +313,10 @@ export class MonsterLogic {
 		return Collections.sort(conditions, c => c);
 	};
 
-	static getDamageModifiers = (monster: Monster, type: DamageModifierType) => {
-		const modifiers: { damageType: string, value: number }[] = [];
-
-		// Collate from features
-		MonsterLogic.getFeatures(monster)
-			.filter(f => f.type === FeatureType.DamageModifier)
-			.forEach(f => {
-				f.data.modifiers
-					.filter(dm => dm.type === type)
-					.forEach(dm => {
-						let value = dm.value;
-						if (dm.valueCharacteristics.length > 0) {
-							const characteristicValue = Collections.max(dm.valueCharacteristics.map(ch => MonsterLogic.getCharacteristic(monster, ch)), v => v) || 0;
-							const multiplier = dm.valueCharacteristicMultiplier || 1;
-							value += characteristicValue * multiplier;
-						}
-						value += dm.valuePerLevel * (monster.level - 1);
-						value += dm.valuePerEchelon * MonsterLogic.getEchelon(monster);
-
-						const existing = modifiers.find(x => x.damageType === dm.damageType);
-						if (existing) {
-							existing.value += dm.value;
-						} else {
-							modifiers.push({
-								damageType: dm.damageType,
-								value: value
-							});
-						}
-					});
-			});
-
-		return Collections.sort(modifiers, dm => dm.damageType);
-	};
-
-	static getEchelon = (monster: Monster) => {
-		const level = MonsterLogic.getMonsterLevel(monster);
-
-		switch (level) {
-			case 1:
-			case 2:
-			case 3:
-				return 1;
-			case 4:
-			case 5:
-			case 6:
-				return 2;
-			case 7:
-			case 8:
-			case 9:
-				return 3;
-			case 10:
-				return 4;
-		}
-
-		return 1;
+	static getDamageModifiers = (monster: Monster) => {
+		const features = MonsterLogic.getFeatures(monster)
+			.filter(f => f.type === FeatureType.DamageModifier);
+		return ModifierLogic.getDamageModifiers(features, monster);
 	};
 
 	static getCombatState = (monster: Monster) => {
@@ -393,12 +399,50 @@ export class MonsterLogic {
 		return str;
 	};
 
+	static getMinionStaminaDescription = (slot: EncounterSlot) => {
+		const max = Collections.sum(slot.monsters, m => MonsterLogic.getStamina(m));
+
+		let str = `${max}`;
+		if (slot.state.staminaDamage > 0) {
+			str = `${Math.max(max - slot.state.staminaDamage, 0)} / ${max}`;
+		}
+		if (slot.state.staminaTemp > 0) {
+			str += ` +${slot.state.staminaTemp}`;
+		}
+
+		return str;
+	};
+
 	static getWindedThreshold = (monster: Monster) => {
 		return Math.floor(MonsterLogic.getStamina(monster) / 2);
 	};
 
 	static getDeadThreshold = (monster: Monster) => {
 		return -MonsterLogic.getWindedThreshold(monster);
+	};
+
+	static getSkills = (monster: Monster, sourcebooks: Sourcebook[]) => {
+		const skillNames: string[] = [];
+
+		// Collate from features
+		this.getFeatures(monster)
+			.filter(f => f.type === FeatureType.SkillChoice)
+			.forEach(f => {
+				skillNames.push(...f.data.selected);
+			});
+
+		const skills: Skill[] = [];
+		Collections.distinct(skillNames, s => s)
+			.forEach(name => {
+				const skill = SourcebookLogic.getSkill(name, sourcebooks);
+				if (skill) {
+					skills.push(skill);
+				} else {
+					skills.push({ name: name, description: '', list: SkillList.Custom });
+				}
+			});
+
+		return Collections.sort(skills, s => s.name);
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -420,15 +464,35 @@ export class MonsterLogic {
 	};
 
 	static getMaliceOptions = (monster: Monster, group?: MonsterGroup) => {
-		const options: (FeatureMalice | FeatureMaliceAbility)[] = [ ...MonsterData.malice ];
+		const options: Feature[] = [ ...MonsterData.malice ];
 		if (group) {
-			options.push(...group.malice.filter(f => f.data.echelon <= MonsterLogic.getEchelon(monster)));
+			const level = MonsterLogic.getMonsterLevel(monster);
+			options.push(...group.malice.filter(f => {
+				let echelon = 1;
+				switch (f.type) {
+					case FeatureType.Malice:
+					case FeatureType.MaliceAbility:
+						echelon = f.data.echelon;
+						break;
+				}
+				return echelon <= CreatureLogic.getEchelon(level);
+			}));
 		}
 
 		return options.sort((a, b) => {
-			const getCost = (malice: FeatureMalice | FeatureMaliceAbility) => {
-				let cost = (malice.type === FeatureType.MaliceAbility) ? malice.data.ability.cost as number : malice.data.cost;
-				const repeatable = (malice.type === FeatureType.MaliceAbility) ? malice.data.ability.repeatable : malice.data.repeatable;
+			const getCost = (malice: Feature) => {
+				let cost = 0;
+				let repeatable = false;
+				switch (malice.type) {
+					case FeatureType.Malice:
+						cost = malice.data.cost as number;
+						repeatable = malice.data.repeatable || false;
+						break;
+					case FeatureType.MaliceAbility:
+						cost = malice.data.ability.cost as number;
+						repeatable = malice.data.ability.repeatable;
+						break;
+				}
 				if (repeatable) {
 					cost += 0.5;
 				}
@@ -441,54 +505,94 @@ export class MonsterLogic {
 
 	///////////////////////////////////////////////////////////////////////////
 
-	static createCharacteristics = (might: number, agility: number, reason: number, intuition: number, presence: number) => {
-		return [
-			{ characteristic: Characteristic.Might, value: might },
-			{ characteristic: Characteristic.Agility, value: agility },
-			{ characteristic: Characteristic.Reason, value: reason },
-			{ characteristic: Characteristic.Intuition, value: intuition },
-			{ characteristic: Characteristic.Presence, value: presence }
-		];
-	};
-
-	///////////////////////////////////////////////////////////////////////////
-
 	static getSuggestedStats = (monster: Monster) => {
+		const characteristics = { m: '0', a: '0', r: '0', i: '0', p: '0' };
 		let roleMod = 0;
 		let damageMod = 0;
 		let orgMod = 0;
 		let staminaMod = 0;
 		let characteristicMod = 0;
+		const actions = {
+			main: '0',
+			maneuver: '0',
+			triggered: '0',
+			villain: '0'
+		};
 
 		switch (monster.role.type) {
 			case MonsterRoleType.Ambusher:
+				characteristics.m = '0';
+				characteristics.a = '2';
+				characteristics.r = '0';
+				characteristics.i = '1';
+				characteristics.p = '0';
 				roleMod = 20;
 				damageMod = 1;
 				break;
 			case MonsterRoleType.Artillery:
+				characteristics.m = '0';
+				characteristics.a = '2';
+				characteristics.r = '1';
+				characteristics.i = '0';
+				characteristics.p = '0';
 				roleMod = 10;
 				damageMod = 1;
 				break;
 			case MonsterRoleType.Brute:
+				characteristics.m = '2';
+				characteristics.a = '1';
+				characteristics.r = '-1';
+				characteristics.i = '0';
+				characteristics.p = '0';
 				roleMod = 30;
 				damageMod = 1;
 				break;
 			case MonsterRoleType.Controller:
+				characteristics.m = '0';
+				characteristics.a = '1';
+				characteristics.r = '2';
+				characteristics.i = '2';
+				characteristics.p = '1';
 				roleMod = 10;
 				break;
 			case MonsterRoleType.Defender:
+				characteristics.m = '2';
+				characteristics.a = '1';
+				characteristics.r = '0';
+				characteristics.i = '1';
+				characteristics.p = '1';
 				roleMod = 30;
 				break;
 			case MonsterRoleType.Harrier:
+				characteristics.m = '1';
+				characteristics.a = '2';
+				characteristics.r = '0';
+				characteristics.i = '0';
+				characteristics.p = '0';
 				roleMod = 20;
 				break;
 			case MonsterRoleType.Hexer:
+				characteristics.m = '0';
+				characteristics.a = '1';
+				characteristics.r = '1';
+				characteristics.i = '1';
+				characteristics.p = '2';
 				roleMod = 10;
 				break;
 			case MonsterRoleType.Mount:
+				characteristics.m = '2';
+				characteristics.a = '2';
+				characteristics.r = '-1';
+				characteristics.i = '0';
+				characteristics.p = '-1';
 				roleMod = 20;
 				break;
 			case MonsterRoleType.Support:
+				characteristics.m = '1';
+				characteristics.a = '1';
+				characteristics.r = '0';
+				characteristics.i = '2';
+				characteristics.p = '1';
 				roleMod = 20;
 				break;
 		}
@@ -501,29 +605,52 @@ export class MonsterLogic {
 			case MonsterOrganizationType.Horde:
 				staminaMod = 0.5;
 				orgMod = 0.5;
+				actions.maneuver = '0 - 1';
 				break;
 			case MonsterOrganizationType.Platoon:
 				staminaMod = 1;
 				orgMod = 1;
+				actions.main = '0 - 1';
+				actions.maneuver = '0 - 1';
 				break;
 			case MonsterOrganizationType.Elite:
 				damageMod += 1; // Add 1, because this one stacks
 				staminaMod = 2;
 				orgMod = 2;
+				actions.main = '1';
+				actions.maneuver = '0 - 1';
+				actions.triggered = '0 - 1';
 				break;
 			case MonsterOrganizationType.Leader:
+				characteristics.m = '2 - 4';
+				characteristics.a = '2 - 3';
+				characteristics.r = '2 - 4';
+				characteristics.i = '2 - 3';
+				characteristics.p = '3 - 5';
 				damageMod = 1;
 				roleMod += 30;
 				staminaMod = 2;
 				orgMod = 2;
 				characteristicMod = 1;
+				actions.maneuver = '1';
+				actions.triggered = '1';
+				actions.villain = '3';
 				break;
 			case MonsterOrganizationType.Solo:
+				characteristics.m = '2 - 4';
+				characteristics.a = '2 - 3';
+				characteristics.r = '2 - 4';
+				characteristics.i = '2 - 3';
+				characteristics.p = '3 - 5';
 				damageMod = 2;
 				roleMod += 30;
 				staminaMod = 5;
 				orgMod = 6;
 				characteristicMod = 1;
+				actions.main = '2';
+				actions.maneuver = '1';
+				actions.triggered = '1 - 2';
+				actions.villain = '3';
 				break;
 		}
 
@@ -535,10 +662,12 @@ export class MonsterLogic {
 		const dmg3 = (4 + monster.level + damageMod) * 1.4;
 
 		return {
-			highestCharacteristic: 1 + MonsterLogic.getEchelon(monster) + characteristicMod,
+			characteristics: characteristics,
+			highestCharacteristic: 1 + CreatureLogic.getEchelon(monster.level) + characteristicMod,
 			ev: Math.ceil(ev),
 			stamina: Math.ceil(stamina),
 			freeStrikeDamage: Math.ceil(dmg1),
+			actions: actions,
 			damage: {
 				tier1: Math.ceil(dmg1),
 				tier2: Math.ceil(dmg2),
@@ -602,7 +731,7 @@ export class MonsterLogic {
 			.map(pair => pair.keyword)
 			.sort();
 
-		target.characteristics = MonsterLogic.createCharacteristics(
+		target.characteristics = FactoryLogic.createCharacteristics(
 			Collections.draw(source.map(m => MonsterLogic.getCharacteristic(m, Characteristic.Might))),
 			Collections.draw(source.map(m => MonsterLogic.getCharacteristic(m, Characteristic.Agility))),
 			Collections.draw(source.map(m => MonsterLogic.getCharacteristic(m, Characteristic.Reason))),

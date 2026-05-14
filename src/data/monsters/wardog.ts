@@ -1,13 +1,13 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const warDog: MonsterGroup = {
 	id: 'monster-group-wardog',
@@ -115,6 +115,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			id: 'wardog-1st-malice-1',
 			name: 'Reconstitute',
 			cost: 3,
+			icon: StatBlockIcon.Self,
 			sections: [
 				'One war dog acting this turn tears apart a nearby corpse of a humanoid and incorporates its body parts into their own. The war dog regains Stamina equal to 5 times their level.'
 			]
@@ -124,7 +125,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 				id: 'wardog-1st-malice-2',
 				name: 'Fire for Effect',
 				type: FactoryLogic.type.createManeuver(),
-				cost: 3,
+				cost: 5,
 				keywords: [ AbilityKeyword.Area, AbilityKeyword.Magic, AbilityKeyword.Ranged ],
 				distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Cube, value: 4, within: 10 }) ],
 				target: 'Each creature in the area',
@@ -143,6 +144,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			id: 'wardog-1st-malice-3',
 			name: 'Fodder Run',
 			cost: 7,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Each war dog minion in the encounter shifts up to their speed and can make a free strike. A minion who does so is then reduced to 0 Stamina.'
 			]
@@ -172,11 +174,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			ability: FactoryLogic.createAbility({
 				id: 'wardog-3rd-malice-5',
 				name: 'Alchemical Cloud',
-				type: FactoryLogic.type.createNoAction(),
 				cost: 7,
-				keywords: [ ],
-				distance: [ ],
-				target: '',
 				sections: [
 					FactoryLogic.createAbilitySectionText('A bank of choking chemicals sweeps across the area of the enácounter map. Each enemy in the encounter makes a **Might test**.'),
 					FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
@@ -226,7 +224,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: '+1 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -271,7 +269,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 1,
 			withCaptain: '+1 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -316,7 +314,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: '+5 bonus to ranged distance',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -358,7 +356,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 1,
 			freeStrikeDamage: 2,
 			withCaptain: 'Gain an edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -403,7 +401,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 25,
 			stability: 2,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -422,8 +420,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '6 damage; A < 2 grabbed'
 							})),
 							FactoryLogic.createAbilitySectionText('The amalgamite can have up to four targets grabbed at once.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'The amalgamite deals 3 damage to each creature grabbed this way or who they already have grabbed, and regains Stamina equal to the damage dealt.'
 							})
@@ -462,7 +459,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 10,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createDamageModifier({
 					id: 'wardog-1st-6-feature-1',
@@ -487,8 +484,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '5 fire damage'
 							})),
 							FactoryLogic.createAbilitySectionText('The area is covered in sticky fire until the start of the crucibite’s next turn. Any creature who enters the area for the first time in a round or starts their turn there takes 2 fire damage.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'The area becomes a 10 × 1 line, and if any ally of the crucibite is in the area when it is created, the ability deals an extra 2 damage to each target.'
 							})
@@ -527,7 +523,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 15,
 			stability: 0,
 			freeStrikeDamage: 1,
-			characteristics: MonsterLogic.createCharacteristics(1, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -581,7 +577,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 20,
 			stability: 0,
 			freeStrikeDamage: 1,
-			characteristics: MonsterLogic.createCharacteristics(0, 1, 0, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 1, 0, 0, 2),
 			features: [
 				FactoryLogic.feature.createDamageModifier({
 					id: 'wardog-1st-8-feature-1',
@@ -654,7 +650,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 20,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(0, 1, 0, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 1, 0, 0, 2),
 			features: [
 				FactoryLogic.feature.createDamageModifier({
 					id: 'wardog-1st-9-feature-1',
@@ -714,7 +710,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 15,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createDamageModifier({
 					id: 'wardog-1st-10-feature-1',
@@ -775,7 +771,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 15,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -797,9 +793,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '7 damage; slide 3'
 							})),
 							FactoryLogic.createAbilitySectionText('The teletalite gains an edge on this ability if any ally is adjacent to the target.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'The portalite teleports the target 3 squares before sliding them.'
 							})
 						]
@@ -851,7 +845,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 20,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -910,7 +904,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 120,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(3, 2, 3, 2, 2),
+			characteristics: FactoryLogic.createCharacteristics(3, 2, 3, 2, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -932,9 +926,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '15 damage; pull 3'
 							})),
 							FactoryLogic.createAbilitySectionText('One ally within 10 squares of the ground commander can make a free strike.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'A target who has <code>I < 2</code> and who is adjacent to the ground commander after this ability is resolved is grabbed (save ends). This grab can’t be escaped using the Escape Grab maneuver. The ground commander can grab up to two creatures at a time.'
 							})
 						]
@@ -1030,7 +1022,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 3,
 			withCaptain: 'Lightning Spread increases by 1 square',
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 3, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 3, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1078,7 +1070,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: 'Gain an edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(0, 3, 0, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 3, 0, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1123,7 +1115,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 3,
 			withCaptain: '+2 bonus to speed',
-			characteristics: MonsterLogic.createCharacteristics(-1, 3, 0, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(-1, 3, 0, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1173,7 +1165,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 35,
 			stability: 0,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(0, 3, 2, 2, -1),
+			characteristics: FactoryLogic.createCharacteristics(0, 3, 2, 2, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1192,8 +1184,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '6 damage; push 3'
 							})),
 							FactoryLogic.createAbilitySectionText('This ability ignores cover and concealment. The arachnite chooses one of the following damage types when making the strike: acid, cold, fire, lightning, poison, psychic, or sonic.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: ' The arachnite can use this ability as if they were in the space of any ally within distance.'
 							})
@@ -1243,7 +1234,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 40,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(3, -1, 0, 3, 1),
+			characteristics: FactoryLogic.createCharacteristics(3, -1, 0, 3, 1),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'wardog-2nd-5-feature-1',
@@ -1303,7 +1294,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 53,
 			stability: 2,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(3, 3, -1, -2, 0),
+			characteristics: FactoryLogic.createCharacteristics(3, 3, -1, -2, 0),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'wardog-2nd-6-feature-1',
@@ -1327,8 +1318,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '10 damage; I < 3 frightened (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('This ability gains an edge while charging.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The ability deals an extra 3 fire damage to the target and each enemy adjacent to the target.'
 							})
@@ -1367,7 +1357,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 30,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(1, 3, 0, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(1, 3, 0, 0, 2),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'wardog-2nd-7-feature-1',
@@ -1427,7 +1417,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 35,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(1, 3, 0, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 3, 0, 2, 0),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'wardog-2nd-8-feature-1',
@@ -1467,8 +1457,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 						target: 'One ally or dazzled creature',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The mischievite swaps positions with the target. An ally targeted by this ability can make a free strike before or after being swapped.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The mischievite can use this ability as a triggered action when they are targeted by an ability. If they do, the swapped target becomes the new target of the triggering ability.'
 							})
@@ -1494,7 +1483,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 35,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(1, 1, 2, 3, 1),
+			characteristics: FactoryLogic.createCharacteristics(1, 1, 2, 3, 1),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'wardog-2nd-9-feature-1',
@@ -1518,8 +1507,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier2: '5 corruption damage; A < 2 slowed (save ends)',
 								tier3: '7 corruption damage; A < 3 restrained (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'If an affected enemy is adjacent to any corpse, they are frightened of the thanatite (save ends).'
 							})
@@ -1553,7 +1541,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 30,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 2, 3, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 2, 3, 0),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'wardog-2nd-10-feature-1',
@@ -1619,7 +1607,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 35,
 			stability: 1,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 1, 3, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 1, 3, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1687,7 +1675,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 180,
 			stability: 2,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(4, 3, 2, 3, 4),
+			characteristics: FactoryLogic.createCharacteristics(4, 3, 2, 3, 4),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'wardog-2nd-12-feature-1',
@@ -1714,8 +1702,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '19 damage; taunted (EoT)'
 							})),
 							FactoryLogic.createAbilitySectionText('A creature taunted this way takes a bane on strikes.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Each target loses 1d3 Recoveries.'
 							})
@@ -1791,7 +1778,6 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 						id: 'wardog-2nd-12-feature-7',
 						name: 'You Would Dare?!',
 						type: FactoryLogic.type.createVillainAction(3),
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
@@ -1814,7 +1800,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 2,
 			freeStrikeDamage: 4,
 			withCaptain: '+3 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(4, 1, -2, -1, 2),
+			characteristics: FactoryLogic.createCharacteristics(4, 1, -2, -1, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1856,7 +1842,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 4,
 			withCaptain: '+5 bonus to ranged distance',
-			characteristics: MonsterLogic.createCharacteristics(-1, 2, 4, 3, 1),
+			characteristics: FactoryLogic.createCharacteristics(-1, 2, 4, 3, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1898,7 +1884,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 4,
 			withCaptain: 'Gain an edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(1, 4, 3, 1, 1),
+			characteristics: FactoryLogic.createCharacteristics(1, 4, 3, 1, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1939,7 +1925,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 50,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 4, 1, 3, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 4, 1, 3, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -1957,9 +1943,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier2: '10 damage; vertical slide 2',
 								tier3: '12 damage; vertical slide 3'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'An enemy force moved by this ability is grabbed instead.'
 							})
 						]
@@ -2009,7 +1993,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 72,
 			stability: 5,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(4, -2, 2, 3, 2),
+			characteristics: FactoryLogic.createCharacteristics(4, -2, 2, 3, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2069,7 +2053,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 45,
 			stability: 0,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(1, 4, 4, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 4, 4, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2131,7 +2115,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 200,
 			stability: 4,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(4, 2, 1, 1, 3),
+			characteristics: FactoryLogic.createCharacteristics(4, 2, 1, 1, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2189,7 +2173,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 45,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 3, 4, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 3, 4, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2254,7 +2238,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 45,
 			stability: 3,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(2, 1, 4, 4, 2),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, 4, 4, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2272,8 +2256,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '8 damage; M < 4 push, prone'
 							})),
 							FactoryLogic.createAbilitySectionText('This ability ignores stability. The geomancer declares a direction for the area, and any creature pushed by this ability is pushed to the last space in the area in the chosen direction.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The ground beneath the area becomes a 2-square-deep trench after the power roll is resolved.'
 							})
@@ -2317,7 +2300,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 50,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(2, 1, 1, 4, 4),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, 1, 4, 4),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2375,7 +2358,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 82,
 			stability: 2,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(4, 0, 4, 2, 3),
+			characteristics: FactoryLogic.createCharacteristics(4, 0, 4, 2, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2441,7 +2424,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 240,
 			stability: 1,
 			freeStrikeDamage: 9,
-			characteristics: MonsterLogic.createCharacteristics(1, 3, 5, 4, 3),
+			characteristics: FactoryLogic.createCharacteristics(1, 3, 5, 4, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2460,8 +2443,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '23 lightning damage; the lightning spreads 3 square; I < 5 dazed (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('The spread is the distance the charge arcs from a target to nearby enemies. Each enemy within spread takes 5 lightning damage.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The lighting spread increases by 2 squares. Additionally, any creature who takes lightning damage from this ability and who has <code>M < 4</code> is slowed until the end of their next turn.'
 							})
@@ -2560,7 +2542,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 2,
 			freeStrikeDamage: 4,
 			withCaptain: '+3 bonus to speed',
-			characteristics: MonsterLogic.createCharacteristics(5, 4, 2, 3, 2),
+			characteristics: FactoryLogic.createCharacteristics(5, 4, 2, 3, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2607,7 +2589,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 5,
 			withCaptain: '+4 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(1, 5, 3, 5, 2),
+			characteristics: FactoryLogic.createCharacteristics(1, 5, 3, 5, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2649,7 +2631,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stability: 0,
 			freeStrikeDamage: 4,
 			withCaptain: 'Gain an edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(2, 2, 4, 3, 5),
+			characteristics: FactoryLogic.createCharacteristics(2, 2, 4, 3, 5),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2690,7 +2672,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 260,
 			stability: 3,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(5, 2, 4, 3, 4),
+			characteristics: FactoryLogic.createCharacteristics(5, 2, 4, 3, 4),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2789,7 +2771,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 260,
 			stability: 2,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(5, 4, 1, 4, 2),
+			characteristics: FactoryLogic.createCharacteristics(5, 4, 1, 4, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2808,8 +2790,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '25 damage; Doru has a double edge on his next power roll; M < 5 slide 5'
 							})),
 							FactoryLogic.createAbilitySectionText('The damage from this ability can’t be reduced in any way.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'This ability targets one additional target.'
 							})
@@ -2854,7 +2835,6 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 						id: 'wardog-4th-5-feature-4',
 						name: 'Laugh It Off',
 						type: FactoryLogic.type.createManeuver(),
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
@@ -2891,7 +2871,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 253,
 			stability: 3,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(2, 1, 5, 4, 1),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, 5, 4, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -2911,8 +2891,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '15 damage; I < 5 slowed (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('A target creature can choose to drop prone, in which case the ability takes a bane against them.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The area remains active until Vesper is reduced to 0 Stamina or until the end of the encounter. Any non-prone enemy who enters the area for the first time in a round or starts their turn there takes 15 damage, or 7 damage if they choose to fall prone.'
 							})
@@ -2954,8 +2933,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: 'Pull 3 toward the center of the area'
 							})),
 							FactoryLogic.createAbilitySectionText('A portal appears at the center of the area. Any creature at the center of the area when this ability is used or who is pulled into the center for the first time in a round takes 10 sonic damage.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The area remains active and deals its damage until Vesper is reduced to 0 Stamina or until the end of the encounter. Any creature who enters the area and has <code>A < 4</code> is pulled 3 squares toward the center of the area. Any creature who starts their turn in the area and has <code>M < 4</code> is slowed until the end of their turn.'
 							})
@@ -2999,7 +2977,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 220,
 			stability: 1,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(1, 3, 3, 4, 5),
+			characteristics: FactoryLogic.createCharacteristics(1, 3, 3, 4, 5),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -3038,9 +3016,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '15 corruption damage; P < 5 weakened (EoT)'
 							})),
 							FactoryLogic.createAbilitySectionText('The area is difficult terrain until the start of Psyche’s next turn. At the start of each of her turns, Psyche can use a maneuver to maintain this effect, move the area up to 5 squares, and make the power roll against each creature in the area’s new location.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'Until the start of Psyche’s next turn, if this ability makes a creature weakened, that creature is also soulbound (save ends; see Soulbind above).'
 							})
 						]
@@ -3064,7 +3040,6 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 						id: 'wardog-4th-7-feature-4',
 						name: 'Spirit Form',
 						type: FactoryLogic.type.createTrigger('An enemy moves within 2 squares of Psyche'),
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [
@@ -3082,9 +3057,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 						target: 'One enemy',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The target loses all their surges and takes 5 corruption damage.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'The target also takes a bane on their next strike.'
 							})
 						]
@@ -3122,7 +3095,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 			stamina: 260,
 			stability: 2,
 			freeStrikeDamage: 10,
-			characteristics: MonsterLogic.createCharacteristics(4, 4, 5, 5, 5),
+			characteristics: FactoryLogic.createCharacteristics(4, 4, 5, 5, 5),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -3144,8 +3117,7 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 								tier3: '25 damage; M < 6 bleeding (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('Each target loses 1d3 Recoveries.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Malice',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'When a target is made bleeding this way, each ally adjacent to them can make a free strike against the target.'
 							})
@@ -3200,7 +3172,6 @@ These monstrous war dogs are developed to fulfill specific roles and combat nich
 						id: 'wardog-4th-8-feature-6',
 						name: 'Fog of War',
 						type: FactoryLogic.type.createVillainAction(1),
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSpecial('') ],
 						target: 'Each ally in the encounter',
 						sections: [

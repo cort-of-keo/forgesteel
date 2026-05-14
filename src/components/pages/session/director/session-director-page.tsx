@@ -1,49 +1,44 @@
-import { Alert, Button, Input, Popover, Segmented, Space } from 'antd';
-import { DownOutlined, ReadOutlined, SettingOutlined } from '@ant-design/icons';
-import { AppFooter } from '../../../panels/app-footer/app-footer';
-import { AppHeader } from '../../../panels/app-header/app-header';
-import { Counter } from '../../../../models/counter';
-import { CounterRunPanel } from '../../../panels/run/counter-run/counter-run-panel';
-import { DangerButton } from '../../../controls/danger-button/danger-button';
-import { Empty } from '../../../controls/empty/empty';
-import { Encounter } from '../../../../models/encounter';
-import { EncounterData } from '../../../../data/encounter-data';
-import { EncounterRunPanel } from '../../../panels/run/encounter-run/encounter-run-panel';
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { Format } from '../../../../utils/format';
-import { Hero } from '../../../../models/hero';
-import { Montage } from '../../../../models/montage';
-import { MontageData } from '../../../../data/montage-data';
-import { MontageRunPanel } from '../../../panels/run/montage-run/montage-run-panel';
-import { Negotiation } from '../../../../models/negotiation';
-import { NegotiationData } from '../../../../data/negotiation-data';
-import { NegotiationRunPanel } from '../../../panels/run/negotiation-run/negotiation-run-panel';
-import { NumberSpin } from '../../../controls/number-spin/number-spin';
-import { Options } from '../../../../models/options';
-import { OptionsPanel } from '../../../panels/options/options-panel';
-import { PanelMode } from '../../../../enums/panel-mode';
-import { Playbook } from '../../../../models/playbook';
-import { PlaybookLogic } from '../../../../logic/playbook-logic';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { TacticalMap } from '../../../../models/tactical-map';
-import { TacticalMapDisplayType } from '../../../../enums/tactical-map-display-type';
-import { TacticalMapPanel } from '../../../panels/elements/tactical-map-panel/tactical-map-panel';
-import { Utils } from '../../../../utils/utils';
-import { useNavigation } from '../../../../hooks/use-navigation';
+import { Alert, Button, Segmented, Space } from 'antd';
+import { AppFooter, FooterParams } from '@/components/panels/app-footer/app-footer';
+import { PlayCircleOutlined, ReadOutlined } from '@ant-design/icons';
+import { AdventureLogic } from '@/logic/adventure-logic';
+import { AppHeader } from '@/components/panels/app-header/app-header';
+import { ButtonGroup } from '@/components/controls/button-group/button-group';
+import { Counter } from '@/models/counter';
+import { CounterRunPanel } from '@/components/panels/run/counter-run/counter-run-panel';
+import { Empty } from '@/components/controls/empty/empty';
+import { Encounter } from '@/models/encounter';
+import { EncounterData } from '@/data/encounter-data';
+import { EncounterRunPanel } from '@/components/panels/run/encounter-run/encounter-run-panel';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Format } from '@/utils/format';
+import { Hero } from '@/models/hero';
+import { Montage } from '@/models/montage';
+import { MontageData } from '@/data/montage-data';
+import { MontageRunPanel } from '@/components/panels/run/montage-run/montage-run-panel';
+import { Negotiation } from '@/models/negotiation';
+import { NegotiationData } from '@/data/negotiation-data';
+import { NegotiationRunPanel } from '@/components/panels/run/negotiation-run/negotiation-run-panel';
+import { NumberSpin } from '@/components/controls/number-spin/number-spin';
+import { PanelMode } from '@/enums/panel-mode';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { TacticalMap } from '@/models/tactical-map';
+import { TacticalMapDisplayType } from '@/enums/tactical-map-display-type';
+import { TacticalMapPanel } from '@/components/panels/elements/tactical-map-panel/tactical-map-panel';
+import { TextInput } from '@/components/controls/text-input/text-input';
+import { Utils } from '@/utils/utils';
+import { useIsSmall } from '@/hooks/use-is-small';
+import { useNavigation } from '@/hooks/use-navigation';
+import { useSession } from '@/contexts/data-context';
 import { useState } from 'react';
+import { useTitle } from '@/hooks/use-title';
 
 import './session-director-page.scss';
 
 interface Props {
-	heroes: Hero[];
 	sourcebooks: Sourcebook[];
-	playbook: Playbook;
-	session: Playbook;
-	options: Options;
-	highlightAbout: boolean;
-	showAbout: () => void;
-	showRoll: () => void;
-	showReference: () => void;
+	params: FooterParams;
 	showPlayerView: () => void;
 	startEncounter: (encounter: Encounter) => Promise<string>;
 	startMontage: (montage: Montage) => Promise<string>;
@@ -57,21 +52,24 @@ interface Props {
 	updateMap: (map: TacticalMap) => void;
 	updateCounter: (counter: Counter) => void;
 	finishSessionElement: (id: string) => string | null;
-	setOptions: (options: Options) => void;
+	showEncounterTools: (encounter: Encounter, tool: string) => void;
 }
 
 export const SessionDirectorPage = (props: Props) => {
+	const isSmall = useIsSmall();
 	const navigation = useNavigation();
+	const session = useSession();
 	const [ selectedElementID, setSelectedElementID ] = useState<string | null>(() => {
-		const options = PlaybookLogic.getContentOptions(props.session);
+		const options = AdventureLogic.getContentOptions(session);
 		return options.length > 0 ? options[0].id : null;
 	});
 	const [ startElement, setStartElement ] = useState<string>('encounter');
 	const [ newCounterName, setNewCounterName ] = useState<string>('');
 	const [ newCounterValue, setNewCounterValue ] = useState<number>(0);
+	useTitle('Session');
 
 	const getSelector = () => {
-		const options = PlaybookLogic.getContentOptions(props.session).map(o => {
+		const options = AdventureLogic.getContentOptions(session).map(o => {
 			return {
 				value: o.id,
 				label: o.name
@@ -95,26 +93,27 @@ export const SessionDirectorPage = (props: Props) => {
 
 	const getSelectedContent = () => {
 		if (selectedElementID) {
-			const encounter = props.session.encounters.find(e => e.id === selectedElementID);
+			const encounter = session.encounters.find(e => e.id === selectedElementID);
 			if (encounter) {
 				return (
 					<div className='session-page-content-container'>
 						<EncounterRunPanel
+							key={encounter.id}
 							encounter={encounter}
 							sourcebooks={props.sourcebooks}
-							heroes={props.heroes}
-							options={props.options}
 							onChange={props.updateEncounter}
+							showTools={tool => props.showEncounterTools(encounter, tool)}
 						/>
 					</div>
 				);
 			}
 
-			const montage = props.session.montages.find(m => m.id === selectedElementID);
+			const montage = session.montages.find(m => m.id === selectedElementID);
 			if (montage) {
 				return (
 					<div className='session-page-content-container'>
 						<MontageRunPanel
+							key={montage.id}
 							montage={montage}
 							onChange={props.updateMontage}
 						/>
@@ -122,11 +121,12 @@ export const SessionDirectorPage = (props: Props) => {
 				);
 			}
 
-			const negotiation = props.session.negotiations.find(n => n.id === selectedElementID);
+			const negotiation = session.negotiations.find(n => n.id === selectedElementID);
 			if (negotiation) {
 				return (
 					<div className='session-page-content-container'>
 						<NegotiationRunPanel
+							key={negotiation.id}
 							negotiation={negotiation}
 							onChange={props.updateNegotiation}
 						/>
@@ -134,16 +134,15 @@ export const SessionDirectorPage = (props: Props) => {
 				);
 			}
 
-			const map = props.session.tacticalMaps.find(tm => tm.id === selectedElementID);
+			const map = session.tacticalMaps.find(tm => tm.id === selectedElementID);
 			if (map) {
 				return (
 					<div className='session-page-content-container'>
 						<TacticalMapPanel
+							key={map.id}
 							map={map}
 							display={TacticalMapDisplayType.DirectorEdit}
-							options={props.options}
-							heroes={props.heroes}
-							encounters={props.session.encounters}
+							encounters={session.encounters}
 							sourcebooks={props.sourcebooks}
 							mode={PanelMode.Full}
 							updateMap={props.updateMap}
@@ -154,11 +153,12 @@ export const SessionDirectorPage = (props: Props) => {
 				);
 			}
 
-			const counter = props.session.counters.find(c => c.id === selectedElementID);
+			const counter = session.counters.find(c => c.id === selectedElementID);
 			if (counter) {
 				return (
 					<div className='session-page-content-container'>
 						<CounterRunPanel
+							key={counter.id}
 							counter={counter}
 							onChange={props.updateCounter}
 						/>
@@ -167,7 +167,7 @@ export const SessionDirectorPage = (props: Props) => {
 			}
 		}
 
-		const options = PlaybookLogic.getContentOptions(props.session);
+		const options = AdventureLogic.getContentOptions(session);
 		if (options.length === 0) {
 			return (
 				<Empty text='Nothing is currently in progress.' />
@@ -238,20 +238,20 @@ export const SessionDirectorPage = (props: Props) => {
 		switch (startElement) {
 			case 'encounter':
 				return (
-					<Space direction='vertical' style={{ width: '100%' }}>
+					<Space orientation='vertical' style={{ width: '100%' }}>
 						<div className='ds-text bold-text'>Your encounters:</div>
 						{
-							props.playbook.encounters.map(e => (
+							SourcebookLogic.getEncounters(props.sourcebooks).map(e => (
 								<Button key={e.id} block={true} onClick={() => startEncounter(e)}>{e.name || 'Unnamed Encounter'}</Button>
 							))
 						}
 						{
-							props.playbook.encounters.length === 0 ?
+							SourcebookLogic.getEncounters(props.sourcebooks).length === 0 ?
 								<Alert
 									type='warning'
 									showIcon={true}
-									message='You have not created any encounters.'
-									action={<Button type='text' title='Encounters' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('encounter')} />}
+									title='You have not created any encounters.'
+									action={<Button type='text' title='Encounters' icon={<ReadOutlined />} onClick={() => navigation.goToLibrary('encounter')} />}
 								/>
 								: null
 						}
@@ -267,20 +267,20 @@ export const SessionDirectorPage = (props: Props) => {
 				);
 			case 'montage':
 				return (
-					<Space direction='vertical' style={{ width: '100%' }}>
+					<Space orientation='vertical' style={{ width: '100%' }}>
 						<div className='ds-text bold-text'>Your montages:</div>
 						{
-							props.playbook.montages.map(m => (
+							SourcebookLogic.getMontages(props.sourcebooks).map(m => (
 								<Button key={m.id} block={true} onClick={() => startMontage(m)}>{m.name || 'Unnamed Montage'}</Button>
 							))
 						}
 						{
-							props.playbook.montages.length === 0 ?
+							SourcebookLogic.getMontages(props.sourcebooks).length === 0 ?
 								<Alert
 									type='warning'
 									showIcon={true}
-									message='You have not created any montages.'
-									action={<Button type='text' title='Montages' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('montage')} />}
+									title='You have not created any montages.'
+									action={<Button type='text' title='Montages' icon={<ReadOutlined />} onClick={() => navigation.goToLibrary('montage')} />}
 								/>
 								: null
 						}
@@ -296,20 +296,20 @@ export const SessionDirectorPage = (props: Props) => {
 				);
 			case 'negotiation':
 				return (
-					<Space direction='vertical' style={{ width: '100%' }}>
+					<Space orientation='vertical' style={{ width: '100%' }}>
 						<div className='ds-text bold-text'>Your negotiations:</div>
 						{
-							props.playbook.negotiations.map(n => (
+							SourcebookLogic.getNegotiations(props.sourcebooks).map(n => (
 								<Button key={n.id} block={true} onClick={() => startNegotiation(n)}>{n.name || 'Unnamed Negotiation'}</Button>
 							))
 						}
 						{
-							props.playbook.negotiations.length === 0 ?
+							SourcebookLogic.getNegotiations(props.sourcebooks).length === 0 ?
 								<Alert
 									type='warning'
 									showIcon={true}
-									message='You have not created any negotiations.'
-									action={<Button type='text' title='Negotiations' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('negotiation')} />}
+									title='You have not created any negotiations.'
+									action={<Button type='text' title='Negotiations' icon={<ReadOutlined />} onClick={() => navigation.goToLibrary('negotiation')} />}
 								/>
 								: null
 						}
@@ -325,20 +325,20 @@ export const SessionDirectorPage = (props: Props) => {
 				);
 			case 'map':
 				return (
-					<Space direction='vertical' style={{ width: '100%' }}>
+					<Space orientation='vertical' style={{ width: '100%' }}>
 						<div className='ds-text bold-text'>Your maps:</div>
 						{
-							props.playbook.tacticalMaps.map(tm => (
+							SourcebookLogic.getTacticalMaps(props.sourcebooks).map(tm => (
 								<Button key={tm.id} block={true} onClick={() => startMap(tm)}>{tm.name || 'Unnamed Map'}</Button>
 							))
 						}
 						{
-							props.playbook.tacticalMaps.length === 0 ?
+							SourcebookLogic.getTacticalMaps(props.sourcebooks).length === 0 ?
 								<Alert
 									type='warning'
 									showIcon={true}
-									message='You have not created any maps.'
-									action={<Button type='text' title='Maps' icon={<ReadOutlined />} onClick={() => navigation.goToPlaybook('tactical-map')} />}
+									title='You have not created any maps.'
+									action={<Button type='text' title='Maps' icon={<ReadOutlined />} onClick={() => navigation.goToLibrary('tactical-map')} />}
 								/>
 								: null
 						}
@@ -346,13 +346,13 @@ export const SessionDirectorPage = (props: Props) => {
 				);
 			case 'counter':
 				return (
-					<Space direction='vertical' style={{ width: '100%' }}>
+					<Space orientation='vertical' style={{ width: '100%' }}>
 						<div className='ds-text bold-text'>Create a new counter:</div>
-						<Input
+						<TextInput
 							placeholder='Counter Name'
 							allowClear={true}
 							value={newCounterName}
-							onChange={e => setNewCounterName(e.target.value)}
+							onChange={setNewCounterName}
 						/>
 						<NumberSpin label='Starting Value' value={newCounterValue} onChange={setNewCounterValue} />
 						<Button block={true} onClick={() => startCounter()}>Create counter</Button>
@@ -368,61 +368,46 @@ export const SessionDirectorPage = (props: Props) => {
 		}
 	};
 
-	try {
-		return (
-			<ErrorBoundary>
-				<div className='session-director-page'>
-					<AppHeader subheader='Session'>
-						<Popover
-							trigger='click'
-							content={(
-								<div style={{ width: '500px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-									<Segmented
-										name='startelements'
-										block={true}
-										options={[ 'encounter', 'montage', 'negotiation', 'map', 'counter' ].map(o => ({ value: o, label: Format.capitalize(o) }))}
-										value={startElement}
-										onChange={setStartElement}
-									/>
-									{getStartContent()}
-								</div>
-							)}
-						>
-							<Button type='primary'>
-								Start
-								<DownOutlined />
-							</Button>
-						</Popover>
-						{
-							selectedElementID ?
-								<DangerButton
-									label='Finish'
-									onConfirm={finish}
-								/>
-								: null
-						}
-						<div className='divider' />
-						<Button onClick={props.showPlayerView}>Player View</Button>
-						<Popover
-							trigger='click'
-							content={<OptionsPanel mode='session' options={props.options} heroes={props.heroes} setOptions={props.setOptions} />}
-						>
-							<Button icon={<SettingOutlined />}>
-								Options
-								<DownOutlined />
-							</Button>
-						</Popover>
-					</AppHeader>
+	return (
+		<ErrorBoundary>
+			<div className='session-director-page'>
+				<AppHeader subheader='Session'>
+					<ButtonGroup
+						buttons={[
+							{
+								type: 'dropdown',
+								label: isSmall ? undefined : 'Start',
+								icon: <PlayCircleOutlined />,
+								primary: true,
+								popover: (
+									<div style={{ width: '500px', display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '500px', overflowY: 'auto' }}>
+										<Segmented
+											name='startelements'
+											block={true}
+											options={[ 'encounter', 'montage', 'negotiation', 'map', 'counter' ].map(o => ({ value: o, label: Format.capitalize(o) }))}
+											value={startElement}
+											onChange={setStartElement}
+										/>
+										{getStartContent()}
+									</div>
+								)
+							},
+							{ type: 'danger', label: isSmall ? undefined : 'Finish', disabled: !selectedElementID, onClick: finish },
+							{ type: 'button', label: isSmall ? undefined : 'Player View', icon: <PlayCircleOutlined />, onClick: props.showPlayerView }
+						]}
+					/>
+				</AppHeader>
+				<ErrorBoundary>
 					<div className='session-director-page-content'>
 						{getSelector()}
 						{getSelectedContent()}
 					</div>
-					<AppFooter page='session' highlightAbout={props.highlightAbout} showAbout={props.showAbout} showRoll={props.showRoll} showReference={props.showReference} />
-				</div>
-			</ErrorBoundary>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+				</ErrorBoundary>
+				<AppFooter
+					page='session'
+					params={props.params}
+				/>
+			</div>
+		</ErrorBoundary>
+	);
 };

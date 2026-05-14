@@ -1,14 +1,14 @@
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureField } from '../../enums/feature-field';
-import { Item } from '../../models/item';
-import { ItemType } from '../../enums/item-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { Item } from '@/models/item';
+import { ItemType } from '@/enums/item-type';
 
 export class TrinketData {
-	// Echelon 1
+	// #region Echelon 1
 
 	static colorCloakBlue: Item = FactoryLogic.createItem({
 		id: 'item-color-cloak-blue',
@@ -39,10 +39,8 @@ export class TrinketData {
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-color-cloak-blue-2',
-							name: 'Item Ability',
+							name: 'Use Cloak',
 							type: FactoryLogic.type.createTrigger('You are targeted by any effect that deals cold damage'),
-							distance: [ FactoryLogic.distance.createSelf() ],
-							target: 'Self',
 							sections: [
 								FactoryLogic.createAbilitySectionText('Shift a number of squares equal to your level. The cold immunity granted by the cloak becomes cold weakness equal to your level until the end of the next round. You can\'t use this triggered action again until this weakness ends.')
 							]
@@ -82,10 +80,8 @@ export class TrinketData {
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-color-cloak-red-2',
-							name: 'Item Ability',
+							name: 'Use Cloak',
 							type: FactoryLogic.type.createTrigger('You are targeted by any effect that deals fire damage'),
-							distance: [ FactoryLogic.distance.createSelf() ],
-							target: 'Self',
 							sections: [
 								FactoryLogic.createAbilitySectionText('Reduce the damage to 0. The fire immunity granted by the cloak becomes fire weakness equal to your level until the end of the next round. You can\'t use this triggered action again until this weakness ends.')
 							]
@@ -125,10 +121,8 @@ export class TrinketData {
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-color-cloak-yellow-2',
-							name: 'Item Ability',
+							name: 'Use Cloak',
 							type: FactoryLogic.type.createTrigger('You are targeted by any effect that deals lightning damage'),
-							distance: [ FactoryLogic.distance.createSelf() ],
-							target: 'Self',
 							sections: [
 								FactoryLogic.createAbilitySectionText('The next damage-dealing ability you use to deal extra lightning damage equal to your level. The lightning immunity granted by the cloak becomes ightning immunity equal to your level until the end of the next round. You can\'t use this triggered action again until this weakness ends.')
 							]
@@ -192,12 +186,10 @@ export class TrinketData {
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-displacing-replacement-bracer-1',
-							name: 'Item Ability',
+							name: 'Use Displacing Replacement Bracer',
 							type: FactoryLogic.type.createManeuver(),
-							distance: [ FactoryLogic.distance.createRanged(10) ],
-							target: 'Special',
 							sections: [
-								FactoryLogic.createAbilitySectionText('You transfer an object of size 1S or 1T held in one hand with another object of the same size that is within range. The objects change locations instantaneously and without creating any auditory or visual disturbance. If another creature is wearing or holding the object you transfer to your hand and they have I < 4, they fail to notice the transfer.')
+								FactoryLogic.createAbilitySectionText('You transfer an object of size 1S or 1T held in one hand with another object of the same size that is within 10 squares. The objects change locations instantaneously and without creating any auditory or visual disturbance. If another creature is wearing or holding the object you transfer to your hand and they have I < 4, they fail to notice the transfer.')
 							]
 						})
 					})
@@ -325,10 +317,8 @@ If the object is too thick or has no open space on the other side, your hand bec
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-mask-of-the-many-1',
-							name: 'Item Ability',
+							name: 'Use Mask of the Many',
 							type: FactoryLogic.type.createManeuver(),
-							distance: [ FactoryLogic.distance.createSelf() ],
-							target: 'Self',
 							sections: [
 								FactoryLogic.createAbilitySectionText('You transform into any humanoid of equivalent size that you have previously seen. The humanoid’s appearance reflects the last time you saw them, including whatever they were wearing. Your clothing and gear are transformed into the figure’s clothing and gear, absorbed into your body, or retain their original forms, as you determine. If the figure possessed any treasures when you last saw them, they are duplicated as mundane copies while you are transformed.')
 							]
@@ -354,6 +344,24 @@ If the object is too thick or has no open space on the other side, your hand bec
 		effect: 'When the brooch is removed from this bag and placed in a container or room, it magically entangles that location to the bag. Any item that can be placed in the Quantum Satchel appears near to the brooch and can be recovered by reaching inside while picturing the desired object. The capacity of the satchel is dictated by the size of the container or room where the entangled brooch is. If an item is removed from the container or room containing the brooch, it can’t be retrieved through the satchel.'
 	});
 
+	static snakerattleBangle: Item = FactoryLogic.createItem({
+		id: 'item-snakerattle-bangle',
+		name: 'Snakerattle Bangle',
+		description: 'This loose-fitting, scaley bangle shifts and slithers while worn. It emits a bone-chilling rattle each time it hits its user’s wrist.',
+		type: ItemType.Trinket1st,
+		keywords: [ AbilityKeyword.Arms, AbilityKeyword.Magic ],
+		crafting: FactoryLogic.createProject({
+			prerequisites: 'The tail of a size 3 or larger rattlesnake',
+			source: 'Texts or lore in Anjali',
+			characteristic: [ Characteristic.Reason, Characteristic.Intuition ],
+			goal: 150
+		}),
+		effect: `
+While wearing this bangle, your melee free strikes inflict I < [average] frightened (EoT). The potency increases by 1 if you have an edge on the power roll.
+
+**Special**: If you are a summoner, you regain the use of your standard melee free strike while wearing this bangle.`
+	});
+
 	static unbinderBoots: Item = FactoryLogic.createItem({
 		id: 'item-unbinder-boots',
 		name: 'Unbinder Boots',
@@ -369,7 +377,24 @@ If the object is too thick or has no open space on the other side, your hand bec
 		effect: 'These boots can temporarily unbind themselves from the chains of the earth, letting you move through the air as high as 3 squares above the ground from where you started. If you end your turn while you are still airborne, you fall.'
 	});
 
-	// Echelon 2
+	// #endregion
+
+	// #region Echelon 2
+
+	static abyssalMapInk: Item = FactoryLogic.createItem({
+		id: 'item-abyssal-map-ink',
+		name: 'Abyssal Map Ink',
+		description: 'The puddle of living ink snarls and snaps while it feeds on parchment and smooth surfaces. It spreads itself across its meal until it resembles a flat, top-down view of its immediate surroundings, wriggling and readjusting itself wherever it goes.',
+		type: ItemType.Trinket2nd,
+		keywords: [ AbilityKeyword.Magic ],
+		crafting: FactoryLogic.createProject({
+			prerequisites: 'A vial of pitling spit, and a jar of human blood',
+			source: 'Texts or lore in Tholl',
+			characteristic: [ Characteristic.Reason, Characteristic.Intuition ],
+			goal: 300
+		}),
+		effect: 'While the ink is spread on a smooth surface or a piece of parchment paper, it turns into a size 1T or 1S map. This map grants you a double edge on tests you make using the Navigate skill. If you have the map active before the start of an encounter, you can move up to three allies (including yourself ) up to 3 squares away from the starting area.'
+	});
 
 	static bastionBelt: Item = FactoryLogic.createItem({
 		id: 'item-bastion-belt',
@@ -421,18 +446,34 @@ If the object is too thick or has no open space on the other side, your hand bec
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-evilest-eye-1',
-							name: 'Item Ability',
+							name: 'Use Evilest Eye',
 							type: FactoryLogic.type.createManeuver(),
-							distance: [ FactoryLogic.distance.createRanged(10) ],
-							target: 'One enemy',
 							sections: [
-								FactoryLogic.createAbilitySectionText('You and each ally within 2 squares of the target each gain 1 surge.')
+								FactoryLogic.createAbilitySectionText('You target one enemy within 10 squares. You and each ally within 2 squares of the target each gain 1 surge.')
 							]
 						})
 					})
 				]
 			}
 		]
+	});
+
+	static graspOfTheChainedHand: Item = FactoryLogic.createItem({
+		id: 'item-grasp-of-the-chained-hand',
+		name: 'Grasp of the Chained Hand',
+		description: 'A gauntlet of loose chains rattles, shackled to each of the user’s fingers. They clatter whenever magic surges through them.',
+		type: ItemType.Trinket2nd,
+		keywords: [ AbilityKeyword.Arms, AbilityKeyword.Magic ],
+		crafting: FactoryLogic.createProject({
+			prerequisites: 'Blood-soaked chains that restrained a demon for at least 30 days',
+			source: 'Texts or lore in Tholl',
+			characteristic: [ Characteristic.Reason, Characteristic.Presence ],
+			goal: 300
+		}),
+		effect: `
+While wearing this gauntlet, your ranged free strikes have the Magic keyword and if the target has P < [average], they are magically chained to you until the end of their next turn. While chained, the target can’t move farther away from you, and you can use a maneuver to either vertically pull the target up to 3 squares or shift yourself up to 3 squares through the air toward the target.
+
+**Special**: If you are a summoner, you regain the use of your standard ranged free strike while wearing this gauntlet.`
 	});
 
 	static insightfulCrown: Item = FactoryLogic.createItem({
@@ -469,12 +510,10 @@ If the object is too thick or has no open space on the other side, your hand bec
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-key-of-inquiry-1',
-							name: 'Item Ability',
+							name: 'Use Key of Inquiry',
 							type: FactoryLogic.type.createManeuver(),
-							distance: [ FactoryLogic.distance.createSpecial('Adjecent') ],
-							target: 'One willing, grabbed, or restrained creature',
 							sections: [
-								FactoryLogic.createAbilitySectionText('Twist the key 90 degrees clockwise. The target must answer the next three questions they are asked truthfully and fully. If twisted 90 degrees counterclockwise instead, the target forgets the last 30 minutes they experienced. A creature affected by the key can’t be affected again by any Key of Inquiry for 1 year. If the key is ever destroyed, all the memories it has erased are restored. Memories erased by the key can’t be restored in any other way.')
+								FactoryLogic.createAbilitySectionText('You touch the key to an adjacent willing, grabbed, or restrained creature and twist the key 90 degrees clockwise. The target must answer the next three questions they are asked truthfully and fully. If twisted 90 degrees counterclockwise instead, the target forgets the last 30 minutes they experienced. A creature affected by the key can’t be affected again by any Key of Inquiry for 1 year. If the key is ever destroyed, all the memories it has erased are restored. Memories erased by the key can’t be restored in any other way.')
 							]
 						})
 					})
@@ -547,10 +586,8 @@ If the object is too thick or has no open space on the other side, your hand bec
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-stop-n-go-coin-1',
-							name: 'Item Ability',
+							name: 'Use Stop-’n-Go Coin',
 							type: FactoryLogic.type.createManeuver(),
-							distance: [ FactoryLogic.distance.createSpecial('') ],
-							target: 'Special; see below',
 							sections: [
 								FactoryLogic.createAbilitySectionText(`
 You toss the coin in the air and let it fall to the ground in front of you. Roll a d3 to determine the coin’s effect, depending on which face shows when it lands:
@@ -568,7 +605,27 @@ The coin must be picked up before it can be used again. If any creature picks up
 		]
 	});
 
-	// Echelon 3
+	static thunderChariot: Item = FactoryLogic.createItem({
+		id: 'item-thunder-chariot',
+		name: 'Thunder Chariot',
+		description: 'A porcelain cart with golden filigree and wheels that crackle with electricity.',
+		type: ItemType.Trinket2nd,
+		keywords: [ AbilityKeyword.Magic ],
+		crafting: FactoryLogic.createProject({
+			prerequisites: 'Twenty lightning bolts frozen in time',
+			source: 'Texts or lore in the First Language',
+			characteristic: [ Characteristic.Reason, Characteristic.Intuition ],
+			goal: 300
+		}),
+		effect: `
+The thunder chariot can be used as a size 2 mount. Its speed is equal to its rider’s speed + 3.
+
+While riding in the thunder chariot, you have lightning immunity 5. An ally can use their maneuver while adjacent to you to move up to their speed, pulling you along.`
+	});
+
+	// #endregion
+
+	// #region Echelon 3
 
 	static bracersOfStrife: Item = FactoryLogic.createItem({
 		id: 'item-bracers-of-strife',
@@ -598,6 +655,46 @@ The coin must be picked up before it can be used again. If any creature picks up
 		]
 	});
 
+	static crossOfTheScornedPuppeteer: Item = FactoryLogic.createItem({
+		id: 'item-cross-of-the-scorned-puppeteer',
+		name: 'Cross of the Scorned Puppeteer',
+		description: 'This shiny black marionette cross reveals a masked figure standing in its reflection where its wielder should be.',
+		type: ItemType.Trinket3rd,
+		keywords: [ AbilityKeyword.Magic, AbilityKeyword.Psionic ],
+		crafting: FactoryLogic.createProject({
+			prerequisites: 'A spool of silk, a plank of stage wood, and the soul of a famous performer',
+			source: 'A record of a soulbinder ritual in Anjali',
+			characteristic: [ Characteristic.Reason, Characteristic.Intuition ],
+			goal: 450
+		}),
+		effect: `
+While holding the cross, it emits faint strings made of light that you can control with your mind.
+
+Whenever an enemy minion is reduced to 0 Stamina within 5 squares of you, you can use a free triggered action to attach a string of light to their corpse and command an illusory double of them until the end of the encounter. The minion is organized into the cross’s squad of minions with the same name under your command (up to a maximum of six minions). On each of your turns, you can direct the squad to move and use a main action while they’re within 5 squares of you.
+
+You can also pull the strings of your allies to keep them out of harm’s way. Whenever an ally takes damage within 5 squares of you, you can use a triggered action to vertically pull them 5 squares (ignoring stability) and halve the damage.
+
+**Special**: If you are a summoner holding the cross, you can organize the minions gained with the cross into one of your class’s squads instead.`
+	});
+
+	static crystallizedEssence: Item = FactoryLogic.createItem({
+		id: 'item-crystallized-essence',
+		name: 'Crystallized Essence',
+		description: 'A storm rages at the center of this color-shifting shard of rock.',
+		type: ItemType.Trinket3rd,
+		keywords: [ AbilityKeyword.Magic ],
+		crafting: FactoryLogic.createProject({
+			prerequisites: 'The remains of an elemental',
+			source: 'Records in Rhorvic',
+			characteristic: [ Characteristic.Reason, Characteristic.Intuition ],
+			goal: 450
+		}),
+		effect: `
+While holding crystallized essence, the distance of your ranged magic abilities increases by 5. Any creatures you create or summon using magic have their Stamina increased by one-third of their Stamina maximum.
+
+Additionally, you can shatter and destroy the crystallized essence as a maneuver to immediately give yourself 5 essence.`
+	});
+
 	static maskOfOversight: Item = FactoryLogic.createItem({
 		id: 'item-mask-of-oversight',
 		name: 'Mask of Oversight',
@@ -617,10 +714,8 @@ The coin must be picked up before it can be used again. If any creature picks up
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-mask-of-oversight-1',
-							name: 'Item Ability',
+							name: 'Use Mask of Oversight',
 							type: FactoryLogic.type.createManeuver(),
-							distance: [ FactoryLogic.distance.createSelf() ],
-							target: 'Self',
 							sections: [
 								FactoryLogic.createAbilitySectionText('You cause your eyes to erupt from their sockets and multiply until six eyes orbit your head. This grants you a 360-degree arc of vision and prevents you from being surprised. Additionally, you have a double edge on tests made to discover hidden creatures, items, or mechanisms, but you have a double bane on Presence tests that don’t use the Intimidate skill. As a maneuver, you can return your eyes to your head and make the additional eyes disappear.')
 							]
@@ -730,12 +825,10 @@ The coin must be picked up before it can be used again. If any creature picks up
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-shifting-ring-1',
-							name: 'Item Ability',
+							name: 'Use Shifting Ring Teleport',
 							type: FactoryLogic.type.createManeuver({ qualifiers: [ 'Once per turn' ] }),
-							distance: [ FactoryLogic.distance.createSelf() ],
-							target: 'Self',
 							sections: [
-								FactoryLogic.createAbilitySectionText('Teleport up to 3 squares.')
+								FactoryLogic.createAbilitySectionText('Teleport up to 3 squares. Additionally, when targeted by any other effect that causes you to teleport, you can teleport up to 3 additional squares.')
 							]
 						})
 					})
@@ -744,10 +837,30 @@ The coin must be picked up before it can be used again. If any creature picks up
 		]
 	});
 
-	// Echelon 4
+	static warbannerOfPride: Item = FactoryLogic.createItem({
+		id: 'item-warbanner-of-pride',
+		name: 'Warbanner of Pride',
+		description: 'A large banner billows from this tall flagpole. Its heraldry depicts a three-headed lion covered in wounds but still standing.',
+		type: ItemType.Trinket3rd,
+		keywords: [ AbilityKeyword.Magic ],
+		crafting: FactoryLogic.createProject({
+			prerequisites: 'A king’s cape and a solid gold flagpole',
+			source: 'Texts or lore in Caelian',
+			characteristic: [ Characteristic.Reason, Characteristic.Intuition ],
+			goal: 450
+		}),
+		effect: `
+While holding the banner, you have a +1 bonus to saving throws and resisting potencies. 
+
+At the end of each of your turns, each ally within 10 squares of you can make a saving throw against one effect they are suffering that is ended by a saving throw.`
+	});
+
+	// #endregion
+
+	// #region Echelon 4
 
 	static gravekeepersLantern: Item = FactoryLogic.createItem({
-		id: 'item- gravekeepers-lantern',
+		id: 'item-gravekeepers-lantern',
 		name: 'Gravekeeper’s Lantern',
 		description: 'This ancient wooden lantern is inscribed with eldritch runes and stained with dark blood.',
 		type: ItemType.Trinket4th,
@@ -770,6 +883,24 @@ The Gravekeeper’s Lantern can temporarily trap a nonhostile spirit of the dead
 A trapped spirit remains in the lantern for 10 minutes. They remember being trapped by you, and might become hostile thereafter.`
 	});
 
+	static hagbasket: Item = FactoryLogic.createItem({
+		id: 'item-hagbasket',
+		name: 'Hagbasket',
+		description: 'This throne woven from wood, hair, and metal floats several feet above the ground. The gentle humming it makes while it soars sounds reminiscent of a hag’s cackle.',
+		type: ItemType.Trinket4th,
+		keywords: [ AbilityKeyword.Magic ],
+		crafting: FactoryLogic.createProject({
+			prerequisites: 'A mundane broom, a hag’s hut, and a hag’s kiss',
+			source: 'Texts or lore in Khelt',
+			characteristic: [ Characteristic.Reason, Characteristic.Intuition ],
+			goal: 600
+		}),
+		effect: `
+The hagbasket can be used as a size 2 mount. Its speed is equal to its rider’s speed, and it can fly and hover.While riding in the hagbasket, power rolls made against you have a double edge. However, you can use a free triggered action when a power roll made against you gets a tier 3 result to halve the damage.
+
+**Special**: If you are a summoner riding in the hagbasket, you can use a maneuver to enable a willing ally within your Summoner’s Range to use Minion Bridge using your minions.`
+	});
+
 	static psiBlade: Item = FactoryLogic.createItem({
 		id: 'item-psi-blade',
 		name: 'Psi Blade',
@@ -790,10 +921,8 @@ A trapped spirit remains in the lantern for 10 minutes. They remember being trap
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-psi-blade-1',
-							name: 'Activate Blade',
+							name: 'Activate Psi Blade',
 							type: FactoryLogic.type.createManeuver(),
-							distance: [ FactoryLogic.distance.createSelf() ],
-							target: 'Self',
 							sections: [
 								FactoryLogic.createAbilitySectionText('You project a glowing blade of rippling psychic energy that extends parallel to your arm.')
 							]
@@ -802,10 +931,8 @@ A trapped spirit remains in the lantern for 10 minutes. They remember being trap
 					FactoryLogic.feature.createAbility({
 						ability: FactoryLogic.createAbility({
 							id: 'item-psi-blade-2',
-							name: 'Item Ability',
+							name: 'Psi Blade Strike',
 							type: FactoryLogic.type.createManeuver({ qualifiers: [ 'The blade is active', 'Once per turn' ] }),
-							distance: [ FactoryLogic.distance.createMelee() ],
-							target: 'One enemy',
 							sections: [
 								FactoryLogic.createAbilitySectionText('Make a melee weapon free strike that deals an extra 3 psychic damage.')
 							]
@@ -815,4 +942,24 @@ A trapped spirit remains in the lantern for 10 minutes. They remember being trap
 			}
 		]
 	});
+
+	static warbannerOfWrath: Item = FactoryLogic.createItem({
+		id: 'item-warbanner-of-wrath',
+		name: 'Warbanner of Wrath',
+		description: 'A large banner billows from this tall flagpole. Its heraldry depicts a dragon breathing fire with outstretched wings covered in holes and tears.',
+		type: ItemType.Trinket4th,
+		keywords: [ AbilityKeyword.Magic ],
+		crafting: FactoryLogic.createProject({
+			prerequisites: 'A king’s deathbed veil and a solid brass flagpole',
+			source: 'Texts or lore in Caelian',
+			characteristic: [ Characteristic.Reason, Characteristic.Intuition ],
+			goal: 600
+		}),
+		effect: `
+You can choose to regain 1 Recovery at the end of every combat encounter while holding the banner.
+
+Once per turn when you or an ally within 10 squares of you makes a melee strike, the strike can deal extra damage based on the number of Recoveries the striker has left. The strike deals +1 damage if the striker has more than half their Recoveries remaining, +2 damage if the striker has half or fewer but still at least one of their Recoveries remaining, and +5 damage if the striker has no Recoveries.`
+	});
+
+	// #endregion
 }

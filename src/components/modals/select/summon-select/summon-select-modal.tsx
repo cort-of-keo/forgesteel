@@ -1,0 +1,68 @@
+import { Collections } from '@/utils/collections';
+import { Empty } from '@/components/controls/empty/empty';
+import { Hero } from '@/models/hero';
+import { Modal } from '@/components/modals/modal/modal';
+import { MonsterLogic } from '@/logic/monster-logic';
+import { MonsterPanel } from '@/components/panels/elements/monster-panel/monster-panel';
+import { PanelMode } from '@/enums/panel-mode';
+import { SearchBox } from '@/components/controls/text-input/text-input';
+import { SelectablePanel } from '@/components/controls/selectable-panel/selectable-panel';
+import { Sourcebook } from '@/models/sourcebook';
+import { Space } from 'antd';
+import { Summon } from '@/models/summon';
+import { SummonLogic } from '@/logic/summon-logic';
+import { Utils } from '@/utils/utils';
+import { useState } from 'react';
+
+import './summon-select-modal.scss';
+
+interface Props {
+	summons: Summon[];
+	hero: Hero;
+	sourcebooks: Sourcebook[];
+	onClose: () => void;
+	onSelect: (summon: Summon) => void;
+}
+
+export const SummonSelectModal = (props: Props) => {
+	const [ searchTerm, setSearchTerm ] = useState<string>('');
+
+	const summons = props.summons
+		.filter(s => Utils.textMatches([
+			s.monster.name,
+			s.monster.description,
+			...s.monster.keywords
+		], searchTerm));
+
+	const sortedSummons = Collections.sort(summons, s => MonsterLogic.getMonsterName(s.monster));
+
+	return (
+		<Modal
+			toolbar={
+				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+			}
+			content={
+				<div className='summon-select-modal'>
+					<Space orientation='vertical' style={{ width: '100%' }}>
+						{
+							sortedSummons.map(s => (
+								<SelectablePanel
+									key={s.id}
+									onSelect={() => props.onSelect(s)}
+								>
+									<MonsterPanel monster={SummonLogic.getSummonedMonster(s, props.hero)} summon={s.info} sourcebooks={props.sourcebooks} mode={PanelMode.Full} />
+								</SelectablePanel>
+							))
+						}
+						{
+							sortedSummons.length === 0 ?
+								<Empty />
+								: null
+						}
+					</Space>
+				</div>
+			}
+			onClose={props.onClose}
+		/>
+	);
+};

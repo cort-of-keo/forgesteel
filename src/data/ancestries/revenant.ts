@@ -1,10 +1,10 @@
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Ancestry } from '../../models/ancestry';
-import { Characteristic } from '../../enums/characteristic';
-import { ConditionType } from '../../enums/condition-type';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Ancestry } from '@/models/ancestry';
+import { Characteristic } from '@/enums/characteristic';
+import { ConditionType } from '@/enums/condition-type';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
 
 export const revenant: Ancestry = {
 	id: 'ancestry-revenant',
@@ -100,8 +100,8 @@ You always know the direction to the exact location of a creature who bears one 
 											FactoryLogic.createPowerRoll({
 												characteristic: [ Characteristic.Reason, Characteristic.Intuition, Characteristic.Presence ],
 												tier1: '3 + R, I, or P damage; slide 1',
-												tier2: '3 + R, I, or P damage; slide 2',
-												tier3: '8 + R, I, or P damage; slide 3'
+												tier2: '5 + R, I, or P damage; slide 2',
+												tier3: '7 + R, I, or P damage; slide 3'
 											})
 										),
 										FactoryLogic.createAbilitySectionText('The sigil disappears from the creature.')

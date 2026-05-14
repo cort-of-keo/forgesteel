@@ -8,4 +8,10 @@
 		margin-top: -10px;
 		padding: unset;
 	}
+
+	.domain-features-list {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
 }

@@ -1,21 +1,23 @@
-import { Button, Divider, Flex, Input, Popover, Progress, Segmented, Space } from 'antd';
-import { DownOutlined, EditFilled, EditOutlined, UploadOutlined } from '@ant-design/icons';
-import { Encounter } from '../../../models/encounter';
-import { FeaturePanel } from '../../panels/elements/feature-panel/feature-panel';
-import { FeatureType } from '../../../enums/feature-type';
-import { HeaderText } from '../../controls/header-text/header-text';
-import { Modal } from '../modal/modal';
-import { Monster } from '../../../models/monster';
-import { MonsterGroup } from '../../../models/monster-group';
-import { MonsterHealthPanel } from '../../panels/health/health-panel';
-import { MonsterLogic } from '../../../logic/monster-logic';
-import { MonsterPanel } from '../../panels/elements/monster-panel/monster-panel';
-import { MonsterToken } from '../../panels/token/token';
-import { Options } from '../../../models/options';
-import { PanelMode } from '../../../enums/panel-mode';
-import { ResourcePill } from '../../controls/pill/pill';
-import { SelectablePanel } from '../../controls/selectable-panel/selectable-panel';
-import { Utils } from '../../../utils/utils';
+import { Button, Divider, Flex, Segmented, Space } from 'antd';
+import { EditFilled, EditOutlined, UploadOutlined } from '@ant-design/icons';
+import { Element } from '@/models/element';
+import { Encounter } from '@/models/encounter';
+import { Expander } from '@/components/controls/expander/expander';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { MalicePanel } from '@/components/panels/malice/malice-panel';
+import { Modal } from '@/components/modals/modal/modal';
+import { Monster } from '@/models/monster';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterHealthPanel } from '@/components/panels/health/health-panel';
+import { MonsterLogic } from '@/logic/monster-logic';
+import { MonsterPanel } from '@/components/panels/elements/monster-panel/monster-panel';
+import { MonsterToken } from '@/components/panels/token/token';
+import { NameDescEditPanel } from '@/components/panels/edit/name-desc-edit/name-desc-edit-panel';
+import { PanelMode } from '@/enums/panel-mode';
+import { Sourcebook } from '@/models/sourcebook';
+import { SummoningInfo } from '@/models/summon';
+import { TextInput } from '@/components/controls/text-input/text-input';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './monster-modal.scss';
@@ -24,17 +26,19 @@ interface Props {
 	monster: Monster;
 	monsterGroup?: MonsterGroup;
 	encounter?: Encounter;
-	options: Options;
+	summon?: SummoningInfo;
+	sourcebooks: Sourcebook[];
+	onChange?: (monster: Monster) => void;
 	onClose: () => void;
-	export?: (format: 'image' | 'pdf' | 'json') => void;
 	updateMonster?: (monster: Monster) => void;
-	setMalice?: (value: number) => void;
+	updateEncounter?: (encounter: Encounter) => void;
+	exportElementData?: (category: string, element: Element) => void;
 }
 
 export const MonsterModal = (props: Props) => {
 	const [ monster, setMonster ] = useState<Monster>(Utils.copy(props.monster));
 	const [ encounter, setEncounter ] = useState<Encounter | undefined>(props.encounter ? Utils.copy(props.encounter) : undefined);
-	const [ page, setPage ] = useState<string>(props.updateMonster ? 'Encounter' : 'Stat Block');
+	const [ page, setPage ] = useState<string>(props.updateMonster ? 'Vitals' : 'Stat Block');
 	const [ editingName, setEditingName ] = useState<boolean>(false);
 
 	const updateMonster = (monster: Monster) => {
@@ -44,9 +48,50 @@ export const MonsterModal = (props: Props) => {
 		}
 	};
 
+	const exportMonster = () => {
+		if (props.exportElementData) {
+			props.exportElementData('monster', props.monster);
+		}
+	};
+
+	const getToolbar = () => {
+		if (props.updateMonster) {
+			return (
+				<Flex align='center' justify='center' style={{ width: '100%' }}>
+					<Segmented
+						name='tabs'
+						options={encounter ? [ 'Vitals', 'Stat Block', 'Malice' ] : [ 'Vitals', 'Stat Block' ]}
+						value={page}
+						onChange={setPage}
+					/>
+				</Flex>
+			);
+		}
+
+		if (props.exportElementData) {
+			return (
+				<Button icon={<UploadOutlined />} onClick={exportMonster}>
+					Export
+				</Button>
+			);
+		}
+
+		return null;
+	};
+
 	const getContent = () => {
+		const onChange = (name: string, desc: string) => {
+			if (props.onChange) {
+				const copy = Utils.copy(monster);
+				copy.name = name;
+				copy.description = desc;
+				setMonster(copy);
+				props.onChange(copy);
+			}
+		};
+
 		switch (page) {
-			case 'Encounter':
+			case 'Vitals':
 				return (
 					<div style={{ padding: '0 20px' }}>
 						<HeaderText
@@ -68,13 +113,13 @@ export const MonsterModal = (props: Props) => {
 						{
 							editingName && props.updateMonster ?
 								<div>
-									<Input
+									<TextInput
 										placeholder='Name'
 										allowClear={true}
 										value={monster.name}
-										onChange={e => {
+										onChange={value => {
 											const copy = Utils.copy(monster);
-											copy.name = e.target.value;
+											copy.name = value;
 											updateMonster(copy);
 										}}
 									/>
@@ -90,55 +135,52 @@ export const MonsterModal = (props: Props) => {
 				);
 			case 'Stat Block':
 				return (
-					<MonsterPanel
-						monster={monster}
-						monsterGroup={props.monsterGroup}
-						options={props.options}
-						mode={PanelMode.Full}
-					/>
+					<>
+						{
+							props.onChange ?
+								<div style={{ padding: '20px' }}>
+									<Expander title='Customize'>
+										<NameDescEditPanel
+											element={monster}
+											showNameGenerator={true}
+											onChange={onChange}
+										/>
+									</Expander>
+								</div>
+								: null
+						}
+						<MonsterPanel
+							monster={monster}
+							monsterGroup={props.monsterGroup}
+							summon={props.summon}
+							sourcebooks={props.sourcebooks}
+							mode={PanelMode.Full}
+						/>
+					</>
 				);
 			case 'Malice':
 				return (
-					<Space direction='vertical' style={{ width: '100%', padding: '20px' }}>
+					<Space orientation='vertical' style={{ width: '100%', padding: '20px' }}>
 						{
-							MonsterLogic.getMaliceOptions(monster, props.monsterGroup).map(malice => {
-								const cost = malice.type === FeatureType.MaliceAbility ? malice.data.ability.cost as number : malice.data.cost;
-
-								return (
-									<SelectablePanel key={malice.id}>
-										<FeaturePanel
-											feature={malice}
-											options={props.options}
-											cost={cost}
-											repeatable={malice.type === FeatureType.Malice ? malice.data.repeatable : undefined}
-											mode={PanelMode.Full}
-										/>
-										{
-											encounter && props.setMalice ?
-												encounter.malice >= cost ?
-													<Button
-														block={true}
-														onClick={() => {
-															const value = Math.max(encounter!.malice - cost, 0);
-															const copy = Utils.copy(encounter);
-															copy.malice = value;
-															setEncounter(copy);
-															props.setMalice!(value);
-														}}
-													>
-														Use
-														<ResourcePill value={cost} />
-													</Button>
-													:
-													<div className='malice-progress'>
-														<Progress percent={100 * encounter.malice / cost} steps={cost} showInfo={false} />
-														<ResourcePill value={`${encounter.malice} of ${cost}`} />
-													</div>
-												: null
+							MonsterLogic.getMaliceOptions(monster, props.monsterGroup)
+								.map(malice => (
+									<MalicePanel
+										malice={malice}
+										currentMalice={encounter ? encounter.malice : undefined}
+										updateCurrentMalice={
+											encounter ?
+												value => {
+													const copy = Utils.copy(encounter);
+													copy.malice = value;
+													setEncounter(copy);
+													if (props.updateEncounter) {
+														props.updateEncounter(copy);
+													}
+												}
+												: undefined
 										}
-									</SelectablePanel>
-								);
-							})
+									/>
+								))
 						}
 					</Space>
 				);
@@ -147,54 +189,15 @@ export const MonsterModal = (props: Props) => {
 		return null;
 	};
 
-	try {
-		return (
-			<Modal
-				toolbar={
-					<>
-						{
-							props.updateMonster ?
-								<Flex align='center' justify='center' style={{ width: '100%' }}>
-									<Segmented
-										name='tabs'
-										options={encounter ? [ 'Encounter', 'Stat Block', 'Malice' ] : [ 'Encounter', 'Stat Block' ]}
-										value={page}
-										onChange={setPage}
-									/>
-								</Flex>
-								: null
-						}
-						{
-							props.export ?
-								<Popover
-									trigger='click'
-									content={(
-										<div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-											<Button onClick={() => props.export!('image')}>Export As Image</Button>
-											<Button onClick={() => props.export!('pdf')}>Export As PDF</Button>
-											<Button onClick={() => props.export!('json')}>Export as Data</Button>
-										</div>
-									)}
-								>
-									<Button icon={<UploadOutlined />}>
-										Export
-										<DownOutlined />
-									</Button>
-								</Popover>
-								: null
-						}
-					</>
-				}
-				content={
-					<div className='monster-modal'>
-						{getContent()}
-					</div>
-				}
-				onClose={props.onClose}
-			/>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+	return (
+		<Modal
+			toolbar={getToolbar()}
+			content={
+				<div className='monster-modal'>
+					{getContent()}
+				</div>
+			}
+			onClose={props.onClose}
+		/>
+	);
 };

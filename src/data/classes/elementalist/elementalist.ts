@@ -1,19 +1,19 @@
-import { AbilityDistanceType } from '../../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { Characteristic } from '../../../enums/characteristic';
-import { DamageModifierType } from '../../../enums/damage-modifier-type';
-import { DamageType } from '../../../enums/damage-type';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { FeatureField } from '../../../enums/feature-field';
-import { HeroClass } from '../../../models/class';
-import { KitArmor } from '../../../enums/kit-armor';
-import { KitWeapon } from '../../../enums/kit-weapon';
-import { PerkList } from '../../../enums/perk-list';
-import { SkillList } from '../../../enums/skill-list';
-import { earth } from './earth';
-import { fire } from './fire';
-import { green } from './green';
-import { voidSubclass } from './void';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { HeroClass } from '@/models/class';
+import { KitArmor } from '@/enums/kit-armor';
+import { KitWeapon } from '@/enums/kit-weapon';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
+import { earth } from '@/data/classes/elementalist/earth';
+import { fire } from '@/data/classes/elementalist/fire';
+import { green } from '@/data/classes/elementalist/green';
+import { voidSubclass } from '@/data/classes/elementalist/void';
 
 export const elementalist: HeroClass = {
 	id: 'class-elementalist',
@@ -22,6 +22,7 @@ export const elementalist: HeroClass = {
 Air for movement. Earth for permanence. Fire for destruction. Water for change. Green for growth. Rot for death. Void for the mystery. Years of study and practice and poring over tomes brought you the revelations that allow you to manipulate these building blocks of reality. Now you use your mastery of the seven elements to destroy, create, and warp the world with magic.
 
 As an elementalist, you can unleash your wrath across a field of foes, put an enemy exactly where you want them, debilitate foes with harmful effects, ward yourself and allies against danger, manipulate terrain, warp space, and more. Your choice of elemental specialization determines which of these things you do best.`,
+	type: 'standard',
 	subclassName: 'Elemental Specialization',
 	subclassCount: 1,
 	primaryCharacteristicsOptions: [
@@ -61,7 +62,6 @@ As an elementalist, you can unleash your wrath across a field of foes, put an en
 				}),
 				FactoryLogic.feature.createSkillChoice({
 					id: 'elementalist-1-1',
-					listOptions: [ SkillList.Lore ],
 					selected: [ 'Magic' ]
 				}),
 				FactoryLogic.feature.createSkillChoice({
@@ -128,17 +128,24 @@ Choose one of the following effects:
 							feature: FactoryLogic.feature.createMultiple({
 								id: 'elementalist-1-7a',
 								name: 'Enchantment of Battle',
-								description: 'You can wear light armor and wield light weapons effectively, even though you don’t have a kit.',
+								description: `
+You can wear light armor and wield light weapons effectively, even though you don’t have a kit.
+
+* While you wear light armor, you gain a +3 bonus to Stamina, and that bonus increases by 3 at 4th, 7th, and 10th levels.
+* While you wield a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes.
+* You can use light armor treasures and light weapon treasures.
+
+If you have a kit, you can’t take this enchantment.`,
 								features: [
 									FactoryLogic.feature.createBonus({
 										id: 'elementalist-1-7aa',
 										field: FeatureField.Stamina,
 										valuePerEchelon: 3
 									}),
-									FactoryLogic.feature.create({
+									FactoryLogic.feature.createAbilityDamage({
 										id: 'elementalist-1-7ab',
-										name: 'Enchantment of Battle',
-										description: 'You can wear light armor and wield light weapons effectively, even though you don’t have a kit. While you wield a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes. You can use light armor treasures and light weapon treasures. If you have a kit, you can’t take this enchantment.'
+										keywords: [ AbilityKeyword.Weapon ],
+										value: 1
 									}),
 									FactoryLogic.feature.createProficiency({
 										id: 'elementalist-1-7ac',
@@ -193,23 +200,23 @@ Choose one of the following effects:
 							feature: FactoryLogic.feature.createMultiple({
 								id: 'elementalist-1-7e',
 								name: 'Enchantment of Permanence',
-								description: 'You gain a bonus to Stamina.',
 								features: [
 									FactoryLogic.feature.createBonus({
-										id: '',
+										id: 'elementalist-1-7e-1',
 										field: FeatureField.Stamina,
 										valuePerEchelon: 6
 									}),
 									FactoryLogic.feature.createBonus({
-										id: '',
+										id: 'elementalist-1-7e-2',
 										field: FeatureField.Stability,
-										valuePerEchelon: 1
+										value: 1
 									})
 								]
 							}),
 							value: 1
 						}
-					]
+					],
+					selectAt: 'respite'
 				}),
 				FactoryLogic.feature.createChoice({
 					id: 'elementalist-1-8',
@@ -224,46 +231,102 @@ Choose one of the following effects:
 							value: 1
 						},
 						{
-							feature: FactoryLogic.feature.createDamageModifier({
+							feature: FactoryLogic.feature.createChoice({
 								id: 'elementalist-1-8b',
 								name: 'Ward of Excellent Protection',
 								description: 'You weave a shield of all the elements around yourself, channeling their full protective power. You have immunity to acid, cold, corruption, fire, lightning, poison, or sonic damage equal to your Reason score.',
-								modifiers: [
-									FactoryLogic.damageModifier.createCharacteristic({
-										damageType: DamageType.Acid,
-										modifierType: DamageModifierType.Immunity,
-										characteristics: [ Characteristic.Reason ]
-									}),
-									FactoryLogic.damageModifier.createCharacteristic({
-										damageType: DamageType.Cold,
-										modifierType: DamageModifierType.Immunity,
-										characteristics: [ Characteristic.Reason ]
-									}),
-									FactoryLogic.damageModifier.createCharacteristic({
-										damageType: DamageType.Corruption,
-										modifierType: DamageModifierType.Immunity,
-										characteristics: [ Characteristic.Reason ]
-									}),
-									FactoryLogic.damageModifier.createCharacteristic({
-										damageType: DamageType.Fire,
-										modifierType: DamageModifierType.Immunity,
-										characteristics: [ Characteristic.Reason ]
-									}),
-									FactoryLogic.damageModifier.createCharacteristic({
-										damageType: DamageType.Lightning,
-										modifierType: DamageModifierType.Immunity,
-										characteristics: [ Characteristic.Reason ]
-									}),
-									FactoryLogic.damageModifier.createCharacteristic({
-										damageType: DamageType.Poison,
-										modifierType: DamageModifierType.Immunity,
-										characteristics: [ Characteristic.Reason ]
-									}),
-									FactoryLogic.damageModifier.createCharacteristic({
-										damageType: DamageType.Sonic,
-										modifierType: DamageModifierType.Immunity,
-										characteristics: [ Characteristic.Reason ]
-									})
+								options: [
+									{
+										feature: FactoryLogic.feature.createDamageModifier({
+											id: 'elementalist-1-8ba',
+											modifiers: [
+												FactoryLogic.damageModifier.createCharacteristic({
+													damageType: DamageType.Acid,
+													modifierType: DamageModifierType.Immunity,
+													characteristics: [ Characteristic.Reason ]
+												})
+											]
+										}),
+										value: 1
+									},
+									{
+										feature: FactoryLogic.feature.createDamageModifier({
+											id: 'elementalist-1-8bb',
+											modifiers: [
+												FactoryLogic.damageModifier.createCharacteristic({
+													damageType: DamageType.Cold,
+													modifierType: DamageModifierType.Immunity,
+													characteristics: [ Characteristic.Reason ]
+												})
+											]
+										}),
+										value: 1
+									},
+									{
+										feature: FactoryLogic.feature.createDamageModifier({
+											id: 'elementalist-1-8bc',
+											modifiers: [
+												FactoryLogic.damageModifier.createCharacteristic({
+													damageType: DamageType.Corruption,
+													modifierType: DamageModifierType.Immunity,
+													characteristics: [ Characteristic.Reason ]
+												})
+											]
+										}),
+										value: 1
+									},
+									{
+										feature: FactoryLogic.feature.createDamageModifier({
+											id: 'elementalist-1-8bd',
+											modifiers: [
+												FactoryLogic.damageModifier.createCharacteristic({
+													damageType: DamageType.Fire,
+													modifierType: DamageModifierType.Immunity,
+													characteristics: [ Characteristic.Reason ]
+												})
+											]
+										}),
+										value: 1
+									},
+									{
+										feature: FactoryLogic.feature.createDamageModifier({
+											id: 'elementalist-1-8be',
+											modifiers: [
+												FactoryLogic.damageModifier.createCharacteristic({
+													damageType: DamageType.Lightning,
+													modifierType: DamageModifierType.Immunity,
+													characteristics: [ Characteristic.Reason ]
+												})
+											]
+										}),
+										value: 1
+									},
+									{
+										feature: FactoryLogic.feature.createDamageModifier({
+											id: 'elementalist-1-8bf',
+											modifiers: [
+												FactoryLogic.damageModifier.createCharacteristic({
+													damageType: DamageType.Poison,
+													modifierType: DamageModifierType.Immunity,
+													characteristics: [ Characteristic.Reason ]
+												})
+											]
+										}),
+										value: 1
+									},
+									{
+										feature: FactoryLogic.feature.createDamageModifier({
+											id: 'elementalist-1-8bg',
+											modifiers: [
+												FactoryLogic.damageModifier.createCharacteristic({
+													damageType: DamageType.Sonic,
+													modifierType: DamageModifierType.Immunity,
+													characteristics: [ Characteristic.Reason ]
+												})
+											]
+										}),
+										value: 1
+									}
 								]
 							}),
 							value: 1
@@ -300,7 +363,8 @@ Choose one of the following effects:
 							}),
 							value: 1
 						}
-					]
+					],
+					selectAt: 'respite'
 				}),
 				FactoryLogic.feature.createClassAbilityChoice({
 					id: 'elementalist-1-9',
@@ -789,9 +853,8 @@ Breath remains until you convert it to essence.`
 						tier3: '6 psychic damage'
 					})
 				),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'At the start of your turn, you can use a maneuver to use this ability again without spending essence.'
 				})
 			]
@@ -814,9 +877,8 @@ Breath remains until you convert it to essence.`
 						tier3: '11 + R fire damage'
 					})
 				),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'If the target is within distance at the start of your turn, make a power roll for this ability again.'
 				})
 			]
@@ -875,7 +937,7 @@ Breath remains until you convert it to essence.`
 					tier2: '6 fire damage',
 					tier3: '10 fire damage'
 				})),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
 					value: 2,
 					effect: 'At the start of your turn, you can use a maneuver to use this ability again without spending essence.'
@@ -901,9 +963,8 @@ Breath remains until you convert it to essence.`
 						tier3: 'The target falls into the hole and can’t reduce the height of the fall.'
 					})
 				),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'At the start of your turn, you open another hole, making a power roll against each creature who could fall into the hole when it opens without spending essence.'
 				})
 			]
@@ -919,9 +980,8 @@ Breath remains until you convert it to essence.`
 			cost: 5,
 			sections: [
 				FactoryLogic.createAbilitySectionText('Until the start of your next turn, the target can move through solid matter, they ignore difficult terrain, and their movement can’t provoke opportunity attacks. If the target ends their turn inside solid matter, they are forced out into the space where they entered it and this effect ends.'),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'The effect lasts until the start of your next turn.'
 				})
 			]
@@ -962,9 +1022,8 @@ Until the start of your next turn, the area gains the following effects:
 * Once as a free maneuver at the start of your turn, you allow yourself and each ally in the area to spend any number of Recoveries.
 * The area is difficult terrain for enemies.
 * Each enemy who enters the area for the first time in a combat round or starts their turn there takes damage equal to your Reason score.`),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'The area remains until the start of your next turn. As a maneuver, you can move the area up to 5 squares. This ability ends if the area is ever not within your line of effect.'
 				})
 			]
@@ -1093,9 +1152,8 @@ Until the start of your next turn, the area gains the following effects:
 					tier3: '9 damage'
 				})),
 				FactoryLogic.createAbilitySectionText('Until the end of your next turn, each ally in the area has each of their characteristic scores treated as 1 higher for the purpose of resisting potencies, and has a +1 bonus to saving throws.'),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'You make the power roll again to target each enemy in the area without spending essence, and the effect lasts until the start of your next turn.'
 				})
 			]
@@ -1112,9 +1170,8 @@ Until the start of your next turn, the area gains the following effects:
 			minLevel: 3,
 			sections: [
 				FactoryLogic.createAbilitySectionText('The wall lasts until the start of your next turn, and can be placed in occupied squares. Creatures can enter and pass through the wall. Each enemy who enters the area for the first time in a combat round or starts their turn there takes fire damage equal to your Reason score for each square of the area they start their turn in or enter.'),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'The wall lasts until the start of your next turn, and you can add a number of squares to the wall equal to your Reason score.'
 				})
 			]
@@ -1132,9 +1189,9 @@ Until the start of your next turn, the area gains the following effects:
 			sections: [
 				FactoryLogic.createAbilitySectionRoll(FactoryLogic.createPowerRoll({
 					characteristic: [ Characteristic.Reason ],
-					tier1: '8 + M fire damage',
-					tier2: '13 + M fire damage',
-					tier3: '17 + M fire damage'
+					tier1: '8 + R fire damage',
+					tier2: '13 + R fire damage',
+					tier3: '17 + R fire damage'
 				})),
 				FactoryLogic.createAbilitySectionText('When the target ends their next turn, or if they drop to 0 Stamina before then, each enemy adjacent to them takes fire damage equal to twice your Reason score. Each affected enemy then gains this same effect.')
 			]
@@ -1157,9 +1214,8 @@ Until the start of your next turn, the area gains the following effects:
 					tier3: '7 damage'
 				})),
 				FactoryLogic.createAbilitySectionText('The area lasts until the start of your next turn. It is difficult terrain for enemies, and you and your allies have concealment while in the area.'),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'The area remains until the start of your next turn, and you can move it up to 5 squares (no action required). As a maneuver, you can make the power roll again without spending essence.'
 				})
 			]
@@ -1181,9 +1237,8 @@ Until the start of your next turn, the area gains the following effects:
 					tier2: '10 + R corruption damage; the target has line of effect only to creatures and objects within 4 squares of them until the start of your next turn',
 					tier3: '15 + R corruption damage; the target has line of effect only to adjacent creatures and objects until the start of your next turn'
 				})),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'The target’s limited line of effect lasts until the start of your next turn.'
 				})
 			]
@@ -1206,9 +1261,8 @@ Until the start of your next turn, the area gains the following effects:
 					tier3: '5 corruption damage; A < [strong], restrained (save ends)'
 				})),
 				FactoryLogic.createAbilitySectionText('The area is difficult terrain until the start of your next turn. Each enemy who ends their turn in the area is restrained (save ends).'),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'The area remains until the start of your next turn.'
 				})
 			]
@@ -1225,9 +1279,8 @@ Until the start of your next turn, the area gains the following effects:
 			minLevel: 6,
 			sections: [
 				FactoryLogic.createAbilitySectionText('The target has a +3 bonus to speed, they can fly, and their abilities ignore concealment. Additionally, whenever the target gains their Heroic Resource, they gain 1 additional Heroic Resource. This effect lasts until the start of your next turn.'),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
-					value: 1,
 					effect: 'The effect lasts until the start of your next turn.'
 				})
 			]
@@ -1250,7 +1303,7 @@ Until the start of your next turn, the area gains the following effects:
 * Their strikes deal extra fire damage equal to twice your Reason score.
 * When the target force moves a creature or object, the forced movement distance gains a +2 bonus.
 * They can use their highest characteristic instead of Might for Might power rolls.`),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
 					value: 2,
 					effect: 'The effect lasts until the start of your next turn. Additionally, at the start of your turn, the target can spend 2 Recoveries.'
@@ -1289,7 +1342,7 @@ Until the start of your next turn, the area gains the following effects:
 			minLevel: 6,
 			sections: [
 				FactoryLogic.createAbilitySectionText('The area becomes dark and verdant, with trees and plant life appearing in unoccupied spaces within it until the start of your next turn. The area is difficult terrain for enemies, and any ally who ends their turn in the area has cover.'),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
 					value: 2,
 					effect: 'The area remains until the start of your next turn. Additionally, at the start of your turn, each ally in the area can spend a Recovery.'
@@ -1383,7 +1436,7 @@ Each enemy who ends their turn within 3 squares of the tree is restrained until 
 					tier2: '9 damage',
 					tier3: '13 damage'
 				})),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
 					value: 2,
 					effect: 'At the start of your turn, you can use a maneuver to use this ability again without spending essence.'
@@ -1402,7 +1455,7 @@ Each enemy who ends their turn within 3 squares of the tree is restrained until 
 			minLevel: 9,
 			sections: [
 				FactoryLogic.createAbilitySectionText('You create a fissure in the ground adjacent to you that is a 10 × 2 line and 6 squares deep. Each creature in the area who is prone and size 2 or smaller falls in. Other creatures can enter the fissure or can shift to the nearest unoccupied space of their choice outside it.'),
-				FactoryLogic.createAbilitySectionField({
+				FactoryLogic.createAbilitySectionSpend({
 					name: 'Persist',
 					value: 2,
 					effect: 'At the start of your turn, you can use a maneuver to use this ability again without spending essence.'
@@ -1440,7 +1493,7 @@ Each enemy who ends their turn within 3 squares of the tree is restrained until 
 					tier2: '18 + R fire damage; I < [average] , dazed (save ends)',
 					tier3: '25 + R fire damage; I < [strong] , dazed (save ends)'
 				})),
-				FactoryLogic.createAbilitySectionText('You use up to three heroic abilities whose essence costs total 11 or less, spending no additional essence beyond the cost of this ability. You can shift up to 2 squares between your use of each ability.')
+				FactoryLogic.createAbilitySectionText('This damage ignores immunity.')
 			]
 		})
 

@@ -1,11 +1,12 @@
-import { AbilityDistanceType } from '../enums/abiity-distance-type';
-import { AbilityKeyword } from '../enums/ability-keyword';
-import { Characteristic } from '../enums/characteristic';
-import { DamageModifierType } from '../enums/damage-modifier-type';
-import { DamageType } from '../enums/damage-type';
-import { FactoryLogic } from '../logic/factory-logic';
-import { FeatureField } from '../enums/feature-field';
-import { Title } from '../models/title';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { ItemType } from '@/enums/item-type';
+import { Title } from '@/models/title';
 
 export class TitleData {
 	static ancientLoremaster: Title = {
@@ -37,7 +38,7 @@ export class TitleData {
 	static angler: Title = {
 		id: 'title-angler',
 		name: 'Angler',
-		description: 'You gain the following benefit',
+		description: 'You gain the following benefit.',
 		echelon: 1,
 		prerequisites: '120 project points spent on the Tackle table while Fishing.',
 		features: [
@@ -261,7 +262,7 @@ You find an agent who can provide you with three pieces of information about the
 	static goldenrod: Title = {
 		id: 'title-goldenrod',
 		name: 'Goldenrod',
-		description: 'You gain the following benefit',
+		description: 'You gain the following benefit.',
 		echelon: 1,
 		prerequisites: '300 project points spent on the Tackle table while Fishing.',
 		features: [
@@ -388,6 +389,22 @@ You find an agent who can provide you with three pieces of information about the
 				id: 'title-marshal-4',
 				name: 'Trained Tracker',
 				description: 'You gain an edge on tests made to track criminals.'
+			})
+		],
+		selectedFeatureID: ''
+	};
+
+	static masterOfReels: Title = {
+		id: 'title-master-of-reels',
+		name: 'Master of Reels',
+		description: 'You gain the following benefit.',
+		echelon: 1,
+		prerequisites: 'You gain this title by undertaking the Fishing project.',
+		features: [
+			FactoryLogic.feature.create({
+				id: 'title-master-of-reels-1',
+				name: 'Master of Reels',
+				description: 'Whenever you deal damage to a target who is 2 or more squares away from you and that target isn’t also force moved, you can pull the target a number of squares equal to your Agility, Reason, or Intuition score (your choice).'
 			})
 		],
 		selectedFeatureID: ''
@@ -557,7 +574,7 @@ At a dramatic moment determined by the Director, you rejoin your party with an e
 
 	static troupeTactics: Title = {
 		id: 'title-troupe-tactics',
-		name: 'Troupe Tactics',
+		name: 'Troupe Leading Player',
 		description: '“We’re actors! We’re the opposite of people!”',
 		echelon: 1,
 		prerequisites: 'The party has successfully performed as a troupe of actors, circus performers, or other entertainers.',
@@ -1198,7 +1215,7 @@ You gain a small magic spy device called a boffin. Once per encounter, you can a
 			}),
 			FactoryLogic.feature.create({
 				id: 'title-sworn-hunter-3',
-				name: 'Spy Ring',
+				name: 'We\'re In This Together',
 				description: 'When you have a creature grabbed and take damage from an ability not used by that creature, the grabbed creature takes the same damage.'
 			})
 		],
@@ -1364,7 +1381,7 @@ When you are reduced to 0 Stamina by damage that isn’t fire or holy damage and
 
 	static dragonBlooded: Title = {
 		id: 'title-dragon-blooded',
-		name: 'Dran Blooded',
+		name: 'Dragon Blooded',
 		description: '“I stabbed the wyrm Axarthan in the heart and their silver blood washed over me, leaving me … as you see.”',
 		echelon: 3,
 		prerequisites: 'You defeat a leader or solo creature with the Dragon keyword, such as a gloom dragon.',
@@ -1448,8 +1465,8 @@ Once per day, you can spend 10 uninterrupted minutes to magically alter mundane 
 							FactoryLogic.createPowerRoll({
 								characteristic: [ Characteristic.Presence ],
 								tier1: 'You take 4 sonic damage unless you have the Performance skill.',
-								tier2: '6 sonic damage; M , [average], weakened (save ends)',
-								tier3: '10 sonic damage; M , [average], weakened and bleeding (save ends)'
+								tier2: '6 sonic damage; M < [average], weakened (save ends)',
+								tier3: '10 sonic damage; M < [average], weakened and bleeding (save ends)'
 							})
 						),
 						FactoryLogic.createAbilitySectionText('The soul of any creature killed by this ability is dragged to Hell.')
@@ -1723,7 +1740,7 @@ Once per day, you can spend 10 uninterrupted minutes to magically alter mundane 
 			}),
 			FactoryLogic.feature.create({
 				id: 'title-enlightened-3',
-				name: 'Worshippers',
+				name: 'Rearrange the Game Pieces',
 				description: 'Your choice of your Reason or Intuition increases by 1 (to a maximum of 6). You can reach behind the curtain and alter reality. At the start of combat, choose yourself or any creature within 5 squares. The chosen target must move up to their speed to a space you choose, but can’t enter damaging terrain or terrain that could impose a condition on them. The target doesn’t appear to move or teleport to that space—they are simply there. No one but you has any memory of the target’s previous position.'
 			})
 		],
@@ -1818,6 +1835,54 @@ Once per day, you can spend 10 uninterrupted minutes to magically alter mundane 
 		selectedFeatureID: ''
 	};
 
+	static reborn: Title = {
+		id: 'title-reborn',
+		name: 'Reborn',
+		description: '“I remember this world. I suppose my task is not yet complete.”',
+		echelon: 4,
+		prerequisites: 'You died in glorious battle while on a quest for a higher power.',
+		features: [
+			FactoryLogic.feature.create({
+				id: 'title-reborn-1',
+				name: 'Effect',
+				description: 'A god or other powerful being has determined that it is not yet your time to die. Your body fades away, but you reappear alive 24 hours later in a location of your choice. You regain all your Stamina and Recoveries, and your choice of your Intuition or Presence increases by 1 (to a maximum of 6). Additionally, choose one of the following benefits:\n\n* Holy Weapon: You have a leveled treasure of the Director’s choice.\n* Kill Me Once, Shame On You: Choose a creature keyword belonging to one of the creatures who defeated you. Any creature with that keyword takes a bane on ability rolls against you.\n* Memories of the Beyond: You have two skills of your choice.\n\nSpecial: If a hakaan gains this title as a result of using their Doomsight trait, they lose that trait.'
+			}),
+			FactoryLogic.feature.createChoice({
+				id: 'title-reborn-2',
+				name: 'Option',
+				options: [
+					{
+						feature: FactoryLogic.feature.createItemChoice({
+							id: 'title-reborn-2a',
+							name: 'Holy Weapon',
+							description: 'You have a leveled treasure of the Director’s choice.',
+							types: [ ItemType.Leveled, ItemType.LeveledArmor, ItemType.LeveledImplement, ItemType.LeveledWeapon ]
+						}),
+						value: 1
+					},
+					{
+						feature: FactoryLogic.feature.create({
+							id: 'title-reborn-2b',
+							name: 'Kill Me Once, Shame On You',
+							description: 'Choose a creature keyword belonging to one of the creatures who defeated you. Any creature with that keyword takes a bane on ability rolls against you.'
+						}),
+						value: 1
+					},
+					{
+						feature: FactoryLogic.feature.createSkillChoice({
+							id: 'title-reborn-2c',
+							name: 'Memories of the Beyond',
+							description: 'You have two skills of your choice.',
+							count: 2
+						}),
+						value: 1
+					}
+				]
+			})
+		],
+		selectedFeatureID: ''
+	};
+
 	static theoreticalWarrior: Title = {
 		id: 'title-theoretical-warrior',
 		name: 'Theoretical Warrior',
@@ -1881,6 +1946,191 @@ Once per day, you can spend 10 uninterrupted minutes to magically alter mundane 
 				id: 'title-unchained-3',
 				name: 'Slippery',
 				description: 'Your choice of your Might or Agility increases by 1 (to a maximum of 6). You can’t be grabbed against your will.'
+			})
+		],
+		selectedFeatureID: ''
+	};
+
+	// Summoner titles
+
+	static safeguarded: Title = {
+		id: 'title-safeguarded',
+		name: 'Safeguarded',
+		description: 'They risk their lives for me because I risk my life for theirs. This fight belongs to all of us!',
+		echelon: 1,
+		prerequisites: 'You earn a noble rank or earn the favor of a knight’s guild.',
+		features: [
+			FactoryLogic.feature.create({
+				id: 'title-safeguarded-1',
+				name: 'Effect',
+				description: `
+You start combat encounters with a squad of three minions from the specific monster band or people you earned this title from. The squad takes their turn as a part of your turn. On the squad’s turn, they can take a move action and either a main action or a maneuver.
+
+**Special**: If two or more heroes in the party have this title from the same source, the party starts combat encounters with a squad of six minions instead. At the start of each round of combat, the heroes decide who controls the squad as a part of their turn.`
+			})
+		],
+		selectedFeatureID: ''
+	};
+
+	static sigilwright: Title = {
+		id: 'title-sigilwright',
+		name: 'Sigilwright',
+		description: 'Let’s find out who’s on the other side of the circle.',
+		echelon: 2,
+		prerequisites: 'You complete a ritual to summon a non-minion entity using a summoning circle you drew.',
+		features: [
+			FactoryLogic.feature.create({
+				id: 'title-sigilwright-1',
+				name: 'Quick Gate',
+				description: 'As a maneuver, you can etch an arcane circle in an adjacent square on the ground. Until the end of the encounter, you can use magic abilities and treat your Summoner’s Range as if you were in that space. Each time you etch an arcane circle, your last circle fades and becomes inactive.'
+			}),
+			FactoryLogic.feature.create({
+				id: 'title-sigilwright-2',
+				name: 'Ritual Circle',
+				description: 'As a respite activity, you can draw a minor summoning circle to temporarily call forth a creature you’ve contacted previously, regardless of manifold. If the creature is willing and able to answer your call, they appear to you for the remainder of the respite. You can ask the creature for information or a service in exchange for ending the respite with two fewer Recoveries or a demand of their choosing. If the creature doesn’t appear, you can choose to take a different respite activity.'
+			}),
+			FactoryLogic.feature.create({
+				id: 'title-sigilwright-3',
+				name: 'Sigil Eye',
+				description: 'You have an edge on tests made to identify summoning circles and who or where they’re connected to. You also have an edge on strikes made against creatures not native to the manifold in which you’re currently located.'
+			})
+		],
+		selectedFeatureID: ''
+	};
+
+	static summonerSuccessor: Title = {
+		id: 'title-summoner-successor',
+		name: 'Summoner Successor',
+		description: 'When their leader fell, they started listening to me for some reason.',
+		echelon: 2,
+		prerequisites: 'You can’t use the Call Forth ability, and you defeat a leader or solo creature with a Summon or Call Forth ability, such as a high elf ordinator.',
+		features: [
+			FactoryLogic.feature.create({
+				id: 'title-summoner-successor-1',
+				name: 'Effect',
+				description: `
+Choose a signature minion from a summoner’s portfolio that shares a keyword with one of the creatures the summoner could summon. You can summon three of that minion into a single squad (up to a maximum of four creatures) at the start of each of your turns in combat. The distance you can command them is equal to your ranged free strike distance. You also gain the Strike for Me triggered ability, which now has the Psionic keyword and loses the Magic keyword.
+
+Additionally, you can summon up to two of your signature minion while outside of combat to do simple tasks.`
+			})
+		],
+		selectedFeatureID: ''
+	};
+
+	static ringleader: Title = {
+		id: 'title-ringleader',
+		name: 'Ringleader',
+		description: 'Don’t worry. I’ve got a guy.',
+		echelon: 3,
+		prerequisites: 'You complete three downtime projects during the same respite with the help of followers or minions.',
+		features: [
+			FactoryLogic.feature.createMultiple({
+				id: 'title-ringleader-1',
+				features: [
+					FactoryLogic.feature.create({
+						id: 'title-ringleader-1a',
+						name: 'Effect',
+						description: 'You no longer need line of effect to give commands to any minions you can summon.'
+					}),
+					FactoryLogic.feature.createChoice({
+						id: 'title-ringleader-1b',
+						options: [
+							{
+								feature: FactoryLogic.feature.create({
+									id: 'title-ringleader-1b-1',
+									name: 'For the Boss',
+									description: 'Your followers gain a +3 bonus to project rolls thatthey make.'
+								}),
+								value: 1
+							},
+							{
+								feature: FactoryLogic.feature.create({
+									id: 'title-ringleader-1b-2',
+									name: 'Networker',
+									description: 'Your maximum follower count increases by 2.'
+								}),
+								value: 1
+							},
+							{
+								feature: FactoryLogic.feature.create({
+									id: 'title-ringleader-1b-3',
+									name: 'Stringpuller',
+									description: 'While occupying a civilized area (such as a village, town, district, or city), you always have access to a follower native to the location. If the area is otherwise hostile to you, this follower is a spy in hiding who has any project points they earn halved.'
+								}),
+								value: 1
+							}
+						]
+					})
+				]
+			})
+		],
+		selectedFeatureID: ''
+	};
+
+	static delegator: Title = {
+		id: 'title-delegator',
+		name: 'Delegator',
+		description: 'They’re all yours, buddy.',
+		echelon: 4,
+		prerequisites: 'You are a summoner, and you strike a deal with your portfolio’s champion.',
+		features: [
+			FactoryLogic.feature.create({
+				id: 'title-delegator-1',
+				name: 'Effect',
+				description: `
+At the start of a combat encounter, you can choose to translate yourself into your circle’s source manifold while your champion fights and summons monsters in your place. The champion uses your Stamina, Recoveries, abilities, and features (except for your Summoner Strikes and Summoner’s Kit). You can dismiss the champion and summon yourself back into the place you left at the end of an encounter.
+
+If your champion would die while taking your place, you lose access to your Return to the Source feature and can only summon signature minions until you revive your champion as a respite activity.`
+			})
+		],
+		selectedFeatureID: ''
+	};
+
+	static highSummoner: Title = {
+		id: 'title-high-summoner',
+		name: 'High Summoner of the Circle',
+		description: 'As I was taught, so I pass on to you.',
+		echelon: 4,
+		prerequisites: 'You are a summoner, and you teach someone how to call forth two or more minions from your portfolio.',
+		features: [
+			FactoryLogic.feature.createMultiple({
+				id: 'title-high-summoner-1',
+				features: [
+					FactoryLogic.feature.create({
+						id: 'title-high-summoner-1a',
+						name: 'Effect',
+						description: 'You are considered a master that can be learned from using the Learn from a Master downtime project. Anyone that makes a project roll using you as the source gains a bonus to their roll equal to your Reason.'
+					}),
+					FactoryLogic.feature.createChoice({
+						id: 'title-high-summoner-1b',
+						options: [
+							{
+								feature: FactoryLogic.feature.create({
+									id: 'title-high-summoner-1b-1',
+									name: 'Essence Mastery',
+									description: 'Your minions cost one fewer essence to summon (minimum cost of 1 essence).'
+								}),
+								value: 1
+							},
+							{
+								feature: FactoryLogic.feature.create({
+									id: 'title-high-summoner-1b-2',
+									name: 'Expanded Domain',
+									description: 'Your Summoner’s Range increases by 5. You can use your minions’ senses as your own as long as they’re on the same manifold as you.'
+								}),
+								value: 1
+							},
+							{
+								feature: FactoryLogic.feature.create({
+									id: 'title-high-summoner-1b-3',
+									name: 'Signature Summoner',
+									description: 'Select a 3-Essence minion you can call forth. At the start of each of your turns in combat, you summon the set number of minions listed on the stat block in place of your signature minions at no cost.'
+								}),
+								value: 1
+							}
+						]
+					})
+				]
 			})
 		],
 		selectedFeatureID: ''

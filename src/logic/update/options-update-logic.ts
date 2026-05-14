@@ -1,15 +1,19 @@
-import { Options } from '../../models/options';
-import { PanelWidth } from '../../enums/panel-width';
-import { SheetPageSize } from '../../enums/sheet-page-size';
+import { Options } from '@/models/options';
+import { PanelWidth } from '@/enums/panel-width';
+import { SheetPageSize } from '@/enums/sheet-page-size';
 
 export class OptionsUpdateLogic {
 	static updateOptions = (options: Options) => {
-		if (options.singlePage === undefined) {
-			options.singlePage = false;
+		if (options.cookieConsent === undefined) {
+			options.cookieConsent = false;
 		}
 
-		if (options.separateInventoryFeatures === undefined) {
-			options.separateInventoryFeatures = false;
+		if (options.xpPerLevel === undefined) {
+			options.xpPerLevel = 16;
+		}
+
+		if (options.singlePage === undefined) {
+			options.singlePage = false;
 		}
 
 		if (options.showSources === undefined) {
@@ -24,12 +28,20 @@ export class OptionsUpdateLogic {
 			options.abilityWidth = PanelWidth.Medium;
 		}
 
-		if (options.includePlayState === undefined) {
-			options.includePlayState = false;
-		}
+		// Rather than remove this feature, disable it every session
+		// to minimize confusion for those who don't know it's even there
+		options.includePlayState = false;
 
 		if (options.colorSheet === undefined) {
 			options.colorSheet = true;
+		}
+
+		if (options.colorScheme === undefined) {
+			options.colorScheme = 'community';
+		}
+
+		if (options.showPowerRollCalculation === undefined) {
+			options.showPowerRollCalculation = true;
 		}
 
 		if (options.sheetTextColor === undefined) {
@@ -48,6 +60,10 @@ export class OptionsUpdateLogic {
 			options.pageOrientation = 'portrait';
 		}
 
+		if (options.debugClassicSheet === undefined) {
+			options.debugClassicSheet = false;
+		}
+
 		if (options.similarLevel === undefined) {
 			options.similarLevel = true;
 		}
@@ -62,10 +78,6 @@ export class OptionsUpdateLogic {
 
 		if (options.similarSize === undefined) {
 			options.similarSize = true;
-		}
-
-		if (options.minionCount === undefined) {
-			options.minionCount = 4;
 		}
 
 		if (options.party === undefined) {
@@ -98,6 +110,10 @@ export class OptionsUpdateLogic {
 
 		if (options.playerGridSize === undefined) {
 			options.playerGridSize = 50;
+		}
+
+		if (options.shownStandardAbilities === undefined) {
+			options.shownStandardAbilities = [];
 		}
 	};
 }

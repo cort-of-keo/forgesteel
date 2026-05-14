@@ -1,31 +1,27 @@
 import { Alert, Button, Drawer, Flex, Space } from 'antd';
 import { EditOutlined, InfoCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { Playbook, PlaybookElementKind } from '../../../../models/playbook';
-import { Plot, PlotContent } from '../../../../models/plot';
-import { Adventure } from '../../../../models/adventure';
-import { Element } from '../../../../models/element';
-import { Empty } from '../../../controls/empty/empty';
-import { Encounter } from '../../../../models/encounter';
-import { EncounterPanel } from '../encounter-panel/encounter-panel';
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { FormatLogic } from '../../../../logic/format-logic';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { Hero } from '../../../../models/hero';
-import { Markdown } from '../../../controls/markdown/markdown';
-import { Modal } from '../../../modals/modal/modal';
-import { Montage } from '../../../../models/montage';
-import { MontagePanel } from '../montage-panel/montage-panel';
-import { Negotiation } from '../../../../models/negotiation';
-import { NegotiationPanel } from '../negotiation-panel/negotiation-panel';
-import { Options } from '../../../../models/options';
-import { PanelMode } from '../../../../enums/panel-mode';
-import { PowerRollPanel } from '../../power-roll/power-roll-panel';
-import { SashPanel } from '../../sash/sash-panel';
-import { SelectablePanel } from '../../../controls/selectable-panel/selectable-panel';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { TacticalMapDisplayType } from '../../../../enums/tactical-map-display-type';
-import { TacticalMapPanel } from '../tactical-map-panel/tactical-map-panel';
-import { useNavigation } from '../../../../hooks/use-navigation';
+import { Plot, PlotContent, PlotContentReference } from '@/models/plot';
+import { Sourcebook, SourcebookElementKind } from '@/models/sourcebook';
+import { Adventure } from '@/models/adventure';
+import { Element } from '@/models/element';
+import { ElementModal } from '@/components/modals/element/element-modal';
+import { Empty } from '@/components/controls/empty/empty';
+import { EncounterPanel } from '@/components/panels/elements/encounter-panel/encounter-panel';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Format } from '@/utils/format';
+import { FormatLogic } from '@/logic/format-logic';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { Markdown } from '@/components/controls/markdown/markdown';
+import { MontagePanel } from '@/components/panels/elements/montage-panel/montage-panel';
+import { NegotiationPanel } from '@/components/panels/elements/negotiation-panel/negotiation-panel';
+import { PanelMode } from '@/enums/panel-mode';
+import { PowerRollPanel } from '@/components/panels/power-roll/power-roll-panel';
+import { SashPanel } from '@/components/panels/sash/sash-panel';
+import { SelectablePanel } from '@/components/controls/selectable-panel/selectable-panel';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { TacticalMapDisplayType } from '@/enums/tactical-map-display-type';
+import { TacticalMapPanel } from '@/components/panels/elements/tactical-map-panel/tactical-map-panel';
+import { useNavigation } from '@/hooks/use-navigation';
 import { useState } from 'react';
 
 import './plot-panel.scss';
@@ -33,20 +29,15 @@ import './plot-panel.scss';
 interface PlotPanelProps {
 	plot: Plot;
 	adventure: Adventure;
-	playbook: Playbook;
 	sourcebooks: Sourcebook[];
-	heroes: Hero[];
-	options: Options;
 	mode?: PanelMode;
 	onSelect: (plot: Plot) => void;
-	onStart: (kind: PlaybookElementKind, element: Element, party: string) => void;
+	onStart: (kind: SourcebookElementKind, element: Element, party: string) => void;
 }
 
 export const PlotPanel = (props: PlotPanelProps) => {
 	const navigation = useNavigation();
-	const [ selectedEncounter, setSelectedEncounter ] = useState<Encounter | null>(null);
-	const [ selectedMontage, setSelectedMontage ] = useState<Montage | null>(null);
-	const [ selectedNegotiation, setSelectedNegotiation ] = useState<Negotiation | null>(null);
+	const [ selectedReference, setSelectedReference ] = useState<PlotContentReference | null>(null);
 
 	const getContent = (content: PlotContent) => {
 		switch (content.contentType) {
@@ -56,7 +47,7 @@ export const PlotPanel = (props: PlotPanelProps) => {
 						<Alert
 							type='info'
 							showIcon={true}
-							message={content.text}
+							title={content.text}
 							style={{ width: '100%' }}
 						/>
 					);
@@ -81,15 +72,13 @@ export const PlotPanel = (props: PlotPanelProps) => {
 			case 'reference': {
 				switch (content.type) {
 					case 'encounter': {
-						const encounter = props.playbook.encounters.find(e => e.id === content.contentID);
+						const encounter = SourcebookLogic.getEncounters(props.sourcebooks).find(e => e.id === content.contentID);
 						if (encounter) {
 							return (
-								<SelectablePanel showShadow={false} style={{ overflow: 'hidden' }} onSelect={() => navigation.goToPlaybook('encounter', encounter.id)}>
+								<SelectablePanel style={{ overflow: 'hidden' }} onSelect={() => navigation.goToLibrary('encounter', encounter.id)}>
 									<EncounterPanel
 										encounter={encounter}
 										sourcebooks={props.sourcebooks}
-										heroes={props.heroes}
-										options={props.options}
 									/>
 									<SashPanel monogram='Encounter' />
 								</SelectablePanel>
@@ -98,12 +87,13 @@ export const PlotPanel = (props: PlotPanelProps) => {
 						break;
 					}
 					case 'montage': {
-						const montage = props.playbook.montages.find(m => m.id === content.contentID);
+						const montage = SourcebookLogic.getMontages(props.sourcebooks).find(m => m.id === content.contentID);
 						if (montage) {
 							return (
-								<SelectablePanel showShadow={false} style={{ overflow: 'hidden' }} onSelect={() => navigation.goToPlaybook('montage', montage.id)}>
+								<SelectablePanel style={{ overflow: 'hidden' }} onSelect={() => navigation.goToLibrary('montage', montage.id)}>
 									<MontagePanel
 										montage={montage}
+										sourcebooks={props.sourcebooks}
 									/>
 									<SashPanel monogram='Montage' />
 								</SelectablePanel>
@@ -112,12 +102,13 @@ export const PlotPanel = (props: PlotPanelProps) => {
 						break;
 					}
 					case 'negotiation': {
-						const negotiation = props.playbook.negotiations.find(n => n.id === content.contentID);
+						const negotiation = SourcebookLogic.getNegotiations(props.sourcebooks).find(n => n.id === content.contentID);
 						if (negotiation) {
 							return (
-								<SelectablePanel showShadow={false} style={{ overflow: 'hidden' }} onSelect={() => navigation.goToPlaybook('negotiation', negotiation.id)}>
+								<SelectablePanel style={{ overflow: 'hidden' }} onSelect={() => navigation.goToLibrary('negotiation', negotiation.id)}>
 									<NegotiationPanel
 										negotiation={negotiation}
+										sourcebooks={props.sourcebooks}
 									/>
 									<SashPanel monogram='Negotiation' />
 								</SelectablePanel>
@@ -125,17 +116,17 @@ export const PlotPanel = (props: PlotPanelProps) => {
 						}
 						break;
 					}
-					case 'map': {
-						const map = props.playbook.tacticalMaps.find(tm => tm.id === content.contentID);
+					case 'tactical-map': {
+						const map = SourcebookLogic.getTacticalMaps(props.sourcebooks).find(tm => tm.id === content.contentID);
 						if (map) {
 							return (
-								<SelectablePanel showShadow={false} style={{ overflow: 'hidden' }} onSelect={() => navigation.goToPlaybook('tactical-map', map.id)}>
+								<SelectablePanel style={{ overflow: 'hidden' }} onSelect={() => navigation.goToLibrary('tactical-map', map.id)}>
 									<HeaderText level={1}>{map.name || 'Unnamed Map'}</HeaderText>
 									<div className='tactical-map-container'>
 										<TacticalMapPanel
 											map={map}
 											display={TacticalMapDisplayType.Thumbnail}
-											options={props.options}
+											sourcebooks={props.sourcebooks}
 										/>
 									</div>
 									<SashPanel monogram='Map' />
@@ -144,7 +135,21 @@ export const PlotPanel = (props: PlotPanelProps) => {
 						}
 						break;
 					}
+					default: {
+						const element = SourcebookLogic.getElement(content.contentID, props.sourcebooks);
+						if (element) {
+							return (
+								<SelectablePanel style={{ overflow: 'hidden' }} onSelect={() => navigation.goToLibrary(content.type, element.id)}>
+									<HeaderText level={1}>{element.name || 'Unnamed Element'}</HeaderText>
+									<div className='ds-text'>{element.description}</div>
+									<SashPanel monogram={Format.capitalize(content.type.split('-').join(' '))} />
+								</SelectablePanel>
+							);
+						}
+						break;
+					}
 				}
+				break;
 			}
 		}
 
@@ -162,144 +167,119 @@ export const PlotPanel = (props: PlotPanelProps) => {
 			case 'reference': {
 				switch (content.type) {
 					case 'encounter': {
-						const encounter = props.playbook.encounters.find(e => e.id === content.contentID);
+						const encounter = SourcebookLogic.getEncounters(props.sourcebooks).find(e => e.id === content.contentID);
 						if (encounter) {
 							return (
 								<Flex vertical={true} gap={5}>
-									<Button title='Info' icon={<InfoCircleOutlined />} onClick={() => setSelectedEncounter(encounter)} />
+									<Button title='Info' icon={<InfoCircleOutlined />} onClick={() => setSelectedReference(content)} />
 									<Button title='Run' icon={<PlayCircleOutlined />} onClick={() => props.onStart!('encounter', encounter, '')} />
-									<Button title='Edit' icon={<EditOutlined />} onClick={() => navigation.goToPlaybookEdit('encounter', encounter.id)} />
+									<Button title='Edit' icon={<EditOutlined />} onClick={() => navigation.goToLibraryEdit('encounter', SourcebookLogic.getEncounterSourcebook(props.sourcebooks, encounter)!.id, encounter.id)} />
 								</Flex>
 							);
 						}
 						break;
 					}
 					case 'montage': {
-						const montage = props.playbook.montages.find(m => m.id === content.contentID);
+						const montage = SourcebookLogic.getMontages(props.sourcebooks).find(m => m.id === content.contentID);
 						if (montage) {
 							return (
 								<Flex vertical={true} gap={5}>
-									<Button title='Info' icon={<InfoCircleOutlined />} onClick={() => setSelectedMontage(montage)} />
+									<Button title='Info' icon={<InfoCircleOutlined />} onClick={() => setSelectedReference(content)} />
 									<Button title='Run' icon={<PlayCircleOutlined />} onClick={() => props.onStart!('montage', montage, '')} />
-									<Button title='Edit' icon={<EditOutlined />} onClick={() => navigation.goToPlaybookEdit('montage', montage.id)} />
+									<Button title='Edit' icon={<EditOutlined />} onClick={() => navigation.goToLibraryEdit('montage', SourcebookLogic.getMontageSourcebook(props.sourcebooks, montage)!.id, montage.id)} />
 								</Flex>
 							);
 						}
 						break;
 					}
 					case 'negotiation': {
-						const negotiation = props.playbook.negotiations.find(n => n.id === content.contentID);
+						const negotiation = SourcebookLogic.getNegotiations(props.sourcebooks).find(n => n.id === content.contentID);
 						if (negotiation) {
 							return (
 								<Flex vertical={true} gap={5}>
-									<Button title='Info' icon={<InfoCircleOutlined />} onClick={() => setSelectedNegotiation(negotiation)} />
+									<Button title='Info' icon={<InfoCircleOutlined />} onClick={() => setSelectedReference(content)} />
 									<Button title='Run' icon={<PlayCircleOutlined />} onClick={() => props.onStart!('negotiation', negotiation, '')} />
-									<Button title='Edit' icon={<EditOutlined />} onClick={() => navigation.goToPlaybookEdit('negotiation', negotiation.id)} />
+									<Button title='Edit' icon={<EditOutlined />} onClick={() => navigation.goToLibraryEdit('negotiation', SourcebookLogic.getNegotiationSourcebook(props.sourcebooks, negotiation)!.id, negotiation.id)} />
 								</Flex>
 							);
 						}
 						break;
 					}
-					case 'map': {
-						const map = props.playbook.tacticalMaps.find(tm => tm.id === content.contentID);
+					case 'tactical-map': {
+						const map = SourcebookLogic.getTacticalMaps(props.sourcebooks).find(tm => tm.id === content.contentID);
 						if (map) {
 							return (
 								<Flex vertical={true} gap={5}>
 									<Button title='Run' icon={<PlayCircleOutlined />} onClick={() => props.onStart!('tactical-map', map, '')} />
-									<Button title='Edit' icon={<EditOutlined />} onClick={() => navigation.goToPlaybookEdit('tactical-map', map.id)} />
+									<Button title='Edit' icon={<EditOutlined />} onClick={() => navigation.goToLibraryEdit('tactical-map', SourcebookLogic.getTacticalMapSourcebook(props.sourcebooks, map)!.id, map.id)} />
 								</Flex>
 							);
 						}
 						break;
 					}
+					default: {
+						return (
+							<Flex vertical={true} gap={5}>
+								<Button title='Info' icon={<InfoCircleOutlined />} onClick={() => setSelectedReference(content)} />
+							</Flex>
+						);
+					}
 				}
+				break;
 			}
 		}
 
 		return null;
 	};
 
-	try {
-		if (props.mode !== PanelMode.Full) {
-			return (
+	if (props.mode !== PanelMode.Full) {
+		return (
+			<ErrorBoundary>
 				<div className='plot-panel compact'>
 					<HeaderText level={1}>{props.plot.name || 'Unnamed Plot Point'}</HeaderText>
 					<Markdown text={props.plot.description} />
 				</div>
-			);
-		}
-
-		return (
-			<ErrorBoundary>
-				<div className='plot-panel'>
-					<HeaderText level={1}>{props.plot.name || 'Unnamed Plot Point'}</HeaderText>
-					<Markdown text={props.plot.description} />
-					{
-						props.plot.content.map(c => (
-							<div key={c.id} className='plot-content-row'>
-								{getContent(c)}
-								{getActions(c)}
-							</div>
-						))
-					}
-					{!props.plot.description && (props.plot.content.length === 0) ? <Empty text='No details' /> : null}
-					{props.plot.links.length > 0 ? <HeaderText>Links</HeaderText> : null}
-					<Space direction='vertical' style={{ width: '100%' }}>
-						{
-							props.plot.links.map(l => (
-								<Button key={l.id} block={true} onClick={() => props.onSelect(props.adventure.plot.plots.find(p => p.id === l.plotID)!)}>
-									{FormatLogic.getPlotLinkTitle(l, props.adventure.plot)}
-								</Button>
-							))
-						}
-					</Space>
-				</div>
-				<Drawer open={!!selectedEncounter} onClose={() => setSelectedEncounter(null)} closeIcon={null} width='500px'>
-					<Modal
-						content={
-							selectedEncounter ?
-								<EncounterPanel
-									encounter={selectedEncounter}
-									sourcebooks={props.sourcebooks}
-									heroes={props.heroes}
-									options={props.options}
-									mode={PanelMode.Full}
-								/>
-								: null
-						}
-						onClose={() => setSelectedEncounter(null)}
-					/>
-				</Drawer>
-				<Drawer open={!!selectedMontage} onClose={() => setSelectedMontage(null)} closeIcon={null} width='500px'>
-					<Modal
-						content={
-							selectedMontage ?
-								<MontagePanel
-									montage={selectedMontage}
-									mode={PanelMode.Full}
-								/>
-								: null
-						}
-						onClose={() => setSelectedMontage(null)}
-					/>
-				</Drawer>
-				<Drawer open={!!selectedNegotiation} onClose={() => setSelectedNegotiation(null)} closeIcon={null} width='500px'>
-					<Modal
-						content={
-							selectedNegotiation ?
-								<NegotiationPanel
-									negotiation={selectedNegotiation}
-									mode={PanelMode.Full}
-								/>
-								: null
-						}
-						onClose={() => setSelectedNegotiation(null)}
-					/>
-				</Drawer>
 			</ErrorBoundary>
 		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
 	}
+
+	return (
+		<ErrorBoundary>
+			<div className='plot-panel'>
+				<HeaderText level={1}>{props.plot.name || 'Unnamed Plot Point'}</HeaderText>
+				<Markdown text={props.plot.description} />
+				{
+					props.plot.content.map(c => (
+						<div key={c.id} className='plot-content-row'>
+							{getContent(c)}
+							{getActions(c)}
+						</div>
+					))
+				}
+				{!props.plot.description && (props.plot.content.length === 0) ? <Empty text='No details' /> : null}
+				{props.plot.links.length > 0 ? <HeaderText>Links</HeaderText> : null}
+				<Space orientation='vertical' style={{ width: '100%' }}>
+					{
+						props.plot.links.map(l => (
+							<Button key={l.id} block={true} onClick={() => props.onSelect(props.adventure.plot.plots.find(p => p.id === l.plotID)!)}>
+								{FormatLogic.getPlotLinkTitle(l, props.adventure.plot)}
+							</Button>
+						))
+					}
+				</Space>
+			</div>
+			<Drawer open={!!selectedReference} onClose={() => setSelectedReference(null)} closeIcon={null} size={500}>
+				{
+					selectedReference ?
+						<ElementModal
+							category={selectedReference.type}
+							element={SourcebookLogic.getElement(selectedReference.contentID, props.sourcebooks) as Element}
+							sourcebooks={props.sourcebooks}
+							onClose={() => setSelectedReference(null)}
+						/>
+						: null
+				}
+			</Drawer>
+		</ErrorBoundary>
+	);
 };

@@ -1,8 +1,8 @@
-import { AbilityDistanceType } from '../../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { Characteristic } from '../../../enums/characteristic';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { SubClass } from '../../../models/subclass';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { SubClass } from '@/models/subclass';
 
 export const chronopathy: SubClass = {
 	id: 'talent-sub-1',
@@ -23,8 +23,7 @@ export const chronopathy: SubClass = {
 						target: 'Self or one creature',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The target shifts up to a number of squares equal to your Reason score.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The target can use a maneuver.'
 							})
@@ -313,5 +312,6 @@ Make a power roll that targets each enemy in the area.`),
 			features: []
 		}
 	],
+	abilities: [],
 	selected: false
 };

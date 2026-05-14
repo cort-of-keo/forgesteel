@@ -1,5 +1,6 @@
-import { Collapse, Tag } from 'antd';
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
+import { Collapse, Flex, Tag } from 'antd';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
 
 import './expander.scss';
 
@@ -9,27 +10,33 @@ interface Props {
 	children: ReactNode;
 	expandedByDefault?: boolean;
 	extra?: ReactNode[];
+	style?: CSSProperties
 }
 
 export const Expander = (props: Props) => {
-	try {
-		return (
-			<Collapse
-				className='expander'
-				items={[
-					{
-						key: '1',
-						label: props.tags ? <>{props.title} {props.tags.map((t, n) => <Tag key={n}>{t}</Tag>)}</> : props.title,
-						children: props.children,
-						extra: props.extra ? <>{props.extra}</> : null
-					}
-				]}
-				defaultActiveKey={props.expandedByDefault ? '1' : undefined}
-				expandIconPosition='end'
-			/>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+	return (
+		<ErrorBoundary>
+			<div style={props.style} onClick={e => e.stopPropagation()}>
+				<Collapse
+					items={[
+						{
+							key: '1',
+							label: props.tags ?
+								<Flex align='center' gap={5}>
+									{props.title}
+									{props.tags.map((t, n) => <Tag key={n} variant='outlined'>{t}</Tag>)}
+								</Flex>
+								: props.title,
+							children: props.children,
+							extra: props.extra ?
+								<>{props.extra}</>
+								: null
+						}
+					]}
+					defaultActiveKey={props.expandedByDefault ? '1' : undefined}
+					expandIconPlacement='end'
+				/>
+			</div>
+		</ErrorBoundary>
+	);
 };

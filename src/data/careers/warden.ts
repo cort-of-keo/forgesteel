@@ -1,8 +1,8 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureField } from '../../enums/feature-field';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const warden: Career = {
 	id: 'career-warden',
@@ -11,7 +11,6 @@ export const warden: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'career-warden-feature-1',
-			listOptions: [ SkillList.Lore ],
 			selected: [ 'Nature' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -68,7 +67,6 @@ export const warden: Career = {
 				description: 'You were responsible for guarding something precious, something vital to your region’s survival. But you let someone in, and they betrayed your trust by stealing the thing you were meant to guard. You left your chosen territory to atone for your mistake.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };

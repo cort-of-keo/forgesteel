@@ -1,51 +1,63 @@
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { FeaturePanel } from '../feature-panel/feature-panel';
-import { Field } from '../../../controls/field/field';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { Hero } from '../../../../models/hero';
-import { Imbuement } from '../../../../models/imbuement';
-import { Options } from '../../../../models/options';
-import { PanelMode } from '../../../../enums/panel-mode';
-import { Sourcebook } from '../../../../models/sourcebook';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Expander } from '@/components/controls/expander/expander';
+import { FeaturePanel } from '@/components/panels/elements/feature-panel/feature-panel';
+import { Field } from '@/components/controls/field/field';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { Hero } from '@/models/hero';
+import { Imbuement } from '@/models/imbuement';
+import { PanelMode } from '@/enums/panel-mode';
+import { ProjectPanel } from '@/components/panels/elements/project-panel/project-panel';
+import { SheetFormatter } from '@/logic/classic-sheet/sheet-formatter';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { SourcebookType } from '@/enums/sourcebook-type';
 
 import './imbuement-panel.scss';
 
 interface Props {
 	imbuement: Imbuement;
-	options: Options;
+	sourcebooks: Sourcebook[];
 	hero?: Hero;
-	sourcebooks?: Sourcebook[];
 	mode?: PanelMode;
 	onChange?: (imbuement: Imbuement) => void;
 }
 
 export const ImbuementPanel = (props: Props) => {
-	try {
-		return (
-			<ErrorBoundary>
-				<div className={props.mode === PanelMode.Full ? 'imbuement-panel' : 'imbuement-panel compact'} id={props.mode === PanelMode.Full ? props.imbuement.id : undefined}>
-					<HeaderText
-						level={1}
-						tags={[ `Level ${props.imbuement.level}` ]}
-					>
-						{props.imbuement.name || 'Unnamed Imbuement'}
-					</HeaderText>
-					<Field label='Applies to' value={props.imbuement.type} />
-					<div className='features'>
-						<FeaturePanel
-							key={props.imbuement.feature.id}
-							feature={props.imbuement.feature}
-							options={props.options}
-							hero={props.hero}
-							sourcebooks={props.sourcebooks}
-							mode={PanelMode.Full}
-						/>
-					</div>
-				</div>
-			</ErrorBoundary>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
+	const tags = [ `Level ${props.imbuement.level}` ];
+	if (props.sourcebooks.length > 0) {
+		const sourcebookType = SourcebookLogic.getImbuementSourcebook(props.sourcebooks, props.imbuement)?.type || SourcebookType.Official;
+		if (sourcebookType !== SourcebookType.Official) {
+			tags.push(sourcebookType);
+		}
 	}
+
+	return (
+		<ErrorBoundary>
+			<div className={props.mode === PanelMode.Full ? 'imbuement-panel' : 'imbuement-panel compact'} id={props.mode === PanelMode.Full ? SheetFormatter.getPageId('imbuement', props.imbuement.id) : undefined}>
+				<HeaderText
+					level={1}
+					tags={tags}
+				>
+					{props.imbuement.name || 'Unnamed Imbuement'}
+				</HeaderText>
+				<Field label='Applies to' value={props.imbuement.type} />
+				<div className='features'>
+					<FeaturePanel
+						key={props.imbuement.feature.id}
+						feature={props.imbuement.feature}
+						hero={props.hero}
+						sourcebooks={props.sourcebooks}
+						mode={PanelMode.Full}
+					/>
+				</div>
+				{
+					props.imbuement.crafting ?
+						<Expander title='Crafting'>
+							<ProjectPanel project={props.imbuement.crafting} sourcebooks={props.sourcebooks} mode={PanelMode.Full} />
+						</Expander>
+						: null
+				}
+			</div>
+		</ErrorBoundary>
+	);
 };

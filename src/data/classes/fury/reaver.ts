@@ -1,9 +1,8 @@
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { Characteristic } from '../../../enums/characteristic';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { FeatureField } from '../../../enums/feature-field';
-import { SkillList } from '../../../enums/skill-list';
-import { SubClass } from '../../../models/subclass';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { SubClass } from '@/models/subclass';
 
 export const reaver: SubClass = {
 	id: 'fury-sub-2',
@@ -15,7 +14,6 @@ export const reaver: SubClass = {
 			features: [
 				FactoryLogic.feature.createSkillChoice({
 					id: 'fury-sub-2-1-1',
-					listOptions: [ SkillList.Intrigue ],
 					selected: [ 'Hide' ]
 				}),
 				FactoryLogic.feature.createKitChoice({
@@ -43,9 +41,7 @@ As your ferocity grows, you gain benefits as noted on the Reaver Growing Ferocit
 						target: 'Self',
 						sections: [
 							FactoryLogic.createAbilitySectionText('You take half the damage from the triggering effect and can shift up to a number of squares equal to your Agility score.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'If the damage has any potency effects associated with it, the potency is reduced by 1 for you.'
 							})
 						]
@@ -196,6 +192,7 @@ As your ferocity grows, you gain benefits as noted on the Reaver Growing Ferocit
 									target: 'One creature',
 									cost: 9,
 									sections: [
+										FactoryLogic.createAbilitySectionText('You shift up to your speed.'),
 										FactoryLogic.createAbilitySectionRoll(
 											FactoryLogic.createPowerRoll({
 												characteristic: [ Characteristic.Might ],
@@ -308,5 +305,6 @@ As your ferocity grows, you gain benefits as noted on the Reaver Growing Ferocit
 			]
 		}
 	],
+	abilities: [],
 	selected: false
 };

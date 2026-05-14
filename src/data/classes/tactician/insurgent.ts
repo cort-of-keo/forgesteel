@@ -1,8 +1,8 @@
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { Characteristic } from '../../../enums/characteristic';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { SkillList } from '../../../enums/skill-list';
-import { SubClass } from '../../../models/subclass';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { SkillList } from '@/enums/skill-list';
+import { SubClass } from '@/models/subclass';
 
 export const insurgent: SubClass = {
 	id: 'tactician-sub-1',
@@ -35,9 +35,7 @@ At the Director’s discretion, you and your allies can use skills from the intr
 						target: 'One ally',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The target gains 2 surges, which they can use on the triggering damage.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'If the damage has any potency effect associated with it, the potency is increased by 1.'
 							})
 						]
@@ -271,5 +269,6 @@ At the Director’s discretion, you and your allies can use skills from the intr
 			features: []
 		}
 	],
+	abilities: [],
 	selected: false
 };

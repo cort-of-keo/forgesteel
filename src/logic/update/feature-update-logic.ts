@@ -1,7 +1,8 @@
-import { AbilityUpdateLogic } from './ability-update-logic';
-import { Feature } from '../../models/feature';
-import { FeatureType } from '../../enums/feature-type';
-import { ItemUpdateLogic } from './item-update-logic';
+import { AbilityUpdateLogic } from '@/logic/update/ability-update-logic';
+import { Characteristic } from '@/enums/characteristic';
+import { Feature } from '@/models/feature';
+import { FeatureType } from '@/enums/feature-type';
+import { ItemUpdateLogic } from '@/logic/update/item-update-logic';
 
 export class FeatureUpdateLogic {
 	static updateFeature = (feature: Feature) => {
@@ -22,10 +23,32 @@ export class FeatureUpdateLogic {
 					feature.data.options = [];
 				}
 				feature.data.options.map(f => f.feature).forEach(FeatureUpdateLogic.updateFeature);
+				if (feature.data.selectAt === undefined) {
+					feature.data.selectAt = 'build';
+				}
+				// eslint-disable-next-line @typescript-eslint/no-deprecated
+				if (feature.data.respiteChange) {
+					feature.data.selectAt = 'respite';
+				}
 				break;
 			case FeatureType.ClassAbility:
+				if (feature.data.source === undefined) {
+					feature.data.source = {
+						fromClassAbilities: true,
+						fromSelectedSubclassAbilities: true,
+						fromUnselectedSubclassAbilities: false,
+						fromClassLevels: false,
+						fromSelectedSubclassLevels: false,
+						fromUnselectedSubclassLevels: false
+					};
+				}
 				if (feature.data.minLevel === undefined) {
 					feature.data.minLevel = 1;
+				}
+				break;
+			case FeatureType.Companion:
+				if (feature.data.selected && feature.data.selected.retainer) {
+					(feature as Feature).type = FeatureType.Retainer;
 				}
 				break;
 			case FeatureType.DamageModifier:
@@ -42,6 +65,12 @@ export class FeatureUpdateLogic {
 				});
 				break;
 			case FeatureType.Domain:
+				if (feature.data.characteristic === undefined) {
+					feature.data.characteristic = Characteristic.Intuition;
+				}
+				if (feature.data.levels === undefined) {
+					feature.data.levels = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
+				}
 				feature.data.selected.forEach(d => {
 					if (d.resourceGains === undefined) {
 						d.resourceGains = [];
@@ -83,6 +112,11 @@ export class FeatureUpdateLogic {
 					feature.data.echelon = 1;
 				}
 				break;
+			case FeatureType.MaliceAbility:
+				if (feature.data.echelon === undefined) {
+					feature.data.echelon = 1;
+				}
+				break;
 			case FeatureType.Multiple:
 				feature.data.features.forEach(FeatureUpdateLogic.updateFeature);
 				break;
@@ -90,6 +124,30 @@ export class FeatureUpdateLogic {
 				if (feature.data.tag === 'undefined') {
 					feature.data.tag = 'conduit-prayer';
 				}
+				break;
+			case FeatureType.Perk:
+				if (feature.data.lists === undefined) {
+					feature.data.lists = [];
+				}
+				break;
+			case FeatureType.Summon:
+				feature.data.summons.forEach(s => {
+					if (s.info.level === undefined) {
+						s.info.level = 1;
+					}
+				});
+				break;
+			case FeatureType.SummonChoice:
+				feature.data.options.forEach(o => {
+					if (o.info.level === undefined) {
+						o.info.level = 1;
+					}
+				});
+				feature.data.selected.forEach(s => {
+					if (s.info.level === undefined) {
+						s.info.level = 1;
+					}
+				});
 				break;
 		}
 	};

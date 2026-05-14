@@ -1,7 +1,7 @@
 import { CSSProperties, ReactNode } from 'react';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { Statistic } from 'antd';
-import { Utils } from '../../../utils/utils';
+import { Popover, Statistic } from 'antd';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
 
 import './number-spin.scss';
 
@@ -42,21 +42,21 @@ export const NumberSpin = (props: Props) => {
 	}
 
 	const steps = props.steps || [ 1 ];
-	const ascending = Utils.copy(steps).sort((a, b) => a - b);
-	const descending = Utils.copy(steps).sort((a, b) => b - a);
+	const ascending = [ ...steps ].sort((a, b) => a - b);
+	const descending = [ ...steps ].sort((a, b) => b - a);
 
-	try {
-		return (
+	return (
+		<ErrorBoundary>
 			<div className={props.disabled ? 'number-spin disabled' : 'number-spin'} style={props.style}>
 				<div className='spin-buttons'>
 					{
 						descending.map((step, n) => (
-							<MinusCircleOutlined
-								key={n}
-								className={canDown ? 'spin-button' : 'spin-button disabled'}
-								title={`-${step}`}
-								onClick={() => onChange(step, -1)}
-							/>
+							<Popover key={n} trigger='hover' content={`-${step}`}>
+								<MinusCircleOutlined
+									className={canDown ? 'spin-button' : 'spin-button disabled'}
+									onClick={() => onChange(step, -1)}
+								/>
+							</Popover>
 						))
 					}
 				</div>
@@ -74,19 +74,16 @@ export const NumberSpin = (props: Props) => {
 				<div className='spin-buttons'>
 					{
 						ascending.map((step, n) => (
-							<PlusCircleOutlined
-								key={n}
-								className={canUp ? 'spin-button' : 'spin-button disabled'}
-								title={`+${step}`}
-								onClick={() => onChange(step, +1)}
-							/>
+							<Popover key={n} trigger='hover' content={`+${step}`}>
+								<PlusCircleOutlined
+									className={canUp ? 'spin-button' : 'spin-button disabled'}
+									onClick={() => onChange(step, +1)}
+								/>
+							</Popover>
 						))
 					}
 				</div>
 			</div>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+		</ErrorBoundary>
+	);
 };

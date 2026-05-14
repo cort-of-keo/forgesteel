@@ -1,9 +1,13 @@
-import { AbilityUpdateLogic } from './ability-update-logic';
-import { FeatureType } from '../../enums/feature-type';
-import { FeatureUpdateLogic } from './feature-update-logic';
-import { Monster } from '../../models/monster';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
+import { FeatureMaliceAbility, FeatureMaliceAbilityData } from '@/models/feature';
+import { AbilityUpdateLogic } from '@/logic/update/ability-update-logic';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureType } from '@/enums/feature-type';
+import { FeatureUpdateLogic } from '@/logic/update/feature-update-logic';
+import { Monster } from '@/models/monster';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { Utils } from '@/utils/utils';
 
 export class MonsterUpdateLogic {
 	static updateMonsterGroup = (monsterGroup: MonsterGroup) => {
@@ -16,8 +20,31 @@ export class MonsterUpdateLogic {
 				f.type = FeatureType.MaliceAbility;
 			}
 
-			if (f.data.echelon === undefined) {
-				f.data.echelon = 1;
+			if (f.type === FeatureType.MaliceAbility) {
+				if (!f.data) {
+					const data: FeatureMaliceAbilityData = {
+						ability: FactoryLogic.createAbility({
+							id: Utils.guid(),
+							name: '',
+							description: '',
+							type: FactoryLogic.type.createMain(),
+							distance: [ FactoryLogic.distance.createMelee() ],
+							target: '',
+							sections: []
+						}),
+						echelon: 0
+					};
+					(f as FeatureMaliceAbility).data = data;
+				}
+			}
+
+			switch (f.type) {
+				case FeatureType.Malice:
+				case FeatureType.MaliceAbility:
+					if (f.data.echelon === undefined) {
+						f.data.echelon = 1;
+					}
+					break;
 			}
 		});
 
@@ -39,6 +66,14 @@ export class MonsterUpdateLogic {
 		}
 		if (monster.role.organization.toString() === 'Troop') {
 			monster.role.organization = MonsterOrganizationType.Elite;
+		}
+
+		if (monster.freeStrikeType === undefined) {
+			monster.freeStrikeType = DamageType.Damage;
+		}
+
+		if (typeof monster.speed.modes === 'string') {
+			monster.speed.modes = monster.speed.modes ? [ monster.speed.modes ] : [];
 		}
 
 		if (monster.state === undefined) {

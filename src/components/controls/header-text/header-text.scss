@@ -42,14 +42,10 @@
 			font-weight: 600;
 			text-transform: uppercase;
 		}
-
-		.header-tags {
-			display: block;
-		}
 	}
 }
 
-@media (prefers-color-scheme: dark) {
+html[data-theme="dark"] {
 	.header-text-panel {
 		border-bottom-color: rgba(250, 250, 250, 0.6);
 

@@ -1,6 +1,6 @@
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { SubClass } from '../../../models/subclass';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { SubClass } from '@/models/subclass';
 
 export const voidSubclass: SubClass = {
 	id: 'elementalist-sub-4',
@@ -46,9 +46,7 @@ export const voidSubclass: SubClass = {
 						target: 'Self or one ally',
 						sections: [
 							FactoryLogic.createAbilitySectionText('You teleport the target up to a number of squares equal to your Reason score. If the target moves to trigger this ability, you can teleport them at any point during the move.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'You teleport the target up to a number of squares equal to twice your Reason score instead.'
 							})
 						]
@@ -160,5 +158,6 @@ Additionally, your mind is connected to the mystery and helps you find the answe
 			]
 		}
 	],
+	abilities: [],
 	selected: false
 };

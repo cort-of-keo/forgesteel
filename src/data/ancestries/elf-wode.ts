@@ -1,7 +1,9 @@
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Ancestry } from '../../models/ancestry';
-import { Characteristic } from '../../enums/characteristic';
-import { FactoryLogic } from '../../logic/factory-logic';
+import { EnvironmentData, OrganizationData, UpbringingData } from '@/data/culture-data';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Ancestry } from '@/models/ancestry';
+import { Characteristic } from '@/enums/characteristic';
+import { CultureType } from '@/enums/culture-type';
+import { FactoryLogic } from '@/logic/factory-logic';
 
 export const wodeElf: Ancestry = {
 	id: 'ancestry-wode-elf',
@@ -42,10 +44,11 @@ export const wodeElf: Ancestry = {
 					value: 1
 				},
 				{
-					feature: FactoryLogic.feature.create({
+					feature: FactoryLogic.feature.createSaveThreshold({
 						id: 'wode-elf-feature-2-4',
 						name: 'Otherworldly Grace',
-						description: 'Your elf body and mind can’t be contained for long. Whenever you make a saving throw, you succeed on a roll of 5 or higher.'
+						description: 'Your elf body and mind can’t be contained for long. Whenever you make a saving throw, you succeed on a roll of 5 or higher.',
+						value: 5
 					}),
 					value: 2
 				},
@@ -86,5 +89,6 @@ export const wodeElf: Ancestry = {
 			count: 'ancestry'
 		})
 	],
-	ancestryPoints: 3
+	ancestryPoints: 3,
+	culture: FactoryLogic.createCulture('Wode Elf', 'Wilderness, bureaucratic, martial.', CultureType.Ancestral, EnvironmentData.wilderness, OrganizationData.bureaucratic, UpbringingData.martial, 'Yllyric')
 };

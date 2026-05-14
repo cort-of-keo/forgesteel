@@ -1,14 +1,14 @@
-import { AbilityDistanceType } from '../../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { Characteristic } from '../../../enums/characteristic';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { FeatureField } from '../../../enums/feature-field';
-import { HeroClass } from '../../../models/class';
-import { PerkList } from '../../../enums/perk-list';
-import { SkillList } from '../../../enums/skill-list';
-import { auteur } from './auteur';
-import { duelist } from './duelist';
-import { virtuoso } from './virtuoso';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { HeroClass } from '@/models/class';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
+import { auteur } from '@/data/classes/troubadour/auteur';
+import { duelist } from '@/data/classes/troubadour/duelist';
+import { virtuoso } from '@/data/classes/troubadour/virtuoso';
 
 export const troubadour: HeroClass = {
 	id: '9y3Jx3koKZipiPh1',
@@ -19,6 +19,7 @@ As a troubadour, you chase drama. The insurmountable dangers of the world might 
 
 “History is a tale. Each of us is just a story we tell ourselves. Change the story, and you change the world.”
 Jackson Bootblack`,
+	type: 'standard',
 	subclassName: 'Class Act',
 	subclassCount: 1,
 	primaryCharacteristicsOptions: [
@@ -42,7 +43,6 @@ Jackson Bootblack`,
 				}),
 				FactoryLogic.feature.createSkillChoice({
 					id: 'UH5m1URtvSjZqfQb',
-					listOptions: [ SkillList.Interpersonal ],
 					selected: [ 'Read Person' ]
 				}),
 				FactoryLogic.feature.createSkillChoice({
@@ -151,8 +151,7 @@ You can have a number of bonds active equal to your level. When you form a bond 
 					name: 'Appeal to the Muses',
 					description: `You can give a rousing speech, invoke your inspirations, or lift your fellows’ spirits, appealing to the muses to heighten a battle’s drama. However, irony is eager to hand your fortune to the villain to achieve the same end.
 
-Before you roll to gain drama at the start of your turn, you can make your appeal (no action required). If you do, your roll gains the following
-additional effects:
+Before you roll to gain drama at the start of your turn, you can make your appeal (no action required). If you do, your roll gains the following additional effects:
 * If the roll is a 1, you gain 1 additional drama. The Director gains 1d3 Malice.
 * If the roll is a 2, you gain 1 Heroic Resource, which you can keep or give to an ally within the distance of your active performance. The Director gains 1 Malice.
 * If the roll is a 3, you gain 2 of a Heroic Resource, which you can distribute among yourself and any allies within the distance of your active performance.`
@@ -236,7 +235,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: 'bPZ0jgAHVi08ZX2X',
 								name: 'Melodrama #1',
-								tag: '',
+								tag: 'crit-fail',
 								trigger: 'Whenever a creature rolls a natural 2 on a power roll.',
 								value: '2'
 							}),
@@ -246,7 +245,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: 'Jlp0a0yANrSIoeXp',
 								name: 'Melodrama #2',
-								tag: '',
+								tag: 'villain-malice',
 								trigger: 'The first time the Director deals damage to a hero using a Villain action or an ability that costs Malice.',
 								value: '2'
 							}),
@@ -256,7 +255,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: '05FGfz1LetwQOlGm',
 								name: 'Melodrama #3',
-								tag: '',
+								tag: 'falls',
 								trigger: 'The first time a hero unwillingly falls 5 or more squares.',
 								value: '2'
 							}),
@@ -266,7 +265,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: 'bnEzQSbTNyay2M51',
 								name: 'Melodrama #4',
-								tag: '',
+								tag: 'surges',
 								trigger: 'The first time a hero deals damage with 3 surges.',
 								value: '2'
 							}),
@@ -276,7 +275,7 @@ The Director can award the heroes 1 hero token to make you infamous among the gr
 							feature: FactoryLogic.feature.createHeroicResourceGain({
 								id: 'lbGOgNoNt9SsiBDB',
 								name: 'Melodrama #5',
-								tag: '',
+								tag: 'last-recovery',
 								trigger: 'Whenever a hero spends their last Recovery.',
 								value: '2'
 							}),
@@ -494,8 +493,7 @@ Additionally, whenever you spend a Recovery, you can forgo regaining Stamina to 
 					})
 				),
 				FactoryLogic.createAbilitySectionText('You can shift up to 3 squares.'),
-				FactoryLogic.createAbilitySectionField({
-					name: 'Spend',
+				FactoryLogic.createAbilitySectionSpend({
 					value: 2,
 					repeatable: true,
 					effect: 'You can target one additional creature or object for every 2 drama spent.'
@@ -565,9 +563,7 @@ Additionally, whenever you spend a Recovery, you can forgo regaining Stamina to 
 					})
 				),
 				FactoryLogic.createAbilitySectionText('One ally within 10 squares of you can end one effect on them that is ended by a saving throw or that ends at the end of their turn.'),
-				FactoryLogic.createAbilitySectionField({
-					name: 'Spend',
-					value: 1,
+				FactoryLogic.createAbilitySectionSpend({
 					effect: 'The chosen ally can spend a Recovery.'
 				})
 			]
@@ -614,8 +610,7 @@ Additionally, whenever you spend a Recovery, you can forgo regaining Stamina to 
 						tier3: 'Slide 2; I < [strong], dazed (save ends)'
 					})
 				),
-				FactoryLogic.createAbilitySectionField({
-					name: 'Spend',
+				FactoryLogic.createAbilitySectionSpend({
 					value: 2,
 					repeatable: true,
 					effect: 'The size of the burst increases by 1 for every 2 drama spent.'
@@ -724,8 +719,8 @@ Additionally, whenever you spend a Recovery, you can forgo regaining Stamina to 
 					FactoryLogic.createPowerRoll({
 						characteristic: [ Characteristic.Agility ],
 						tier1: '6 + A damage; P < [weak], weakened (save ends)',
-						tier2: '10 + A damage; P < [weak], weakened (save ends)',
-						tier3: '14 + A damage; P < [weak], weakened (save ends)'
+						tier2: '10 + A damage; P < [average], weakened (save ends)',
+						tier3: '14 + A damage; P < [strong], weakened (save ends)'
 					})
 				),
 				FactoryLogic.createAbilitySectionText('You can become bleeding (save ends) to deal an extra 5 corruption damage to the target.')

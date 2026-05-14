@@ -1,14 +1,14 @@
-import { AbilityDistanceType } from '../enums/abiity-distance-type';
-import { AbilityKeyword } from '../enums/ability-keyword';
-import { Characteristic } from '../enums/characteristic';
-import { Complication } from '../models/complication';
-import { DamageModifierType } from '../enums/damage-modifier-type';
-import { DamageType } from '../enums/damage-type';
-import { FactoryLogic } from '../logic/factory-logic';
-import { FeatureField } from '../enums/feature-field';
-import { ItemType } from '../enums/item-type';
-import { LanguageType } from '../enums/language-type';
-import { SkillList } from '../enums/skill-list';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { Complication } from '@/models/complication';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { ItemType } from '@/enums/item-type';
+import { LanguageType } from '@/enums/language-type';
+import { SkillList } from '@/enums/skill-list';
 
 export class ComplicationData {
 	static advancedStudies: Complication = {
@@ -21,10 +21,6 @@ export class ComplicationData {
 					id: 'comp-advanced-studies-1',
 					name: 'Advanced Study Benefit and Drawback',
 					description: 'As a respite activity, you can study the notebook.',
-					type: FactoryLogic.type.createNoAction(),
-					keywords: [ ],
-					distance: [ ],
-					target: 'None',
 					sections: [
 						FactoryLogic.createAbilitySectionRoll(
 							FactoryLogic.createPowerRoll({
@@ -100,14 +96,16 @@ export class ComplicationData {
 		name: 'Artifact Bonded',
 		description: 'A powerful artifact has bonded to you. You might be destined to wield the artifact or to destroy it. You’re not powerful enough to use it at the moment, although you might be some day. For now, though, the artifact has no effect beyond getting you in trouble.',
 		features: [
-			FactoryLogic.feature.createItemChoice({
-				id: 'comp-artifactBonded-b1',
-				types: [ ItemType.Artifact ]
-			}),
-			FactoryLogic.feature.create({
-				id: 'comp-artifactBonded-b2',
+			FactoryLogic.feature.createToggle({
+				id: 'comp-artifactBonded-b',
 				name: 'Artifact Bonded Benefit',
-				description: 'The first time in an encounter that you are reduced to 0 Stamina against your will, the artifact appears on your person. It disappears at the end of your next turn, when you benefit from one of its properties, or when you have more than 0 Stamina, whichever comes first.'
+				description: 'The first time in an encounter that you are reduced to 0 Stamina against your will, the artifact appears on your person. It disappears at the end of your next turn, when you benefit from one of its properties, or when you have more than 0 Stamina, whichever comes first.',
+				condition: 'The artifact is present',
+				featureChecked: FactoryLogic.feature.createItemChoice({
+					id: 'comp-artifactBonded-ba',
+					types: [ ItemType.Artifact ]
+				}),
+				checked: false
 			}),
 			FactoryLogic.feature.create({
 				id: 'comp-artifactBonded-d',
@@ -279,7 +277,6 @@ Each time you complete this project, your knowledge of your chosen field expands
 		features: [
 			FactoryLogic.feature.createSkillChoice({
 				id: 'comp-crashLanded-skill',
-				listOptions: [ SkillList.Lore ],
 				selected: [ 'Timescape' ]
 			}),
 			FactoryLogic.feature.create({
@@ -544,7 +541,6 @@ Each time you complete this project, your knowledge of your chosen field expands
 		features: [
 			FactoryLogic.feature.createSkillChoice({
 				id: 'comp-fallenImmortal-skill',
-				listOptions: [ SkillList.Lore ],
 				selected: [ 'Religion' ]
 			}),
 			FactoryLogic.feature.create({
@@ -814,7 +810,7 @@ You can’t take this complication if you can’t be made dazed.`,
 			FactoryLogic.feature.create({
 				id: 'comp-hostBody-b',
 				name: 'Host Body Benefit',
-				description: 'You are a fungus that inhabits a humanoid body. Your host body follows all the usual rules for a character and is considered to be alive. At any time while your host body is alive, or for 24 hours after it dies, you can use a main action to move to a dead humanoid within 10 squares of the body and use it as your new host body, provided the body belongs a playable ancestry. When you do so, your original host body dies if it was alive. Your new host body gains all your statistics except f size, ancestry traits, and other statistics related to your former host body’s ancestry, which you instead gain from your new host body. When you inhabit a new host body, you start with 1 Stamina and can immediately spend a Recovery.'
+				description: 'You are a fungus that inhabits a humanoid body. Your host body follows all the usual rules for a character and is considered to be alive. At any time while your host body is alive, or for 24 hours after it dies, you can use a main action to move to a dead humanoid within 10 squares of the body and use it as your new host body, provided the body belongs to a playable ancestry. When you do so, your original host body dies if it was alive. Your new host body gains all your statistics except for size, ancestry traits, and other statistics related to your former host body’s ancestry, which you instead gain from your new host body. When you inhabit a new host body, you start with 1 Stamina and can immediately spend a Recovery.'
 			}),
 			FactoryLogic.feature.create({
 				id: 'comp-hostBody-d',
@@ -833,7 +829,7 @@ You can’t take this complication if you can’t be made dazed.`,
 	static hunted: Complication = {
 		id: 'comp-hunted',
 		name: 'Hunted',
-		description: 'You’re one step ahead of a pursuer - perhaps a bounty hunter determined to bring you to justice, a revenant, or an assassin intent on your death. Someday, you’ll be strong enough to face your pursuer head to head. Bbut for now, you live your life on the run.',
+		description: 'You’re one step ahead of a pursuer - perhaps a bounty hunter determined to bring you to justice, a revenant, or an assassin intent on your death. Someday, you’ll be strong enough to face your pursuer head to head. But for now, you live your life on the run.',
 		features: [
 			FactoryLogic.feature.createSkillChoice({
 				id: 'comp-hunted-skill',
@@ -858,11 +854,11 @@ You can’t take this complication if you can’t be made dazed.`,
 		description: 'You’re hunting someone or something - perhaps a wanted criminal or someone who wronged you, or perhaps a dangerous monster or beast. You won’t rest until you face off against your quarry!',
 		features: [
 			FactoryLogic.feature.createSkillChoice({
-				id: '',
+				id: 'comp-hunter-b1',
 				options: [ 'Alertness', 'Criminal Underworld', 'Eavesdrop', 'Interrogate', 'Rumors', 'Search', 'Track', 'Society' ]
 			}),
 			FactoryLogic.feature.create({
-				id: 'comp-hunter-b',
+				id: 'comp-hunter-b2',
 				name: 'Hunter Benefit',
 				description: 'You have an edge on tests made to find or learn clues about your quarry.'
 			}),
@@ -983,7 +979,7 @@ You can’t take this complication if you can’t be made dazed.`,
 			FactoryLogic.feature.create({
 				id: 'comp-lifebonded-b',
 				name: 'Lifebonded Benefit',
-				description: 'Choose another creature who doesn’t have the Lifebonded complication. When you die, your body disappears until that creature finishes a respite or earns 2 or more Victories. You then appear next to the creature, fully healed.'
+				description: 'Choose another creature who doesn’t have the Lifebonded complication. When you die, your body disappears until that creature finishes a respite or earns 1 or more Victories. You then appear next to the creature, fully healed.'
 			}),
 			FactoryLogic.feature.create({
 				id: 'comp-lifebonded-d',
@@ -1099,7 +1095,6 @@ You can’t take this complication if you can’t be made dazed.`,
 		features: [
 			FactoryLogic.feature.createSkillChoice({
 				id: 'comp-masterChef-skill',
-				listOptions: [ SkillList.Crafting ],
 				selected: [ 'Cooking' ]
 			}),
 			FactoryLogic.feature.create({
@@ -1120,9 +1115,8 @@ You can’t take this complication if you can’t be made dazed.`,
 		name: 'Meddling Butler',
 		description: 'You’re not sure what you did to deserve it, but for some reason your family saddled you with an old, trusted, and extremely irritating family servant. They’re supremely competent, of course, but they sometimes seem to forget who’s in charge.',
 		features: [
-			FactoryLogic.feature.createCompanion({
-				id: 'comp-meddlingButler-b',
-				type: 'retainer'
+			FactoryLogic.feature.createRetainer({
+				id: 'comp-meddlingButler-b'
 			}),
 			FactoryLogic.feature.create({
 				id: 'comp-meddlingButler-d',
@@ -1392,7 +1386,6 @@ You can’t take this complication if you can’t be made dazed.`,
 		features: [
 			FactoryLogic.feature.createSkillChoice({
 				id: 'comp-raisedByBeasts-skill',
-				listOptions: [ SkillList.Interpersonal ],
 				selected: [ 'Handle Animals' ]
 			}),
 			FactoryLogic.feature.create({
@@ -1454,12 +1447,11 @@ You can’t take this complication if you can’t be made dazed.`,
 					id: 'comp-rogueTalent-b',
 					name: 'Telekinetic Grasp',
 					description: 'You reach out with your mind to move a creature or object.',
-					type: FactoryLogic.type.createManeuver(),
+					type: FactoryLogic.type.createManeuver({ qualifiers: [ 'can be used as a ranged free strike' ], freeStrike: true }),
 					keywords: [ AbilityKeyword.Psionic, AbilityKeyword.Ranged, AbilityKeyword.Strike ],
 					distance: [ FactoryLogic.distance.createRanged(10) ],
 					target: 'One creature or object',
 					sections: [
-						FactoryLogic.createAbilitySectionText('Note: you can use this ability as a ranged free strike.'),
 						FactoryLogic.createAbilitySectionRoll(
 							FactoryLogic.createPowerRoll({
 								characteristic: [ Characteristic.Might, Characteristic.Intuition, Characteristic.Presence ],
@@ -1615,7 +1607,7 @@ You can’t take this complication if you can’t be made dazed.`,
 			FactoryLogic.feature.create({
 				id: 'comp-sharedSpirit-b',
 				name: 'Shared Spirit',
-				description: 'At the start of each day, roll 1d6. On a 1-4, you control your body. On a 5-6, the spirit does. Alternatively, if you and the spirit are on good terms, you can choose each day who is in control. You can use those skills only while you are in control of your body. Then choose three new skills, which you have and can use only while your spirit is in control.'
+				description: 'At the start of each day, roll a d6. On a 1–4, you control your body. On a 5–6, the spirit does. Alternatively, if you and the spirit are on good terms, you can choose each day who is in control. Choose three of your skills. You can use those skills only while you are in control of your body. Then choose three new skills, which you have and can use only while your spirit is in control.'
 			})
 		]
 	};
@@ -1686,7 +1678,6 @@ You can’t take this complication if you can’t be made dazed.`,
 		features: [
 			FactoryLogic.feature.createSkillChoice({
 				id: 'comp-silentSentinel-skill1',
-				listOptions: [ SkillList.Intrigue ],
 				count: 2,
 				selected: [ 'Eavesdrop', 'Sneak' ]
 			}),
@@ -1842,7 +1833,7 @@ Note: Stormwight furies can’t take this complication.`,
 	static hearsVoices: Complication = {
 		id: 'comp-hearsVoices',
 		name: 'Voice in your Head',
-		description: 'You occasionally hear a voice in your head, giving you orders or offering advice. You don’t know who the voice is or why it comes to you, but when you’ve followed the advice, it’s usually proved to be sound',
+		description: 'You occasionally hear a voice in your head, giving you orders or offering advice. You don’t know who the voice is or why it comes to you, but when you’ve followed the advice, it’s usually proved to be sound.',
 		features: [
 			FactoryLogic.feature.create({
 				id: 'comp-hearsVoices-b',
@@ -1902,11 +1893,6 @@ Note: Stormwight furies can’t take this complication.`,
 				ability: FactoryLogic.createAbility({
 					id: 'comp-waking-dreams-ability',
 					name: 'Waking Dreams',
-					description: '',
-					type: FactoryLogic.type.createNoAction(),
-					keywords: [ ],
-					distance: [ ],
-					target: 'Self',
 					sections: [
 						FactoryLogic.createAbilitySectionRoll(
 							FactoryLogic.createPowerRoll({

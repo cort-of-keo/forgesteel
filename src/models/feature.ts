@@ -1,28 +1,31 @@
-import { DamageModifier, Modifier } from './damage-modifier';
-import { Ability } from './ability';
-import { AbilityKeyword } from '../enums/ability-keyword';
-import { Ancestry } from './ancestry';
-import { Characteristic } from '../enums/characteristic';
-import { ConditionType } from '../enums/condition-type';
-import { DamageType } from '../enums/damage-type';
-import { Domain } from './domain';
-import { Element } from './element';
-import { FeatureAddOnType } from '../enums/feature-addon-type';
-import { FeatureField } from '../enums/feature-field';
-import { FeatureType } from '../enums/feature-type';
-import { Follower } from './follower';
-import { Item } from './item';
-import { ItemType } from '../enums/item-type';
-import { Kit } from './kit';
-import { KitArmor } from '../enums/kit-armor';
-import { KitWeapon } from '../enums/kit-weapon';
-import { Monster } from './monster';
-import { Perk } from './perk';
-import { PerkList } from '../enums/perk-list';
-import { PowerRoll } from './power-roll';
-import { Size } from './size';
-import { SkillList } from '../enums/skill-list';
-import { Title } from './title';
+import { DamageModifier, Modifier } from '@/models/damage-modifier';
+import { Ability } from '@/models/ability';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Ancestry } from '@/models/ancestry';
+import { Characteristic } from '@/enums/characteristic';
+import { ConditionType } from '@/enums/condition-type';
+import { DamageType } from '@/enums/damage-type';
+import { Domain } from '@/models/domain';
+import { Element } from '@/models/element';
+import { FeatureAddOnType } from '@/enums/feature-addon-type';
+import { FeatureField } from '@/enums/feature-field';
+import { FeatureType } from '@/enums/feature-type';
+import { Fixture } from '@/models/fixture';
+import { Follower } from '@/models/follower';
+import { Item } from '@/models/item';
+import { ItemType } from '@/enums/item-type';
+import { Kit } from '@/models/kit';
+import { KitArmor } from '@/enums/kit-armor';
+import { KitWeapon } from '@/enums/kit-weapon';
+import { Monster } from '@/models/monster';
+import { Perk } from '@/models/perk';
+import { PerkList } from '@/enums/perk-list';
+import { PowerRoll } from '@/models/power-roll';
+import { Size } from '@/models/size';
+import { SkillList } from '@/enums/skill-list';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
+import { Summon } from '@/models/summon';
+import { Title } from '@/models/title';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface _FeatureData { }
@@ -50,6 +53,13 @@ export interface FeatureAbilityDistanceData extends _FeatureData, Modifier {
 	keywords: AbilityKeyword[];
 };
 export type FeatureAbilityDistance = FeatureOf<FeatureType.AbilityDistance, FeatureAbilityDistanceData>;
+
+export interface FeatureAbilityKeywordData extends _FeatureData {
+	keywords: AbilityKeyword[];
+	toAdd: AbilityKeyword[];
+	toRemove: AbilityKeyword[];
+};
+export type FeatureAbilityKeyword = FeatureOf<FeatureType.AbilityKeyword, FeatureAbilityKeywordData>;
 
 export interface FeatureAddOnData extends _FeatureData {
 	category: FeatureAddOnType;
@@ -86,7 +96,10 @@ export type FeatureCharacteristicBonus = FeatureOf<FeatureType.CharacteristicBon
 
 export interface FeatureChoiceData extends _FeatureData {
 	options: { feature: Feature, value: number }[];
+	/** @deprecated */
+	respiteChange?: boolean;
 	count: number | 'ancestry';
+	selectAt: 'build' | 'respite' | 'play';
 	selected: Feature[];
 }
 export type FeatureChoice = FeatureOf<FeatureType.Choice, FeatureChoiceData>;
@@ -94,7 +107,14 @@ export type FeatureChoice = FeatureOf<FeatureType.Choice, FeatureChoiceData>;
 export interface FeatureClassAbilityData extends _FeatureData {
 	classID: string | undefined;
 	cost: number | 'signature';
-	allowAnySource: boolean;
+	source: {
+		fromClassAbilities: boolean;
+		fromSelectedSubclassAbilities: boolean;
+		fromUnselectedSubclassAbilities: boolean;
+		fromClassLevels: boolean;
+		fromSelectedSubclassLevels: boolean;
+		fromUnselectedSubclassLevels: boolean;
+	}
 	minLevel: number;
 	count: number;
 	selectedIDs: string[];
@@ -107,7 +127,6 @@ export interface FeatureConditionImmunityData extends _FeatureData {
 export type FeatureConditionImmunity = FeatureOf<FeatureType.ConditionImmunity, FeatureConditionImmunityData>;
 
 export interface FeatureCompanionData extends _FeatureData {
-	type: 'companion' | 'mount' | 'retainer';
 	selected: Monster | null;
 }
 export type FeatureCompanion = FeatureOf<FeatureType.Companion, FeatureCompanionData>;
@@ -118,6 +137,8 @@ export interface FeatureDamageModifierData extends _FeatureData {
 export type FeatureDamageModifier = FeatureOf<FeatureType.DamageModifier, FeatureDamageModifierData>;
 
 export interface FeatureDomainData extends _FeatureData {
+	characteristic: Characteristic;
+	levels: number[];
 	count: number;
 	selected: Domain[];
 };
@@ -129,6 +150,11 @@ export interface FeatureDomainFeatureData extends _FeatureData {
 	selected: Feature[];
 };
 export type FeatureDomainFeature = FeatureOf<FeatureType.DomainFeature, FeatureDomainFeatureData>;
+
+export interface FeatureFixtureData extends _FeatureData {
+	fixture: Fixture;
+};
+export type FeatureFixture = FeatureOf<FeatureType.Fixture, FeatureFixtureData>;
 
 export interface FeatureFollowerData extends _FeatureData {
 	follower: Follower;
@@ -183,6 +209,7 @@ export interface FeatureMaliceData extends _FeatureData {
 	repeatable?: boolean;
 	sections: (string | PowerRoll)[];
 	echelon: number;
+	icon?: StatBlockIcon;
 };
 export type FeatureMalice = FeatureOf<FeatureType.Malice, FeatureMaliceData>;
 
@@ -225,15 +252,20 @@ export interface FeatureProficiencyData extends _FeatureData {
 };
 export type FeatureProficiency = FeatureOf<FeatureType.Proficiency, FeatureProficiencyData>;
 
+export interface FeatureRetainerData extends _FeatureData {
+	selected: Monster | null;
+}
+export type FeatureRetainer = FeatureOf<FeatureType.Retainer, FeatureRetainerData>;
+
+export interface FeatureSaveThresholdData extends _FeatureData {
+	value: number;
+};
+export type FeatureSaveThreshold = FeatureOf<FeatureType.SaveThreshold, FeatureSaveThresholdData>;
+
 export interface FeatureSizeData extends _FeatureData {
 	size: Size;
 };
 export type FeatureSize = FeatureOf<FeatureType.Size, FeatureSizeData>;
-
-export interface FeatureSkillData extends _FeatureData {
-	skill: string;
-};
-export type FeatureSkill = FeatureOf<FeatureType.Skill, FeatureSkillData>;
 
 export interface FeatureSkillChoiceData extends _FeatureData {
 	options: string[];
@@ -249,11 +281,29 @@ export interface FeatureSpeedData extends _FeatureData {
 export type FeatureSpeed = FeatureOf<FeatureType.Speed, FeatureSpeedData>;
 
 export interface FeatureSummonData extends _FeatureData {
-	options: Monster[];
-	count: number;
-	selected: Monster[];
+	summons: Summon[];
 };
 export type FeatureSummon = FeatureOf<FeatureType.Summon, FeatureSummonData>;
+
+export interface FeatureSummonChoiceData extends _FeatureData {
+	options: Summon[];
+	count: number;
+	selected: Summon[];
+};
+export type FeatureSummonChoice = FeatureOf<FeatureType.SummonChoice, FeatureSummonChoiceData>;
+
+export interface FeatureSwitchOptionsData extends _FeatureData {
+	switch: string;
+	options: { value: string, feature: Feature }[];
+	defaultOption: Feature | null;
+};
+export type FeatureSwitchOptions = FeatureOf<FeatureType.SwitchOptions, FeatureSwitchOptionsData>;
+
+export interface FeatureSwitchValueData extends _FeatureData {
+	switch: string;
+	value: string
+};
+export type FeatureSwitchValue = FeatureOf<FeatureType.SwitchValue, FeatureSwitchValueData>;
 
 export interface FeatureTaggedFeatureData extends _FeatureData {
 	tag: string;
@@ -277,11 +327,20 @@ export interface FeatureTitleChoiceData extends _FeatureData {
 };
 export type FeatureTitleChoice = FeatureOf<FeatureType.TitleChoice, FeatureTitleChoiceData>;
 
+export interface FeatureToggleData extends _FeatureData {
+	condition: string;
+	featureChecked: Feature | null;
+	featureUnchecked: Feature | null;
+	checked: boolean;
+};
+export type FeatureToggle = FeatureOf<FeatureType.Toggle, FeatureToggleData>;
+
 export type Feature =
 	| FeatureAbility
 	| FeatureAbilityCost
 	| FeatureAbilityDamage
 	| FeatureAbilityDistance
+	| FeatureAbilityKeyword
 	| FeatureAddOn
 	| FeatureAncestryChoice
 	| FeatureAncestryFeatureChoice
@@ -294,6 +353,7 @@ export type Feature =
 	| FeatureDamageModifier
 	| FeatureDomain
 	| FeatureDomainFeature
+	| FeatureFixture
 	| FeatureFollower
 	| FeatureHeroicResource
 	| FeatureHeroicResourceGain
@@ -309,14 +369,19 @@ export type Feature =
 	| FeaturePackageContent
 	| FeaturePerk
 	| FeatureProficiency
+	| FeatureRetainer
+	| FeatureSaveThreshold
 	| FeatureSize
-	| FeatureSkill
 	| FeatureSkillChoice
 	| FeatureSpeed
 	| FeatureSummon
+	| FeatureSummonChoice
+	| FeatureSwitchOptions
+	| FeatureSwitchValue
 	| FeatureText
 	| FeatureTaggedFeature
 	| FeatureTaggedFeatureChoice
-	| FeatureTitleChoice;
+	| FeatureTitleChoice
+	| FeatureToggle;
 
 export type FeatureData = Feature['data'];

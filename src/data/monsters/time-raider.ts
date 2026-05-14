@@ -1,13 +1,13 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const timeRaider: MonsterGroup = {
 	id: 'monster-group-time-raider',
@@ -72,6 +72,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			id: 'time-raider-malice-2',
 			name: 'Recall Module',
 			cost: 5,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Until the end of the round, each time raider gains a +3 bonus to speed, and can teleport up to their speed as a move action.'
 			]
@@ -80,6 +81,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			id: 'time-raider-malice-3',
 			name: 'Psi-Cage',
 			cost: 10,
+			icon: StatBlockIcon.SpecialArea,
 			sections: [
 				'All time raiders in the encounter collectively create a psionic field over the encounter map, which lasts until the first time raider with the highest Stamina maximum drops to 0 Stamina or chooses to end the field (no action required). While the field is up, each non-time raider on the map makes a **Reason test** against this psionic effect at the start of each round.',
 				FactoryLogic.createPowerRoll({
@@ -105,7 +107,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: '+1 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(2, 2, 2, 1, -1),
+			characteristics: FactoryLogic.createCharacteristics(2, 2, 2, 1, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -158,7 +160,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stability: 0,
 			freeStrikeDamage: 3,
 			withCaptain: '+1 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(2, 1, 2, 1, 1),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, 2, 1, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -210,7 +212,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stamina: 60,
 			stability: 0,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 2, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 2, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -230,8 +232,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 									tier3: '13 damage; R<2 weakened (save ends)'
 								})
 							),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'A creature weakened this way is also bleeding.'
 							})
@@ -292,7 +293,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stamina: 40,
 			stability: 3,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 2, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 2, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -359,7 +360,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stamina: 40,
 			stability: 0,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 2, 2, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 2, 2, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -392,8 +393,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 						target: 'Special',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The area is a psionically charged treadmill that pushes creatures and objects at high speed in one direction of the helix’s choice. Any creature who enters the area or starts their turn there slides 3 squares toward the end of the area in the chosen direction. Each ene- my in the area when it first appears takes 3 damage before they slide.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'The helix creates a second kinetic lane.'
 							})
@@ -429,7 +429,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stamina: 50,
 			stability: 0,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 2, 2, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 2, 2, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -495,7 +495,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stamina: 40,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 2, 2, 1),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 2, 2, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -569,7 +569,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stamina: 50,
 			stability: 0,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(1, 2, 2, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 2, 2, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -644,7 +644,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stamina: 50,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(1, 1, 2, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 1, 2, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -724,7 +724,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 			stamina: 120,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 3, 3, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 3, 3, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -775,8 +775,7 @@ Time raiders also have two sets of arms, allowing them to wield melee weapons at
 						target: 'The triggering creature',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The strike takes a bane. After the strike resolves, the tyrannis can make a free strike against the target.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The strike has a double bane instead.'
 							})

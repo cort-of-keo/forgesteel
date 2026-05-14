@@ -1,7 +1,7 @@
-import { Encounter } from '../models/encounter';
-import { EncounterObjectiveData } from './encounter-objective-data';
-import { MonsterData } from './monster-data';
-import { TerrainData } from './terrain-data';
+import { Encounter } from '@/models/encounter';
+import { EncounterObjectiveData } from '@/data/encounter-objective-data';
+import { MonsterData } from '@/data/monster-data';
+import { TerrainData } from '@/data/terrain-data';
 
 export class EncounterData {
 	static goblinAmbush: Encounter = {
@@ -148,7 +148,8 @@ export class EncounterData {
 		initiative: undefined,
 		round: 1,
 		malice: 0,
-		additionalTurnsTaken: []
+		additionalTurnsTaken: [],
+		hiddenMaliceFeatures: []
 	};
 
 	static dragonAttack: Encounter = {
@@ -193,6 +194,7 @@ export class EncounterData {
 		initiative: undefined,
 		round: 1,
 		malice: 0,
-		additionalTurnsTaken: []
+		additionalTurnsTaken: [],
+		hiddenMaliceFeatures: []
 	};
 }

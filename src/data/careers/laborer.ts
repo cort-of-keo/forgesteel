@@ -1,8 +1,8 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureField } from '../../enums/feature-field';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const laborer: Career = {
 	id: 'career-laborer',
@@ -11,7 +11,6 @@ export const laborer: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'laborer-feature-1',
-			listOptions: [ SkillList.Exploration ],
 			selected: [ 'Endurance' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -65,7 +64,6 @@ export const laborer: Career = {
 				description: 'You labored silently as an uncaring boss drove those around you into the ground, pushing you to work harder to lessen the burden on your companions. But when the boss pushed too far and killed a friend of yours, you led an uprising against them. That was the start of your adventuring life.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };

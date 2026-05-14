@@ -1,22 +1,22 @@
-import { Ability, AbilityDistance } from '../models/ability';
-import { AbilityDistanceType } from '../enums/abiity-distance-type';
-import { AbilityKeyword } from '../enums/ability-keyword';
-import { Characteristic } from '../enums/characteristic';
-import { Collections } from '../utils/collections';
-import { CreatureLogic } from './creature-logic';
-import { Format } from '../utils/format';
-import { FormatLogic } from './format-logic';
-import { Hero } from '../models/hero';
-import { HeroLogic } from './hero-logic';
-import { KitArmor } from '../enums/kit-armor';
-import { KitWeapon } from '../enums/kit-weapon';
-import { Monster } from '../models/monster';
-import { MonsterLogic } from './monster-logic';
-import { PowerRoll } from '../models/power-roll';
-import { Utils } from '../utils/utils';
+import { Ability, AbilityDistance } from '@/models/ability';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { Collections } from '@/utils/collections';
+import { CreatureLogic } from '@/logic/creature-logic';
+import { FeatureType } from '@/enums/feature-type';
+import { FormatLogic } from '@/logic/format-logic';
+import { Hero } from '@/models/hero';
+import { HeroLogic } from '@/logic/hero-logic';
+import { KitArmor } from '@/enums/kit-armor';
+import { KitWeapon } from '@/enums/kit-weapon';
+import { Monster } from '@/models/monster';
+import { MonsterLogic } from '@/logic/monster-logic';
+import { PowerRoll } from '@/models/power-roll';
+import { Utils } from '@/utils/utils';
 
 export class AbilityLogic {
-	static getKeywords = () => {
+	static getAllKeywords = () => {
 		return [
 			AbilityKeyword.Animal,
 			AbilityKeyword.Animapathy,
@@ -71,6 +71,26 @@ export class AbilityLogic {
 		].sort();
 	};
 
+	static getTargets = () => {
+		return Collections.sort([
+			'Self',
+			'Each creature and object in the area',
+			'Each creature in the area',
+			'Each enemy in the area',
+			'Each ally in the area',
+			'One creature or object',
+			'One creature',
+			'One enemy',
+			'One ally',
+			'Two creatures or objects',
+			'Two creatures',
+			'Two enemies',
+			'Two allies',
+			'One creature or object per minion',
+			'One creature per minion'
+		], a => a);
+	};
+
 	static getPanelWidth = (ability: Ability) => {
 		const descLength = Math.round(ability.description.split(' ').length / 10);
 		const textLength = Collections.sum(ability.sections.filter(s => s.type === 'text'), s => Math.round(s.text.split(' ').length / 10));
@@ -79,6 +99,23 @@ export class AbilityLogic {
 
 		const length = descLength + textLength + fieldLength + rollLength;
 		return Math.max(1, Math.round(length / 12));
+	};
+
+	static getKeywords = (ability: Ability, hero?: Hero) => {
+		let keywords = [ ...ability.keywords ];
+
+		if (hero) {
+			HeroLogic.getFeatures(hero)
+				.map(f => f.feature)
+				.filter(f => f.type === FeatureType.AbilityKeyword)
+				.filter(f => f.data.keywords.every(kw => keywords.includes(kw)))
+				.forEach(f => {
+					f.data.toRemove.forEach(ak => keywords = keywords.filter(k => k !== ak));
+					f.data.toAdd.forEach(ak => keywords.push(ak));
+				});
+		}
+
+		return keywords;
 	};
 
 	static getDistance = (distance: AbilityDistance, ability?: Ability, hero?: Hero) => {
@@ -138,7 +175,7 @@ export class AbilityLogic {
 				break;
 		}
 		if (distance.within > 0) {
-			sections.push(`within ${distance.within}`);
+			sections.push(`within ${distance.within + bonus}`);
 		}
 		if (distance.qualifier) {
 			sections.push(`(${distance.qualifier})`);
@@ -167,6 +204,51 @@ export class AbilityLogic {
 		};
 
 		return [ powerRoll.tier1, powerRoll.tier2, powerRoll.tier3 ].some(tier => match(tier));
+	};
+
+	static getPowerRollBonusValue = (ability: Ability, creature: Hero | Monster | undefined): number => {
+		const rollCharacteristics = this.getPowerRollCharacteristics(ability, creature);
+		let rollPowerAmount = 2;// echelon 1 always at least 2
+		if (rollCharacteristics.length) {
+			rollPowerAmount = Math.max(...rollCharacteristics
+				.map(c => CreatureLogic.getCharacteristic(creature, c)));
+		} else {
+			const rollSections = ability.sections.filter(s => s.type === 'roll');
+			if (rollSections.length) {
+				const rollSection = rollSections[0];
+				if (rollSections.length > 1) {
+					console.warn('More than one roll section!', ability.name, rollSections);
+				}
+
+				[ rollSection.roll.tier1, rollSection.roll.tier2, rollSection.roll.tier3 ].forEach(tier => {
+					const potency = tier.match(/[MmAaRrIiPp]<(\d)/);
+					if (potency && potency[1]) {
+						rollPowerAmount = Math.max(rollPowerAmount, Number.parseInt(potency[1]));
+					}
+				});
+			}
+		}
+		return rollPowerAmount;
+	};
+
+	static getPowerRollCharacteristics = (ability: Ability, creature: Hero | Monster | undefined): Characteristic[] => {
+		const rollSections = ability.sections.filter(s => s.type === 'roll');
+		if (rollSections.length) {
+			const rollSection = rollSections[0];
+			if (rollSections.length > 1) {
+				console.warn('More than one roll section!', ability.name, rollSections);
+			}
+
+			let rollCharacteristics = rollSection.roll.characteristic;
+			// Specific check for Grab/Knockback + Psionic Martial Arts override
+			if (CreatureLogic.isHero(creature)
+				&& ([ 'grab', 'knockback' ].includes(ability.id))
+				&& HeroLogic.getFeatures(creature as Hero).find(f => f.feature.id === 'null-1-8')) { // Psionic Martial Arts id
+				rollCharacteristics = [ Characteristic.Intuition ];
+			}
+			return rollCharacteristics;
+		}
+		return [];
 	};
 
 	static getTierEffect = (value: string, tier: number, ability: Ability, distance: AbilityDistanceType | undefined, hero: Hero | undefined) => {
@@ -216,7 +298,7 @@ export class AbilityLogic {
 						}
 					}
 
-					const dmgFeatures = HeroLogic.getFeatureDamageBonuses(hero, ability);
+					const dmgFeatures = HeroLogic.getFeatureDamageBonuses(hero, ability, distance);
 					value += Collections.sum(dmgFeatures, x => x.value);
 
 					section.toLowerCase().split(' ').forEach(token => {
@@ -255,48 +337,6 @@ export class AbilityLogic {
 					const damage = [ ...types, 'damage' ].join(' ');
 
 					return `${total} ${damage}`;
-				}
-
-				if (hero && (n === 0) && [ 'pull', 'push', 'slide' ].some(s => section.toLowerCase().includes(s))) {
-					let value = 0;
-					let sign = '+';
-					let vertical = false;
-					let type = '';
-					const dice: string[] = [];
-					const characteristics: Characteristic[] = [];
-
-					section.toLowerCase().split(' ').forEach(token => {
-						if ((token === 'pull') || (token === 'push') || (token === 'slide')) {
-							type = token;
-						} else if (token === 'vertical') {
-							vertical = true;
-						} else if (/\d+d\d+/.test(token)) {
-							dice.push(token);
-						} else if (!isNaN(parseInt(token))) {
-							value += parseInt(token);
-						} else if ((token === '+') || (token === '-')) {
-							sign = token;
-						} else if ((token === 'might') || (token === 'might,') || (token === 'm') || (token === 'm,')) {
-							characteristics.push(Characteristic.Might);
-						} else if ((token === 'agility') || (token === 'agility,') || (token === 'a') || (token === 'a,')) {
-							characteristics.push(Characteristic.Agility);
-						} else if ((token === 'reason') || (token === 'reason,') || (token === 'r') || (token === 'r,')) {
-							characteristics.push(Characteristic.Reason);
-						} else if ((token === 'intuition') || (token === 'intuition,') || (token === 'i') || (token === 'i,')) {
-							characteristics.push(Characteristic.Intuition);
-						} else if ((token === 'presence') || (token === 'presence,') || (token === 'p') || (token === 'p,')) {
-							characteristics.push(Characteristic.Presence);
-						}
-					});
-
-					const charValues = characteristics.map(ch => HeroLogic.getCharacteristic(hero, ch));
-					const maxCharValue = Collections.max(charValues, n => n) || 0;
-					let total: number | string = sign === '+' ? value + maxCharValue : value - maxCharValue;
-					if (dice.length > 0) {
-						total = `${dice.join(' + ')} + ${total}`;
-					}
-
-					return Format.capitalize(vertical ? `vertical ${type} ${total}` : `${type} ${total}`);
 				}
 
 				return AbilityLogic.getTextEffect(section, hero);
@@ -370,9 +410,63 @@ export class AbilityLogic {
 				.replace(/<\s*[[({]?strong[\])}]?/gi, `< ${HeroLogic.getPotency(hero, 'strong')}`);
 		}
 
+		// N + [Characteristic]
+		if (hero) {
+			const regex = /(\d+)\s*\+\s*(M|A|R|I|P)/gi;
+			text = text.replace(regex, (_match, value, characteristic) => {
+				let ch = 0;
+				switch (characteristic.toUpperCase()) {
+					case 'M':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Might);
+						break;
+					case 'A':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Agility);
+						break;
+					case 'R':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Reason);
+						break;
+					case 'I':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Intuition);
+						break;
+					case 'P':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Presence);
+						break;
+				}
+				const total = Number(value) + ch;
+				return `${total}`;
+			});
+		}
+
+		// N + your [Characteristic] score
+		if (hero) {
+			const regex = /(\d+)\s*(\+|plus)\s*your\s*(Might|Agility|Reason|Intuition|Presence)\s*score/gi;
+			text = text.replace(regex, (_match, value, _plus, characteristic) => {
+				let ch = 0;
+				switch (characteristic.toLowerCase()) {
+					case 'might':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Might);
+						break;
+					case 'agility':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Agility);
+						break;
+					case 'reason':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Reason);
+						break;
+					case 'intuition':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Intuition);
+						break;
+					case 'presence':
+						ch = HeroLogic.getCharacteristic(hero, Characteristic.Presence);
+						break;
+				}
+				const total = Number(value) + ch;
+				return `${total}`;
+			});
+		}
+
 		// Equal to [N times] your [Characteristic(s)] score
 		if (hero) {
-			const charRegex = /(equal to(?: or (?:greater|less) than)?)[^,.;:]* your ([^,.;:]*) score/gi;
+			const charRegex = /(equal to(?: or (?:greater|less) than)?)[^,.;:]*? your ([^,.;:]*) score/gi;
 			[ ...text.matchAll(charRegex) ].forEach(match => {
 				const options: number[] = [];
 				[
@@ -449,6 +543,16 @@ export class AbilityLogic {
 				} else {
 					text = text.replace(str, `up to ${constant + (Math.floor(value * multiplier))} squares`);
 				}
+			});
+		}
+
+		// Handle [pull / push / slide] N
+		if (hero) {
+			const forcedMovementRegex = /(pull|push|slide)\s+(\d+)/gi;
+			text = text.replace(forcedMovementRegex, (_match, type, value) => {
+				const bonus = HeroLogic.getForcedMovementBonus(hero, type);
+				const total = Number(value) + bonus;
+				return `${type} ${total}`;
 			});
 		}
 

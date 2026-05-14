@@ -1,7 +1,7 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const explorer: Career = {
 	id: 'career-explorer',
@@ -10,7 +10,6 @@ export const explorer: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'career-explorer-feature-1',
-			listOptions: [ SkillList.Exploration ],
 			selected: [ 'Navigate' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -60,7 +59,6 @@ export const explorer: Career = {
 				description: 'As a seafaring explorer, you lived to chart unknown courses. Though travel on the high seas was fraught with danger, the destination was always rewarding in riches, knowledge, or some other way that was meaningful to you. Your luck ran out when your ship was destroyed by pirates or other enemy forces. You’ve taken to protecting those who seek safe passage while also hoping to avenge your crew.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };

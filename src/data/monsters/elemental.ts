@@ -1,13 +1,13 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { ConditionType } from '../../enums/condition-type';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { ConditionType } from '@/enums/condition-type';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const elemental: MonsterGroup = {
 	id: 'monster-group-elemental',
@@ -73,6 +73,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 			id: 'elemental-malice-1',
 			name: 'Elemental Swap',
 			cost: 3,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Two elementals on the encounter map teleport to swap places, and each has damage immunity 2 until the end of the round.'
 			]
@@ -81,6 +82,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 			id: 'elemental-malice-2',
 			name: 'Split',
 			cost: 5,
+			icon: StatBlockIcon.Self,
 			sections: [
 				'An elemental acting this turn cleaves themself into two separate elementals. Each elemental has the same statistics as the original, except that each has half the original’s current Stamina and is one size smaller. Both elementals can then shift up to their speed.'
 			]
@@ -115,7 +117,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 			stamina: 80,
 			stability: 0,
 			freeStrikeDamage: 6,
-			characteristics: MonsterLogic.createCharacteristics(-1, 2, 0, 1, 2),
+			characteristics: FactoryLogic.createCharacteristics(-1, 2, 0, 1, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -147,8 +149,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 						target: 'Self or one elemental',
 						sections: [
 							FactoryLogic.createAbilitySectionText('Until the start of the crux’s next turn, the target has fire immunity 5.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Until the end of the encounter, the ground within 3 squares of the target is wreathed in fire. Any enemy who enters that area for the first time in a round or starts their turn there takes 3 fire damage.'
 							})
@@ -196,7 +197,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 			stamina: 100,
 			stability: 0,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(1, 2, -1, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(1, 2, -1, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -228,8 +229,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 						target: 'Self or one elemental',
 						sections: [
 							FactoryLogic.createAbilitySectionText('Until the start of the essence’s next turn, the target has lightning immunity 5.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Until the end of the encounter, a vortex surrounds the target in a 3 aura. The area is difficult terrain for enemies. Additionally, at the end of each of the target’s turns, they can push one creature in the area up to 5 squares.'
 							})
@@ -279,7 +279,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 			stamina: 80,
 			stability: 1,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 1, -1, 2),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 1, -1, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -311,8 +311,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 						target: 'Self or one elemental',
 						sections: [
 							FactoryLogic.createAbilitySectionText('Until the start of the essence’s next turn, the target has cold immunity 5.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Until the end of the encounter, the ground within 1 square of the target is a pool of water that is difficult terrain. This water extends out behind the target as they move, creating a stream that lasts until the end of the encounter. Any enemy who ends their turn in the stream and has M<2 is slowed (save ends).'
 							})
@@ -365,7 +364,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 			stamina: 120,
 			stability: 2,
 			freeStrikeDamage: 6,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 0, 2, 2),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 0, 2, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -397,8 +396,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 						target: 'Self or one elemental',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The target gains 15 temporary Stamina that lasts until the start of the field’s next turn.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Until the end of the encounter, the ground within 1 square of the target is overgrown with underbrush and vines. Whenever any enemy makes a strike against the target while within line of effect of that area, the enemy is pulled 5 squares toward the area after the strike is resolved. Any enemy who enters the area for the first time in a round or starts their turn there is knocked prone.'
 							})
@@ -451,7 +449,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 			stamina: 132,
 			stability: 2,
 			freeStrikeDamage: 6,
-			characteristics: MonsterLogic.createCharacteristics(2, -1, 0, 1, 2),
+			characteristics: FactoryLogic.createCharacteristics(2, -1, 0, 1, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -483,8 +481,7 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 						target: 'Self or one elemental',
 						sections: [
 							FactoryLogic.createAbilitySectionText('Until the start of the force’s next turn, any melee strike made against the target takes a bane if it doesn’t already have a bane or double bane.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Until the end of the encounter, the target grows a carapace of stone. They have a +3 bonus to stability and gain 15 temporary Stamina.'
 							})
@@ -497,7 +494,6 @@ Tidedrifters have a healthy sense of humor that makes it easy to win their frien
 						name: 'Break Armor',
 						type: FactoryLogic.type.createTrigger('The force takes damage.'),
 						cost: 1,
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSelf() ],
 						target: 'Self',
 						sections: [

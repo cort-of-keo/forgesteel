@@ -1,11 +1,11 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const elfWode: MonsterGroup = {
 	id: 'monster-group-elf-wode',
@@ -66,6 +66,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			id: 'elf-wode-malice-1',
 			name: 'Forest Network',
 			cost: 3,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Each wode elf who ends this turn hidden can shift up to their speed while remaining hidden.'
 			]
@@ -74,6 +75,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			id: 'elf-wode-malice-2',
 			name: 'Punishing Regrowth',
 			cost: 5,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Until the end of the round, each wode elf gains an edge on abilities, and their strikes can slide a target up to 2 squares in addition to their usual effects. If a strike already imposes forced movement, this slide happens after that forced movement. A creature force moved by a wode elf’s strike who ends this forced movement in difficult terrain is restrained until the end of their next turn.'
 			]
@@ -82,6 +84,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			id: 'elf-wode-malice-3',
 			name: 'Vines Everywhere',
 			cost: 7,
+			icon: StatBlockIcon.SpecialArea,
 			sections: [
 				'Vines rapidly grow across the entire encounter map. Each enemy in the encounter makes an **Agility test**.',
 				FactoryLogic.createPowerRoll({
@@ -107,7 +110,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stability: 0,
 			freeStrikeDamage: 1,
 			withCaptain: '+2 bonus to speed',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -153,7 +156,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stability: 0,
 			freeStrikeDamage: 1,
 			withCaptain: 'Gain an edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -198,7 +201,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: 'Gain an edge on strikes',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -247,7 +250,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: '+1 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -287,7 +290,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stamina: 40,
 			stability: 0,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(1, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(1, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -309,8 +312,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 								tier3: '12 damage; push 5'
 							})),
 							FactoryLogic.createAbilitySectionText('The chirurgeon can make a ranged free strike before using this ability.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 5,
 								effect: 'The chirurgeon uses this ability again.'
 							})
@@ -350,7 +352,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stamina: 30,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 1, 0, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 1, 0, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -369,8 +371,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 								tier3: '10 damage; pull 5; M<2 slowed (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('While slowed this way, a target can’t search for hidden creatures.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'The size of the cube and the potency both increase by 1.'
 							})
@@ -412,7 +413,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stamina: 20,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 1, 0, 2, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 1, 0, 2, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -486,7 +487,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stamina: 40,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -505,8 +506,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 								tier3: '9 damage'
 							})),
 							FactoryLogic.createAbilitySectionText('The target is taunted until the end of their next turn, and the greenskeeper shifts up to 3 squares.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The distance increases to Melee 5.'
 							})
@@ -546,7 +546,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stamina: 50,
 			stability: 0,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -568,8 +568,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 								tier3: '14 damage; M<2 bleeding (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('The guerilla can teleport up to 3 squares.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'This ability targets one additional target, and deals an additional 3 damage if both targets are adjacent to each other.'
 							})
@@ -617,7 +616,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stamina: 40,
 			stability: 0,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -636,8 +635,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 								tier3: '14 damage; A<2 restrained (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('The gweiadur shifts up to 3 squares.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'If this ability restrains the target, one enemy adjacent to the target is also restrained (save ends).'
 							})
@@ -683,7 +681,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stamina: 30,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -702,8 +700,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 								tier3: '9 damage; the target is marked (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('Allies gain an edge on abilities against a target marked by any wode elf.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'The sentry targets two additional creatures or objects.'
 							})
@@ -743,7 +740,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stamina: 120,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 3, 2, 2, 2),
+			characteristics: FactoryLogic.createCharacteristics(2, 3, 2, 2, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -762,8 +759,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 								tier3: '15 damage; M<3 restrained (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('The warleader can teleport up to 3 squares between each strike.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'A target restrained by this ability takes an extra 3 damage.'
 							})
@@ -866,7 +862,7 @@ The wode elves send their warleaders into battle only if the situation is dire. 
 			stamina: 30,
 			stability: 1,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(2, 1, -1, 0, -1),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, -1, 0, -1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({

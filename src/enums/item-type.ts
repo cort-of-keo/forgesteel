@@ -1,6 +1,9 @@
 export enum ItemType {
 	Artifact = 'Artifact',
-	Consumable = 'Consumable Item',
+	Consumable1st = 'Consumable (1st echelon)',
+	Consumable2nd = 'Consumable (2nd echelon)',
+	Consumable3rd = 'Consumable (3rd echelon)',
+	Consumable4th = 'Consumable (4th echelon)',
 	ImbuedArmor = 'Imbued Armor',
 	ImbuedImplement = 'Imbued Implement',
 	ImbuedWeapon = 'Imbued Weapon',
@@ -11,5 +14,5 @@ export enum ItemType {
 	Trinket1st = 'Trinket (1st echelon)',
 	Trinket2nd = 'Trinket (2nd echelon)',
 	Trinket3rd = 'Trinket (3rd echelon)',
-	Trinket4th = 'Trinket (4th echolon)'
+	Trinket4th = 'Trinket (4th echelon)'
 };

@@ -1,9 +1,9 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { Characteristic } from '../../enums/characteristic';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureField } from '../../enums/feature-field';
-import { Imbuement } from '../../models/imbuement';
-import { ItemType } from '../../enums/item-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { Imbuement } from '@/models/imbuement';
+import { ItemType } from '@/enums/item-type';
 
 export class ImbuedImplementData {
 	static berserking: Imbuement = FactoryLogic.createImbuement({
@@ -63,10 +63,22 @@ export class ImbuedImplementData {
 			goal: 150
 		}),
 		level: 1,
-		feature: FactoryLogic.feature.create({
+		feature: FactoryLogic.feature.createMultiple({
 			id: 'imbuement-forceful-i',
 			name: 'Forceful I',
-			description: 'Whenever you use a magic or psionic ability to push or pull a creature, you can move that creature an additional 2 squares.'
+			description: 'Whenever you use a magic or psionic ability to push or pull a creature, you can move that creature an additional 2 squares.',
+			features: [
+				FactoryLogic.feature.createBonus({
+					id: 'imbuement-forceful-i-push',
+					field: FeatureField.ForcedMovementPush,
+					value: 2
+				}),
+				FactoryLogic.feature.createBonus({
+					id: 'imbuement-forceful-i-pull',
+					field: FeatureField.ForcedMovementPull,
+					value: 2
+				})
+			]
 		})
 	});
 
@@ -84,8 +96,6 @@ export class ImbuedImplementData {
 				id: 'imbuement-rat-form',
 				name: 'Rat Form',
 				type: FactoryLogic.type.createManeuver(),
-				distance: [ FactoryLogic.distance.createSelf() ],
-				target: 'Self',
 				sections: [
 					FactoryLogic.createAbilitySectionText('You transform into a rat. Your equipment transforms with you. As a rat, you have speed 5 and can automatically climb at full speed while moving, your size is 1T, and you can see in the dark. You can speak and keep your skills while in rat form, but your Might is −5 and you lose all your regular abilities, features, and benefits. You can revert to your natural form as a maneuver, and do so automatically if you take any damage.')
 				]
@@ -118,10 +128,31 @@ export class ImbuedImplementData {
 			goal: 150
 		}),
 		level: 1,
-		feature: FactoryLogic.feature.create({
+		feature: FactoryLogic.feature.createMultiple({
 			id: 'imbuement-seeking',
 			name: 'Seeking',
-			description: 'Your ranged magic or psionic abilities gain a +2 distance bonus. Additionally, if you think the name of a specific creature, place, or object to the implement, the implement points toward that target, provided you are on the same world.'
+			description: 'Your ranged magic or psionic abilities gain a +2 distance bonus. Additionally, if you think the name of a specific creature, place, or object to the implement, the implement points toward that target, provided you are on the same world.',
+			features: [
+				FactoryLogic.feature.createAbilityDistance({
+					id: 'imbuement-seeking-magic',
+					name: 'Seeking (Magic)',
+					description: 'Your ranged magic abilities gain a +2 distance bonus.',
+					keywords: [ AbilityKeyword.Ranged, AbilityKeyword.Magic ],
+					value: 2
+				}),
+				FactoryLogic.feature.createAbilityDistance({
+					id: 'imbuement-seeking-psionic',
+					name: 'Seeking (Psionic)',
+					description: 'Your ranged psionic abilities gain a +2 distance bonus.',
+					keywords: [ AbilityKeyword.Ranged, AbilityKeyword.Psionic ],
+					value: 2
+				}),
+				FactoryLogic.feature.create({
+					id: 'imbuement-seeking-text',
+					name: 'Seeking',
+					description: 'If you think the name of a specific creature, place, or object to the implement, the implement points toward that target, provided you are on the same world.'
+				})
+			]
 		})
 	});
 
@@ -134,10 +165,31 @@ export class ImbuedImplementData {
 			goal: 150
 		}),
 		level: 1,
-		feature: FactoryLogic.feature.create({
+		feature: FactoryLogic.feature.createMultiple({
 			id: 'imbuement-thought-sending',
 			name: 'Thought Sending',
-			description: 'Your ranged magic and psionic abilities gain a +2 distance bonus. Additionally, you can telepathically communicate with any willing creature who knows a language and whose name you know, provided they are on the same world as you. You must initiate the conversation, but once you do, the creature can respond until you end the conversation.'
+			description: 'Your ranged magic and psionic abilities gain a +2 distance bonus. Additionally, you can telepathically communicate with any willing creature who knows a language and whose name you know, provided they are on the same world as you. You must initiate the conversation, but once you do, the creature can respond until you end the conversation.',
+			features: [
+				FactoryLogic.feature.createAbilityDistance({
+					id: 'imbuement-thought-sending-magic',
+					name: 'Thought Sending (Magic)',
+					description: 'Your ranged magic abilities gain a +2 distance bonus.',
+					keywords: [ AbilityKeyword.Ranged, AbilityKeyword.Magic ],
+					value: 2
+				}),
+				FactoryLogic.feature.createAbilityDistance({
+					id: 'imbuement-thought-sending-psionic',
+					name: 'Thought Sending (Psionic)',
+					description: 'Your ranged psionic abilities gain a +2 distance bonus.',
+					keywords: [ AbilityKeyword.Ranged, AbilityKeyword.Psionic ],
+					value: 2
+				}),
+				FactoryLogic.feature.create({
+					id: 'imbuement-thought-sending-text',
+					name: 'Thought Sending',
+					description: 'You can telepathically communicate with any willing creature who knows a language and whose name you know, provided they are on the same world as you. You must initiate the conversation, but once you do, the creature can respond until you end the conversation.'
+				})
+			]
 		})
 	});
 
@@ -188,8 +240,6 @@ export class ImbuedImplementData {
 				id: 'imbuement-celestine',
 				name: 'Celestine',
 				type: FactoryLogic.type.createMain(),
-				distance: [ FactoryLogic.distance.createSpecial('') ],
-				target: 'Special; see below',
 				sections: [
 					FactoryLogic.createAbilitySectionText('You conjure up to three stars, which hover in unoccupied squares of your choice within 5 squares of you. The stars remain in place, and disappear if you create more stars. When an enemy enters any star’s space, the star detonates and is destroyed, and the enemy takes 10 fire damage. If you have line of effect to the enemy, you can also slide them 1 square. Otherwise, the enemy slides 1 square in a random direction.')
 				]
@@ -238,10 +288,22 @@ export class ImbuedImplementData {
 			goal: 150
 		}),
 		level: 5,
-		feature: FactoryLogic.feature.create({
+		feature: FactoryLogic.feature.createMultiple({
 			id: 'imbuement-forceful-ii',
 			name: 'Forceful II',
-			description: 'Whenever you use a magic or psionic ability to push or pull a creature, you can move that creature an additional 3 squares. This replaces the benefit of Forceful I.'
+			description: 'Whenever you use a magic or psionic ability to push or pull a creature, you can move that creature an additional 3 squares. This replaces the benefit of Forceful I.',
+			features: [
+				FactoryLogic.feature.createBonus({
+					id: 'imbuement-forceful-ii-push',
+					field: FeatureField.ForcedMovementPush,
+					value: 1
+				}),
+				FactoryLogic.feature.createBonus({
+					id: 'imbuement-forceful-ii-pull',
+					field: FeatureField.ForcedMovementPull,
+					value: 1
+				})
+			]
 		})
 	});
 
@@ -259,10 +321,8 @@ export class ImbuedImplementData {
 				id: 'imbuement-hallucinatory',
 				name: 'Hallucinatory',
 				type: FactoryLogic.type.createManeuver(),
-				distance: [ FactoryLogic.distance.create({ type: AbilityDistanceType.Aura, value: 2 }) ],
-				target: 'Each enemy in the area',
 				sections: [
-					FactoryLogic.createAbilitySectionText('The area is difficult terrain for your enemies until the end of the encounter.')
+					FactoryLogic.createAbilitySectionText('You create an area of sensory instability in a 2 aura centered on yourself. The area is difficult terrain for your enemies until the end of the encounter.')
 				]
 			})
 		})

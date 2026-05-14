@@ -1,15 +1,15 @@
-import { Button, Divider, Input, Space } from 'antd';
-import { Expander } from '../../../controls/expander/expander';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { Markdown } from '../../../controls/markdown/markdown';
-import { Modal } from '../../modal/modal';
-import { SearchOutlined } from '@ant-design/icons';
-import { SelectablePanel } from '../../../controls/selectable-panel/selectable-panel';
-import { Skill } from '../../../../models/skill';
-import { SkillList } from '../../../../enums/skill-list';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { SourcebookLogic } from '../../../../logic/sourcebook-logic';
-import { Utils } from '../../../../utils/utils';
+import { Button, Divider, Space } from 'antd';
+import { SearchBox, TextInput } from '@/components/controls/text-input/text-input';
+import { Expander } from '@/components/controls/expander/expander';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { Markdown } from '@/components/controls/markdown/markdown';
+import { Modal } from '@/components/modals/modal/modal';
+import { SelectablePanel } from '@/components/controls/selectable-panel/selectable-panel';
+import { Skill } from '@/models/skill';
+import { SkillList } from '@/enums/skill-list';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './skill-select-modal.scss';
@@ -25,48 +25,56 @@ export const SkillSelectModal = (props: Props) => {
 	const [ searchTerm, setSearchTerm ] = useState<string>('');
 	const [ customSkill, setCustomSkill ] = useState<string>('');
 
-	try {
-		const skills = props.skills
-			.filter(s => Utils.textMatches([
-				s.name,
-				s.description
-			], searchTerm));
+	const skills = props.skills
+		.filter(s => Utils.textMatches([
+			s.name,
+			s.description
+		], searchTerm));
 
-		const otherSkills = SourcebookLogic.getSkills(props.sourcebooks)
-			.filter(os => !props.skills.map(s => s.name).includes(os.name))
-			.filter(os => Utils.textMatches([
-				os.name,
-				os.description
-			], searchTerm));
+	const otherSkills = SourcebookLogic.getSkills(props.sourcebooks)
+		.filter(os => !props.skills.map(s => s.name).includes(os.name))
+		.filter(os => Utils.textMatches([
+			os.name,
+			os.description
+		], searchTerm));
 
-		return (
-			<Modal
-				toolbar={
-					<>
-						<Input
-							name='search'
-							placeholder='Search'
-							allowClear={true}
-							value={searchTerm}
-							suffix={<SearchOutlined />}
-							onChange={e => setSearchTerm(e.target.value)}
-						/>
-					</>
-				}
-				content={
-					<div className='skill-select-modal'>
-						{
-							[ SkillList.Crafting, SkillList.Exploration, SkillList.Interpersonal, SkillList.Intrigue, SkillList.Lore ].map(list => {
-								const subset = skills.filter(s => s.list === list);
-								if (subset.length === 0) {
-									return null;
-								}
+	return (
+		<Modal
+			toolbar={
+				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+			}
+			content={
+				<div className='skill-select-modal'>
+					{
+						[ SkillList.Crafting, SkillList.Exploration, SkillList.Interpersonal, SkillList.Intrigue, SkillList.Lore ].map(list => {
+							const subset = skills.filter(s => s.list === list);
+							if (subset.length === 0) {
+								return null;
+							}
 
-								return (
-									<Space key={list} direction='vertical' style={{ width: '100%' }}>
-										<HeaderText level={1}>{list}</HeaderText>
+							return (
+								<Space key={list} orientation='vertical' style={{ width: '100%' }}>
+									<HeaderText level={1}>{list}</HeaderText>
+									{
+										subset.map((s, n) => (
+											<SelectablePanel key={n} onSelect={() => props.onSelect(s)}>
+												<HeaderText tags={[ s.list ]}>{s.name}</HeaderText>
+												<Markdown text={s.description} />
+											</SelectablePanel>
+										))
+									}
+								</Space>
+							);
+						})
+					}
+					{
+						otherSkills.length > 0 ?
+							<>
+								<Divider />
+								<Expander title='Other skills'>
+									<Space orientation='vertical' style={{ width: '100%' }}>
 										{
-											subset.map((s, n) => (
+											otherSkills.map((s, n) => (
 												<SelectablePanel key={n} onSelect={() => props.onSelect(s)}>
 													<HeaderText tags={[ s.list ]}>{s.name}</HeaderText>
 													<Markdown text={s.description} />
@@ -74,48 +82,26 @@ export const SkillSelectModal = (props: Props) => {
 											))
 										}
 									</Space>
-								);
-							})
-						}
-						{
-							otherSkills.length > 0 ?
-								<>
-									<Divider />
-									<Expander title='Other skills'>
-										<Space direction='vertical' style={{ width: '100%', paddingTop: '15px' }}>
-											{
-												otherSkills.map((s, n) => (
-													<SelectablePanel key={n} onSelect={() => props.onSelect(s)}>
-														<HeaderText tags={[ s.list ]}>{s.name}</HeaderText>
-														<Markdown text={s.description} />
-													</SelectablePanel>
-												))
-											}
-										</Space>
-									</Expander>
-								</>
-								: null
-						}
-						<Divider />
-						<Expander title='Add a custom skill'>
-							<Space direction='vertical' style={{ width: '100%' }}>
-								<HeaderText>Custom Skill</HeaderText>
-								<Input
-									placeholder='Custom Skill Name'
-									allowClear={true}
-									value={customSkill}
-									onChange={e => setCustomSkill(e.target.value)}
-								/>
-								<Button block={true} disabled={!customSkill} onClick={() => props.onSelect({ name: customSkill, description: '', list: SkillList.Custom })}>Select</Button>
-							</Space>
-						</Expander>
-					</div>
-				}
-				onClose={props.onClose}
-			/>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+								</Expander>
+							</>
+							: null
+					}
+					<Divider />
+					<Expander title='Add a custom skill'>
+						<Space orientation='vertical' style={{ width: '100%' }}>
+							<HeaderText>Custom Skill</HeaderText>
+							<TextInput
+								placeholder='Custom Skill Name'
+								allowClear={true}
+								value={customSkill}
+								onChange={setCustomSkill}
+							/>
+							<Button block={true} disabled={!customSkill} onClick={() => props.onSelect({ name: customSkill, description: '', list: SkillList.Custom })}>Select</Button>
+						</Space>
+					</Expander>
+				</div>
+			}
+			onClose={props.onClose}
+		/>
+	);
 };

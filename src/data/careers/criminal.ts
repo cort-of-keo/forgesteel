@@ -1,8 +1,8 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureField } from '../../enums/feature-field';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const criminal: Career = {
 	id: 'career-criminal',
@@ -11,7 +11,6 @@ export const criminal: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'career-criminal-feature-1',
-			listOptions: [ SkillList.Lore ],
 			selected: [ 'Criminal Underworld' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -65,7 +64,6 @@ export const criminal: Career = {
 				description: 'When a tyrant rose to power in your homeland, they began cracking down on all criminals with deadly raids and public executions. The nature of the crime didn’t matter - pickpockets and beggars were made to kneel before the axe alongside murderers. After losing enough friends, you stood up and joined the resistance - not just against this tyrant, but against authoritarians anywhere.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };

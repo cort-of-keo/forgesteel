@@ -1,11 +1,11 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const radenwight: MonsterGroup = {
 	id: 'monster-group-radenwight',
@@ -65,6 +65,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			id: 'radenwight-malice-2',
 			name: 'Rat Race',
 			cost: 5,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Each radenwight in the encounter shifts up to their speed. If a radenwight ends this shift adjacent to one or more radenwights, they can make a melee free strike against each enemy adjacent to them.'
 			]
@@ -73,6 +74,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			id: 'radenwight-malice-3',
 			name: 'Rally the Rodents',
 			cost: 7,
+			icon: StatBlockIcon.Area,
 			sections: [
 				'A radenwight uses music to coordinate living rats, forming a 10 wall of rats scurrying atop one another into unoccupied spaces anywhere on the encounter map. The wall doesn’t block line of effect for radenwights and their allies, but it does for other creatures as the rats coordinate their movements with the radenwights. Each square of the wall has 10 Stamina. If the last radenwight in the encounter dies and the wall is still standing, the rats let out a hideous screech as they disperse. Each enemy on the encounter map makes an **Intuition test**.',
 				FactoryLogic.createPowerRoll({
@@ -97,7 +99,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			stamina: 4,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(-1, 2, 0, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(-1, 2, 0, 1, 0),
 			withCaptain: '+1 damage bonus to strikes',
 			features: [
 				FactoryLogic.feature.createAbility({
@@ -150,7 +152,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			stamina: 5,
 			stability: 1,
 			freeStrikeDamage: 1,
-			characteristics: MonsterLogic.createCharacteristics(-1, 1, 0, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(-1, 1, 0, 0, 2),
 			withCaptain: '+2 bonus to melee distance',
 			features: [
 				FactoryLogic.feature.createAbility({
@@ -199,7 +201,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			stamina: 4,
 			stability: 0,
 			freeStrikeDamage: 1,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 1, 0, -1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 1, 0, -1),
 			withCaptain: 'Gain an edge on strikes',
 			features: [
 				FactoryLogic.feature.createAbility({
@@ -248,7 +250,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			stamina: 3,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(1, 2, -1, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 2, -1, 0, 0),
 			withCaptain: 'Gain an edge on strikes',
 			features: [
 				FactoryLogic.feature.createAbility({
@@ -293,12 +295,12 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			role: FactoryLogic.createMonsterRole(MonsterOrganizationType.Platoon, MonsterRoleType.Brute),
 			keywords: [ 'Humanoid', 'Radenwight' ],
 			encounterValue: 6,
-			size: FactoryLogic.createSize(1, 'S'),
+			size: FactoryLogic.createSize(1, 'L'),
 			speed: FactoryLogic.createSpeed(5, 'climb'),
 			stamina: 40,
 			stability: 2,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(2, 1, -1, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, -1, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -371,7 +373,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			stamina: 30,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 0, 0, 2, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 0, 0, 2, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -407,8 +409,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 						cost: 3,
 						sections: [
 							FactoryLogic.createAbilitySectionText('Each target who has used their Ready Rodent ability this round regains the use of their triggered action.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The area increases to 6 burst.'
 							})
@@ -447,7 +448,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			stamina: 30,
 			stability: 0,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(-1, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(-1, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -515,7 +516,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 			stamina: 80,
 			stability: 1,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(-2, 2, 0, 0, 3),
+			characteristics: FactoryLogic.createCharacteristics(-2, 2, 0, 0, 3),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -552,8 +553,7 @@ In truth, the Great Maclette finds beauty in the thrill of the heist. Robbery is
 								tier2: 'P<2 Slowed (save ends)',
 								tier3: 'P<3 Slowed (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'Each ally within 3 squares of any target has a +2 bonus to speed until the end of their next turn.'
 							})

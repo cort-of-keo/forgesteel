@@ -1,8 +1,22 @@
 # Development Plans
 
+* Improve editors
+  * Modifier editor
+
+* Update:
+  * Vampire
+  * Vessel
+* Monster customization should include:
+  * Monster group add-ons
+  * Retainer level up choices
+
 ### Heroes
 
-(nothing)
+* Classic Sheet
+  * Add ability to create standalone 'reference sheets' with selectable 'reference cards'
+  * (possibly solved along with above) Have ability to create handout sheets with items, followers, etc without being attached to a character
+  * Check hero features/abilities for certain keywords and ensure relevant reference cards get put into the character sheet?
+  * Add user-selectable color scheme
 
 ### Library
 
@@ -10,17 +24,13 @@
 * It should be possible to create a homebrew class ability / monster individually
 * Monster Builder:
   * Auto-create monsters
-  * Allow users to adjust monster level (monsters book pg 26)
-
-### Playbook
-
 * Encounter Builder:
   * When an encounter has monsters with items, this should be noted in the encounter info (monster info and running encounter notes)
   * Encounters should pull in monsters, rather than storing monster / group IDs
   * Set number of squares for per-square terrain
   * Use encounter templates
-  * Auto-create encounters
 * Tactical Maps:
+  * Add / move minis using drag-and-drop
   * Switch map Z level
     * Show (blurred, translucent, no pointer events) levels below / above
   * Ability to destroy tile squares / wall sections
@@ -32,7 +42,7 @@
   * Ability to set 'used reaction' flag on heroes / monsters / minions
   * Monsters:
     * Ability to duplicate / delete monsters in a slot
-    * Solo monsters have double turns
+    * It should be possible to pull 'quick condition' things from monsters and apply them
   * Terrain:
     * Show number of squares on terrain encounter row
     * Show 'should be N squares' for terrain

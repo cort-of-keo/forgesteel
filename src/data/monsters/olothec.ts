@@ -1,11 +1,11 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const olothec: MonsterGroup = {
 	id: 'monster-group-olothec',
@@ -72,6 +72,7 @@ export const olothec: MonsterGroup = {
 			id: 'olothec-malice-3',
 			name: 'Memory of Chaos',
 			cost: 6,
+			icon: StatBlockIcon.AuraBurst,
 			sections: [
 				'The olothec broadcasts their memory of the universe in its primordial state—a sweeping cacophony of transcendental irrationality and unceasing change. Until the end of the encounter, any creature who starts their turn within 3 squares of the olothec and has R<3 is dazed and slowed until the end of their next turn).'
 			]
@@ -90,7 +91,7 @@ export const olothec: MonsterGroup = {
 			stamina: 450,
 			stability: 0,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(4, -1, 4, 2, 3),
+			characteristics: FactoryLogic.createCharacteristics(4, -1, 4, 2, 3),
 			features: [
 				FactoryLogic.feature.createDamageModifier({
 					id: 'olothec-feature-1',
@@ -142,9 +143,7 @@ export const olothec: MonsterGroup = {
 								tier3: '13 acid damage; A<4 push special and prone'
 							})),
 							FactoryLogic.createAbilitySectionText('Each creature pushed this way is pushed to an unoccupied space in the area as far as possible from the olothec.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'The area is difficult terrain. Any creature who enters the area or moves within it for the first time on a turn and has A<3 is knocked prone.'
 							})
 						]

@@ -1,30 +1,30 @@
 import { Alert, Button, Drawer, Flex, InputNumber, Popover, Segmented, Space, Tag } from 'antd';
-import { ConditionEndType, ConditionType } from '../../../enums/condition-type';
+import { ConditionEndType, ConditionType } from '@/enums/condition-type';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Collections } from '../../../utils/collections';
-import { Condition } from '../../../models/condition';
-import { ConditionPanel } from '../condition/condition-panel';
-import { ConditionSelectModal } from '../../modals/select/condition-select/condition-select-modal';
-import { DamageModifierType } from '../../../enums/damage-modifier-type';
-import { DropdownButton } from '../../controls/dropdown-button/dropdown-button';
-import { Empty } from '../../controls/empty/empty';
-import { Encounter } from '../../../models/encounter';
-import { EncounterSlot } from '../../../models/encounter-slot';
-import { ErrorBoundary } from '../../controls/error-boundary/error-boundary';
-import { Field } from '../../controls/field/field';
-import { Format } from '../../../utils/format';
-import { HeaderText } from '../../controls/header-text/header-text';
-import { HealthGauge } from '../health-gauge/health-gauge';
-import { Hero } from '../../../models/hero';
-import { HeroLogic } from '../../../logic/hero-logic';
-import { Markdown } from '../../controls/markdown/markdown';
-import { Monster } from '../../../models/monster';
-import { MonsterInfo } from '../token/token';
-import { MonsterLogic } from '../../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../../enums/monster-organization-type';
-import { NumberSpin } from '../../controls/number-spin/number-spin';
-import { PanelMode } from '../../../enums/panel-mode';
-import { Utils } from '../../../utils/utils';
+import { Collections } from '@/utils/collections';
+import { Condition } from '@/models/condition';
+import { ConditionPanel } from '@/components/panels/condition/condition-panel';
+import { ConditionSelectModal } from '@/components/modals/select/condition-select/condition-select-modal';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DropdownButton } from '@/components/controls/dropdown-button/dropdown-button';
+import { Empty } from '@/components/controls/empty/empty';
+import { Encounter } from '@/models/encounter';
+import { EncounterSlot } from '@/models/encounter-slot';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Field } from '@/components/controls/field/field';
+import { Format } from '@/utils/format';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { HealthGauge } from '@/components/panels/health-gauge/health-gauge';
+import { Hero } from '@/models/hero';
+import { HeroLogic } from '@/logic/hero-logic';
+import { Markdown } from '@/components/controls/markdown/markdown';
+import { Monster } from '@/models/monster';
+import { MonsterInfo } from '@/components/panels/token/token';
+import { MonsterLogic } from '@/logic/monster-logic';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { NumberSpin } from '@/components/controls/number-spin/number-spin';
+import { PanelMode } from '@/enums/panel-mode';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './health-panel.scss';
@@ -167,8 +167,8 @@ export const HeroHealthPanel = (props: HeroProps) => {
 							staminaMax: HeroLogic.getStamina(hero),
 							staminaDamage: hero.state.staminaDamage,
 							state: HeroLogic.getCombatState(hero),
-							immunities: HeroLogic.getDamageModifiers(hero, DamageModifierType.Immunity),
-							weaknesses: HeroLogic.getDamageModifiers(hero, DamageModifierType.Weakness),
+							immunities: HeroLogic.getDamageModifiers(hero).filter(dm => dm.modifierType === DamageModifierType.Immunity),
+							weaknesses: HeroLogic.getDamageModifiers(hero).filter(dm => dm.modifierType === DamageModifierType.Weakness),
 							setValue: setStaminaDamage,
 							takeDamage: takeDamage,
 							heal: heal
@@ -347,8 +347,8 @@ export const MonsterHealthPanel = (props: MonsterProps) => {
 							staminaMax: MonsterLogic.getStamina(monster),
 							staminaDamage: monster.state.staminaDamage,
 							state: MonsterLogic.getCombatState(monster),
-							immunities: MonsterLogic.getDamageModifiers(monster, DamageModifierType.Immunity),
-							weaknesses: MonsterLogic.getDamageModifiers(monster, DamageModifierType.Weakness),
+							immunities: MonsterLogic.getDamageModifiers(monster).filter(dm => dm.modifierType === DamageModifierType.Immunity),
+							weaknesses: MonsterLogic.getDamageModifiers(monster).filter(dm => dm.modifierType === DamageModifierType.Weakness),
 							setValue: setStaminaDamage,
 							takeDamage: takeDamage,
 							heal: heal
@@ -397,7 +397,7 @@ export const MonsterHealthPanel = (props: MonsterProps) => {
 
 interface MinionGroupProps {
 	slot: EncounterSlot;
-	encounter: Encounter;
+	encounter?: Encounter;
 	onChange?: (slot: EncounterSlot) => void;
 }
 
@@ -506,15 +506,19 @@ export const MinionGroupHealthPanel = (props: MinionGroupProps) => {
 					value: slot.state.defeated,
 					setValue: setDefeated
 				}}
-				captain={{
-					captainID: slot.state.captainID,
-					candidates: props.encounter.groups
-						.flatMap(g => g.slots)
-						.flatMap(s => s.monsters)
-						.filter(m => m.role.organization !== MonsterOrganizationType.Minion)
-						.filter(m => !m.state.defeated),
-					setCaptainID: setCaptainID
-				}}
+				captain={
+					props.encounter ?
+						{
+							captainID: slot.state.captainID,
+							candidates: props.encounter.groups
+								.flatMap(g => g.slots)
+								.flatMap(s => s.monsters)
+								.filter(m => m.role.organization !== MonsterOrganizationType.Minion)
+								.filter(m => !m.state.defeated),
+							setCaptainID: setCaptainID
+						}
+						: undefined
+				}
 				conditions={{
 					current: slot.state.conditions,
 					immunities: []
@@ -622,7 +626,7 @@ const HealthPanel = (props: Props) => {
 
 	const getHealthControls = () => {
 		return (
-			<Space direction='vertical' style={{ flex: '1 1 0', width: '100%' }}>
+			<Space orientation='vertical' style={{ flex: '1 1 0', width: '100%' }}>
 				{
 					props.stamina && props.recoveries ?
 						<Segmented
@@ -638,7 +642,7 @@ const HealthPanel = (props: Props) => {
 				}
 				{
 					page === 'stamina' ?
-						<Space direction='vertical' style={{ width: '100%' }}>
+						<Space orientation='vertical' style={{ width: '100%' }}>
 							<NumberSpin
 								style={{ flex: '1 1 0' }}
 								min={0}
@@ -656,7 +660,7 @@ const HealthPanel = (props: Props) => {
 				}
 				{
 					page === 'recoveries' ?
-						<Space direction='vertical' style={{ width: '100%' }}>
+						<Space orientation='vertical' style={{ width: '100%' }}>
 							<Button
 								block={true}
 								className='tall-button'
@@ -720,23 +724,23 @@ const HealthPanel = (props: Props) => {
 		}
 
 		return (
-			<div className='health-panel compact'>
-				{
-					props.stamina ?
-						<Field
-							label='Stamina'
-							value={props.stamina.staminaDamage ? `${props.stamina!.staminaMax - props.stamina!.staminaDamage} / ${props.stamina!.staminaMax}` : props.stamina!.staminaMax}
-						/>
-						: null
-				}
-				{
-					tags.length > 0 ?
-						<div>
-							{tags.map((tag, n) => <Tag key={n}>{tag}</Tag>)}
-						</div>
-						: null
-				}
-			</div>
+			<ErrorBoundary>
+				<div className='health-panel compact'>
+					{
+						props.stamina ?
+							<Field
+								label='Stamina'
+								value={props.stamina.staminaDamage ? `${props.stamina!.staminaMax - props.stamina!.staminaDamage} / ${props.stamina!.staminaMax}` : props.stamina!.staminaMax}
+							/>
+							: null
+					}
+					{
+						tags.length > 0 ?
+							<Flex gap={3}>{tags.map((tag, n) => <Tag key={n} variant='outlined'>{tag}</Tag>)}</Flex>
+							: null
+					}
+				</div>
+			</ErrorBoundary>
 		);
 	}
 
@@ -756,7 +760,7 @@ const HealthPanel = (props: Props) => {
 						<Alert
 							type='warning'
 							showIcon={true}
-							message={`You are ${props.stamina.state}.`}
+							title={`You are ${props.stamina.state}.`}
 						/>
 						: null
 				}
@@ -765,7 +769,7 @@ const HealthPanel = (props: Props) => {
 						<Alert
 							type='warning'
 							showIcon={true}
-							message={
+							title={
 								<Markdown
 									text={`
 You are dying.
@@ -865,7 +869,7 @@ Your allies can help you spend Recoveries in combat, and you can spend Recoverie
 							<Popover
 								trigger='click'
 								content={
-									<Space direction='vertical'>
+									<Space orientation='vertical'>
 										<Button block={true} type='text' onClick={() => addSpecial('Judged')}>Judged</Button>
 										<Button block={true} type='text' onClick={() => addSpecial('Marked')}>Marked</Button>
 										<Button block={true} type='text' onClick={() => addSpecial('Surprised')}>Surprised</Button>
@@ -898,7 +902,7 @@ Your allies can help you spend Recoveries in combat, and you can spend Recoverie
 						<Empty text='You are not affected by any conditions.' />
 						: null
 				}
-				<Drawer open={conditionsVisible} onClose={() => setConditionsVisible(false)} closeIcon={null} width='500px'>
+				<Drawer open={conditionsVisible} onClose={() => setConditionsVisible(false)} closeIcon={null} size={500}>
 					<ConditionSelectModal immunities={props.conditions.immunities} onSelect={addCondition} onClose={() => setConditionsVisible(false)} />
 				</Drawer>
 			</div>

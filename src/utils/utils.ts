@@ -1,36 +1,46 @@
-import * as htmlToImage from 'html-to-image';
-import { Collections } from './collections';
 import { Converter } from 'showdown';
-import { Random } from './random';
-import { SheetPageSize } from '../enums/sheet-page-size';
+import { SheetPageSize } from '@/enums/sheet-page-size';
+import { domToImage } from 'modern-screenshot';
 import html2canvas from 'html2canvas';
 import jspdf from 'jspdf';
+import { v4 as uuidv4 } from 'uuid';
 
 export class Utils {
 	static showdownConverter = new Converter({ simpleLineBreaks: true, tables: true });
 
-	static guid = (): string => {
-		const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
-		let id = '';
-		while (id.length < 16) {
-			const n = Random.randomNumber(letters.length);
-			id += letters[n];
+	static isDev = () => {
+		return window.location.hostname === 'localhost';
+	};
+
+	static guid = () => {
+		return uuidv4();
+	};
+
+	// From: https://github.com/bryc/code/blob/master/jshash/experimental/cyrb53.js
+	static hashCode = (str: string, seed: number = 0): number => {
+		let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+		for (let i = 0, ch; i < str.length; i++) {
+			ch = str.charCodeAt(i);
+			h1 = Math.imul(h1 ^ ch, 2654435761);
+			h2 = Math.imul(h2 ^ ch, 1597334677);
 		}
-		return id;
+		h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+		h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+		h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+		h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+		return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 	};
 
 	static copy = <T>(object: T) => {
-		return JSON.parse(
-			JSON.stringify(object)
-		) as T;
+		if (typeof structuredClone === 'function') {
+			return structuredClone<T>(object);
+		}
+
+		return JSON.parse(JSON.stringify(object)) as T;
 	};
 
-	static debounce = (func: () => void, delay = 500) => {
-		let timeout: number;
-		return () => {
-			clearTimeout(timeout);
-			timeout = setTimeout(func, delay);
-		};
+	static wait = (ms: number) => {
+		return new Promise<void>(resolve => setTimeout(resolve, ms));
 	};
 
 	static textMatches = (sources: string[], searchTerm: string) => {
@@ -56,19 +66,37 @@ export class Utils {
 		}
 	};
 
-	static export = (elementIDs: string[], name: string, obj: unknown, ext: string, format: 'image' | 'pdf' | 'json') => {
-		switch (format) {
-			case 'json':
-				Utils.saveFile(obj, name, ext);
-				break;
-			case 'image':
-			case 'pdf':
-				Utils.takeScreenshot(elementIDs, name, format);
-				break;
-		}
+	static getResizedImage = (data: string): Promise<string> => {
+		return new Promise(resolve => {
+			const img = new Image();
+			img.onload = () => {
+				const maxSize = 500;
+				const canvas = document.createElement('canvas');
+				canvas.width = maxSize;
+				canvas.height = maxSize;
+				const ctx = canvas.getContext('2d');
+				if (ctx) {
+					const scale = Math.min(maxSize / img.width, maxSize / img.height);
+					const scaledWidth = img.width * scale;
+					const scaledHeight = img.height * scale;
+					const offsetX = (maxSize - scaledWidth) / 2;
+					const offsetY = (maxSize - scaledHeight) / 2;
+					ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
+					const mime = data.match(/^data:([^;,]+)[;,]/)?.[1] || 'image/png';
+					resolve(canvas.toDataURL(mime));
+				} else {
+					resolve(data);
+				}
+			};
+			img.src = data;
+		});
 	};
 
-	static takeScreenshot = (elementIDs: string[], name: string, format: 'image' | 'pdf') => {
+	static exportData = (name: string, obj: unknown, ext: string) => {
+		Utils.saveFile(obj, name, ext);
+	};
+
+	static exportImage = (elementIDs: string[], name: string) => {
 		const elements = elementIDs
 			.map(id => document.getElementById(id))
 			.filter(element => !!element);
@@ -85,38 +113,35 @@ export class Utils {
 			}
 		});
 
-		switch (format) {
-			case 'image':
-				html2canvas(elements[0])
-					.then(canvas => {
-						Utils.saveImage(`${name}.png`, canvas);
-						elements[0].style.backgroundColor = originalBackgroundColors[elements[0].id];
-					});
-				break;
-			case 'pdf':
-				Promise.all(elements.map(this.elementToCanvas))
-					.then(canvases => {
-						Utils.savePDF(`${name}.pdf`, canvases);
-						elements.forEach(element => element.style.backgroundColor = originalBackgroundColors[element.id]);
-					});
-				break;
-		}
+		elements.forEach((element, n) => {
+			html2canvas(element)
+				.then(canvas => {
+					const filename = (elements.length > 1) ? `${name} ${n + 1}.png` : `${name}.png`;
+					Utils.saveImage(filename, canvas);
+					element.style.backgroundColor = originalBackgroundColors[element.id];
+				});
+		});
 	};
 
-	static elementToCanvas = (element: HTMLElement): Promise<HTMLCanvasElement> => {
+	static elementToImage = (element: HTMLElement, scale: number): Promise<HTMLImageElement> => {
 		const width = element.clientWidth;
 		const height = element.clientHeight;
-		// It looks like there is an issue with the library scaling properly with
-		// the devicePixelRatio in some cases. I suspect canvas also suffers from this:
-		// https://github.com/bubkoo/html-to-image/issues/553
-		// However - for the time being we're taking advantage of this to get
-		// varying output resolutions
 
-		return htmlToImage.toCanvas(element, {
+		// see: https://github.com/qq15725/modern-screenshot/issues/104
+		const fontScaleFix = (node: Node) => {
+			if (node instanceof HTMLElement) {
+				node.style.fontSize = node.style.fontSize.replace(/(\d+(\.\d+)?(e[+-]?\d+)?)/g, (match, number) => {
+					const parsedNumber = parseFloat(number);
+					return isNaN(parsedNumber) ? match : (parsedNumber * 0.999).toString();
+				});
+			}
+		};
+
+		return domToImage(element, {
 			width: width,
 			height: height,
-			canvasWidth: width,
-			canvasHeight: height
+			scale: scale,
+			onCloneEachNode: fontScaleFix
 		});
 	};
 
@@ -128,31 +153,32 @@ export class Utils {
 		if (elements.length === 0) {
 			return;
 		}
-		const prevDpr = window.devicePixelRatio;
 		let dpi = 150;
+		let scale = 1;
 		if (resolution === 'high') {
-			window.devicePixelRatio = 4;
 			dpi = 600;
+			scale = 4;
 		} else {
-			window.devicePixelRatio = 2;
 			dpi = 300;
+			scale = 2;
 		}
 
-		return Promise.all(elements.map(this.elementToCanvas))
-			.then(canvases => {
-				Utils.savePdfPages(`${filename}.pdf`, canvases, pdfPaperSize, dpi);
-				window.devicePixelRatio = prevDpr;
+		return Promise.all(elements.map(e => this.elementToImage(e, scale)))
+			.then(images => {
+				Utils.savePdfPages(`${filename}.pdf`, images, pdfPaperSize, dpi);
 			});
 	};
 
 	static saveFile = (data: unknown, name: string, type: string) => {
 		const json = JSON.stringify(data, null, '\t');
-		const blob = new Blob([ json ], { type: 'application/json' });
+		const blob = new Blob([ json ], { type: 'application/octet-stream' });
 
 		const a = document.createElement('a');
 		a.download = `${name}.ds-${type}`;
 		a.href = window.URL.createObjectURL(blob);
+		document.body.appendChild(a);
 		a.click();
+		document.body.removeChild(a);
 	};
 
 	static saveImage = (filename: string, canvas: HTMLCanvasElement) => {
@@ -162,22 +188,7 @@ export class Utils {
 		a.click();
 	};
 
-	static savePDF = (filename: string, canvases: HTMLCanvasElement[]) => {
-		const width = Collections.max(canvases.map(c => c.width), c => c) || 0;
-		const height = Collections.max(canvases.map(c => c.height), c => c) || 0;
-
-		const orientation = (height >= width) ? 'portrait' : 'landscape';
-
-		const pdf = new jspdf(orientation, 'pt', [ width, height ]);
-		canvases.forEach((canvas, n) => {
-			const page = (n === 0) ? pdf : pdf.addPage([ width, height ], orientation);
-			page.addImage(canvas, 'PNG', 0, 0, canvas.width, canvas.height);
-		});
-
-		pdf.save(filename);
-	};
-
-	static savePdfPages = async (filename: string, pageCanvases: HTMLCanvasElement[], pdfPaperSize: SheetPageSize, dpi: number) => {
+	static savePdfPages = async (filename: string, pageCanvases: HTMLImageElement[], pdfPaperSize: SheetPageSize, dpi: number) => {
 		const width1 = pageCanvases[0].width || 0;
 		const height1 = pageCanvases[0].height || 0;
 		const documentOrientation = (height1 >= width1) ? 'portrait' : 'landscape';
@@ -203,11 +214,17 @@ export class Utils {
 		pdf.save(filename);
 	};
 
-	static isNullOrEmpty = (str: string | undefined) => {
+	static isNullOrEmpty = (str: string | null | undefined) => {
 		return (str === null || str === undefined || str.trim() === '');
 	};
 
-	static valueOrDefault = (value: string | number | undefined, defaultValue: string): string => {
+	// Returns the given default if the value is:
+	//    - null
+	//    - undefined
+	//    - an empty string
+	//    - ZERO (0)
+	// Otherwise, returns the value as a string.
+	static valueOrDefault = (value: string | number | null | undefined, defaultValue: string): string => {
 		let result = defaultValue;
 
 		if (value && !Utils.isNullOrEmpty(value.toString())) {
@@ -215,5 +232,16 @@ export class Utils {
 		}
 
 		return result;
+	};
+
+	static fixHostnameUrl = (value: string) => {
+		return value.toLowerCase().replace(/\/+$/, '');
+	};
+
+	static getErrorMessage = (error: unknown): string => {
+		if (error instanceof Error) {
+			return error.message;
+		}
+		return String(error);
 	};
 }

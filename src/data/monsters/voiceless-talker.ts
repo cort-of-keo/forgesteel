@@ -1,13 +1,13 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const voicelessTalker: MonsterGroup = {
 	id: 'monster-group-voiceless-talker',
@@ -68,6 +68,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 			id: 'voiceless-talker-malice-1',
 			name: 'Guise',
 			cost: 3,
+			icon: StatBlockIcon.Self,
 			sections: [
 				'One non-minion voiceless talker projects a psionic screen over their body, preventing other creatures from treating them as an enemy until the end of the voiceless talker’s next turn.'
 			]
@@ -101,6 +102,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 			id: 'voiceless-talker-malice-3',
 			name: 'Evolutionary Circuit',
 			cost: 10,
+			icon: StatBlockIcon.SpecialArea,
 			sections: [
 				'All voiceless talkers link their minds, creating a circuit that empowers them while two or more voiceless talkers remain in the encounter. While this circuit is active, any psionic strike made by a voiceless talker deals an extra 5 damage. Additionally, when a non-minion voiceless talker takes damage, they can use a free triggered action to swap places with any voiceless talker minion on the encounter map. The minion takes the damage instead.'
 			]
@@ -120,7 +122,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 			stability: 0,
 			freeStrikeDamage: 3,
 			withCaptain: '+2 bonus to Stamina',
-			characteristics: MonsterLogic.createCharacteristics(-1, 0, 3, 1, 1),
+			characteristics: FactoryLogic.createCharacteristics(-1, 0, 3, 1, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -163,7 +165,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 			stability: 0,
 			freeStrikeDamage: 3,
 			withCaptain: '+2 damage bonus to strikes',
-			characteristics: MonsterLogic.createCharacteristics(-1, 3, 1, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(-1, 3, 1, 1, 0),
 			features: [
 				FactoryLogic.feature.createDamageModifier({
 					id: 'voiceless-talker-2-feature-3',
@@ -228,7 +230,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 			stamina: 180,
 			stability: 4,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(3, 1, -2, -2, 0),
+			characteristics: FactoryLogic.createCharacteristics(3, 1, -2, -2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -252,8 +254,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 								name: 'Special',
 								effect: 'The hulking brain can have up to four size 1 creatures grabbed.'
 							}),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The potency increases by 1.'
 							})
@@ -303,8 +304,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 						cost: 1,
 						sections: [
 							FactoryLogic.createAbilitySectionText('The hulking brain shifts to a square adjacent to the ally and takes the damage instead.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The enemy is knocked prone.'
 							})
@@ -330,7 +330,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 			stamina: 140,
 			stability: 2,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(-1, 3, 3, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(-1, 3, 3, 2, 0),
 			features: [
 				FactoryLogic.feature.create({
 					id: 'qqRknE96pIBK9FRK',
@@ -401,8 +401,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 						target: 'Self',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The mindkiller halves the damage. If the mindkiller has a creature grabbed, that creature takes the other half of the damage.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'A grabbed creature takes the damage instead of the mindkiller.'
 							})
@@ -443,7 +442,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 			stamina: 140,
 			stability: 2,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(0, 3, 3, 2, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 3, 3, 2, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -464,8 +463,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 								})
 							),
 							FactoryLogic.createAbilitySectionText('The strike’s spread is the distance it expands from a target to nearby enemies. Each enemy within that distance takes 3 damage.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'Each enemy within the strike spread takes an extra 3 damage.'
 							})
@@ -552,7 +550,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 			stamina: 140,
 			stability: 2,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(-1, 1, 3, 2, 2),
+			characteristics: FactoryLogic.createCharacteristics(-1, 1, 3, 2, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -593,8 +591,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 									tier3: '12 psychic damage; R<3 push 4 and prone'
 								})
 							),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'The size of the burst increases to 5.'
 							})
@@ -664,7 +661,7 @@ Mindkiller whelps are a lesser form of mindkiller who can be created in a fracti
 			stamina: 180,
 			stability: 2,
 			freeStrikeDamage: 7,
-			characteristics: MonsterLogic.createCharacteristics(0, 3, 4, 1, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 3, 4, 1, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({

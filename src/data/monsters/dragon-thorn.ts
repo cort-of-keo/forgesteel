@@ -1,12 +1,12 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const dragonThorn: MonsterGroup = {
 	id: 'monster-group-dragon-thorn',
@@ -46,6 +46,7 @@ Despite this, the folk of certain settlements manage to avoid being driven from 
 			id: 'dragon-thorn-malice-1',
 			name: 'Cage of Thorns',
 			cost: 3,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'A cage of thorns grows around one dragonsealed enemy on the encounter map, making that enemy restrained until the end of their next turn.'
 			]
@@ -54,6 +55,7 @@ Despite this, the folk of certain settlements manage to avoid being driven from 
 			id: 'dragon-thorn-malice-2',
 			name: 'Bramble Barricade',
 			cost: 5,
+			icon: StatBlockIcon.Area,
 			sections: [
 				'The dragon grows a 10 wall of briars in unoccupied spaces on the encounter map. The wall blocks line of effect for all creatures except the dragon. Each square of the wall has 5 Stamina and fire weakness 5. The area can be moved through but is difficult terrain. Any creature who is force moved into or within the area takes 1 damage for each square of the area entered and is bleeding until the end of their next turn.'
 			]
@@ -62,6 +64,7 @@ Despite this, the folk of certain settlements manage to avoid being driven from 
 			id: 'dragon-thorn-malice-3',
 			name: 'Solo Action',
 			cost: 5,
+			icon: StatBlockIcon.Villain,
 			sections: [
 				'The dragon takes an additional main action on their turn. They can use this feature even if they are dazed.'
 			]
@@ -70,6 +73,7 @@ Despite this, the folk of certain settlements manage to avoid being driven from 
 			id: 'dragon-thorn-malice-4',
 			name: 'Afflictive Overgrowth',
 			cost: 7,
+			icon: StatBlockIcon.SpecialArea,
 			sections: [
 				'The dragon summons poisonous, biting thorns around their foes. Each enemy on the encounter map makes an **Agility test**.',
 				FactoryLogic.createPowerRoll({
@@ -88,13 +92,13 @@ Despite this, the folk of certain settlements manage to avoid being driven from 
 			level: 2,
 			role: FactoryLogic.createMonsterRole(MonsterOrganizationType.Solo),
 			keywords: [ 'Dragon', 'Elemental' ],
-			encounterValue: 40,
+			encounterValue: 48,
 			size: FactoryLogic.createSize(3),
 			speed: FactoryLogic.createSpeed(8, 'fly'),
 			stamina: 250,
 			stability: 6,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 3, -1, 1, 2),
+			characteristics: FactoryLogic.createCharacteristics(2, 3, -1, 1, 2),
 			features: [
 				FactoryLogic.feature.createDamageModifier({
 					id: 'dragon-thorn-feature-1',
@@ -146,8 +150,7 @@ Despite this, the folk of certain settlements manage to avoid being driven from 
 								tier2: '12 damage; push 4',
 								tier3: '15 damage; push 8'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'Each target takes an extra 1d3 damage, and if they have A<2, they are bleeding (save ends).'
 							})
@@ -190,12 +193,12 @@ Despite this, the folk of certain settlements manage to avoid being driven from 
 					ability: FactoryLogic.createAbility({
 						id: 'dragon-thorn-feature-10',
 						name: 'Thorny Scales',
-						type: FactoryLogic.type.createTrigger('A creature within distance deals damage to the dragon with a melee strike.'),
+						type: FactoryLogic.type.createTrigger('A creature within distance deals damage to the dragon with a melee strike.', { free: true }),
 						cost: 1,
 						distance: [ FactoryLogic.distance.createMelee() ],
 						target: 'The triggering creature',
 						sections: [
-							FactoryLogic.createAbilitySectionText('The dragon makes a free strike against the target, and if the target has m<2], they are bleeding until the end of their next turn.')
+							FactoryLogic.createAbilitySectionText('The dragon makes a free strike against the target, and if the target has M<2, they are bleeding until the end of their next turn.')
 						]
 					})
 				}),

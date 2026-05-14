@@ -1,8 +1,8 @@
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { DamageModifierType } from '../../../enums/damage-modifier-type';
-import { DamageType } from '../../../enums/damage-type';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { SubClass } from '../../../models/subclass';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { SubClass } from '@/models/subclass';
 
 export const fire: SubClass = {
 	id: 'elementalist-sub-2',
@@ -43,9 +43,7 @@ export const fire: SubClass = {
 						target: 'Self or one ally',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The forced movement distance gains a bonus equal to your Reason score.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'The forced movement distance gains a bonus equal to twice your Reason score instead.'
 							})
 						]
@@ -62,7 +60,7 @@ export const fire: SubClass = {
 					description: `
 Your connection to fire allows you to protect yourself from it, even as you rip away the protections of others. You have fire immunity equal to 5 plus your level. Additionally, fire damage you deal ignores a target’s fire immunity.
 
-At the start of a combat encounter, you gain a number of surges equal to your Victories. Whenever you spend a surge to deal extra damage, you can make that damage fire damage`
+At the start of a combat encounter, you gain a number of surges equal to your Victories. Whenever you spend a surge to deal extra damage, you can make that damage fire damage.`
 				}),
 				FactoryLogic.feature.createDamageModifier({
 					id: 'elementalist-sub-2-2-2',
@@ -159,5 +157,6 @@ Additionally, your Return to Formlessness ability can be used on supernatural ob
 			]
 		}
 	],
+	abilities: [],
 	selected: false
 };

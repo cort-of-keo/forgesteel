@@ -1,13 +1,13 @@
-import { AbilityDistanceType } from '../../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { Characteristic } from '../../../enums/characteristic';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { FeatureField } from '../../../enums/feature-field';
-import { HeroClass } from '../../../models/class';
-import { KitArmor } from '../../../enums/kit-armor';
-import { KitWeapon } from '../../../enums/kit-weapon';
-import { PerkList } from '../../../enums/perk-list';
-import { SkillList } from '../../../enums/skill-list';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { HeroClass } from '@/models/class';
+import { KitArmor } from '@/enums/kit-armor';
+import { KitWeapon } from '@/enums/kit-weapon';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const conduit: HeroClass = {
 	id: 'class-conduit',
@@ -16,6 +16,7 @@ export const conduit: HeroClass = {
 The power of the gods flows through you! As a vessel for divine power, you don’t just keep your allies in the fight. You make those allies more effective, even as you rain divine energy down upon your foes. Though the deity or saint you serve might have other faithful and clergy, you are special among worshippers, receiving your abilities from the highest source.
 
 As a conduit, you heal and buff your allies, and debuff your foes while smiting them with divine magic. The spark of divinity within you shines, filling your enemies with awe and making you more worldly and aware.`,
+	type: 'standard',
 	subclassName: '',
 	subclassCount: 0,
 	primaryCharacteristicsOptions: [
@@ -84,9 +85,8 @@ You can gain more piety by praying to the gods—but beware! Doing so can easily
 						target: 'Self or one ally',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The target can spend a Recovery.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
+								repeatable: true,
 								effect: `
 For each piety spent, you can choose one of the following enhancements:
 
@@ -103,7 +103,7 @@ For each piety spent, you can choose one of the following enhancements:
 						id: 'conduit-1-6',
 						name: 'Ray of Wrath',
 						description: 'You unleash a blast of holy light upon your foe.',
-						type: FactoryLogic.type.createMain({ qualifiers: [ 'can be used as a ranged free strike' ] }),
+						type: FactoryLogic.type.createMain({ qualifiers: [ 'can be used as a ranged free strike' ], freeStrike: true }),
 						keywords: [ AbilityKeyword.Magic, AbilityKeyword.Ranged, AbilityKeyword.Strike ],
 						distance: [ FactoryLogic.distance.createRanged(10) ],
 						target: 'One creature or object',
@@ -134,9 +134,7 @@ For each piety spent, you can choose one of the following enhancements:
 									target: 'One ally',
 									sections: [
 										FactoryLogic.createAbilitySectionText('The power roll gains an edge.'),
-										FactoryLogic.createAbilitySectionField({
-											name: 'Spend',
-											value: 1,
+										FactoryLogic.createAbilitySectionSpend({
 											effect: 'The power roll has a double edge.'
 										})
 									]
@@ -156,9 +154,7 @@ For each piety spent, you can choose one of the following enhancements:
 									target: 'One ally',
 									sections: [
 										FactoryLogic.createAbilitySectionText('The power roll takes a bane against the target.'),
-										FactoryLogic.createAbilitySectionField({
-											name: 'Spend',
-											value: 1,
+										FactoryLogic.createAbilitySectionSpend({
 											effect: 'The power roll has a double bane against the target.'
 										})
 									]
@@ -196,17 +192,25 @@ For each piety spent, you can choose one of the following enhancements:
 							feature: FactoryLogic.feature.createMultiple({
 								id: 'conduit-1-8c',
 								name: 'Prayer of Soldier\'s Skill',
-								description: 'Your god gives your mind the training of a soldier. You can wear light armor and wield light weapons effectively, even though you don’t have a kit. You can use light armor treasures and light weapon treasures. If you have a kit, you can’t take this blessing.',
+								description: `
+Your god gives your mind the training of a soldier. You can wear light armor and wield light weapons effectively, even though you don’t have a kit.
+
+* While you wear light armor, you gain a +3 bonus to Stamina, and that bonus increases by 3 at 4th, 7th, and 10th levels.
+* While you wield
+a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes.
+* You can use light armor treasures and light weapon treasures.
+
+If you have a kit, you can’t take this blessing.`,
 								features: [
-									FactoryLogic.feature.create({
-										id: 'conduit-1-8da',
-										name: 'Prayer of Soldier\'s Skill',
-										description: 'While you wield a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes.'
-									}),
 									FactoryLogic.feature.createBonus({
-										id: 'conduit-1-8db',
+										id: 'conduit-1-8da',
 										field: FeatureField.Stamina,
 										valuePerEchelon: 3
+									}),
+									FactoryLogic.feature.createAbilityDamage({
+										id: 'conduit-1-8db',
+										keywords: [ AbilityKeyword.Weapon ],
+										value: 1
 									}),
 									FactoryLogic.feature.createProficiency({
 										id: 'conduit-1-8dc',
@@ -257,7 +261,8 @@ For each piety spent, you can choose one of the following enhancements:
 							}),
 							value: 1
 						}
-					]
+					],
+					selectAt: 'respite'
 				}),
 				FactoryLogic.feature.createChoice({
 					id: 'conduit-1-9',
@@ -295,7 +300,8 @@ For each piety spent, you can choose one of the following enhancements:
 							}),
 							value: 1
 						}
-					]
+					],
+					selectAt: 'respite'
 				}),
 				FactoryLogic.feature.createClassAbilityChoice({
 					id: 'conduit-1-10',
@@ -357,10 +363,12 @@ A creature with a willing soul returns to life at the end of the respite with fu
 		{
 			level: 4,
 			features: [
-				FactoryLogic.feature.create({
+				FactoryLogic.feature.createHeroicResourceGain({
 					id: 'conduit-4-1',
 					name: 'Blessed Domain',
-					description: 'Whenever you gain piety from a domain effect, you gain 1 additional piety.'
+					tag: 'domain',
+					trigger: 'You gain piety from a domain effect.',
+					value: '1'
 				}),
 				FactoryLogic.feature.createCharacteristicBonus({
 					id: 'conduit-4-1a',
@@ -372,7 +380,7 @@ A creature with a willing soul returns to life at the end of the respite with fu
 				FactoryLogic.feature.createChoice({
 					id: 'conduit-4-1b',
 					name: 'Characteristic Increase: Additional Choice',
-					description: 'Additionally, you can increase one of your characteristic scores by 1, to a maximum of 3.',
+					description: 'You can increase one of your characteristic scores by 1, to a maximum of 3.',
 					options: [
 						{
 							feature: FactoryLogic.feature.createCharacteristicBonus({
@@ -568,7 +576,7 @@ Additionally, whenever you take a respite, you can open a portal to rest in the 
 				FactoryLogic.feature.createChoice({
 					id: 'conduit-10-2b',
 					name: 'Characteristic Increase: Additional Choice',
-					description: 'Additionally, you can increase one of your characteristic scores by 1, to a maximum of 5.',
+					description: 'You can increase one of your characteristic scores by 1, to a maximum of 5.',
 					options: [
 						{
 							feature: FactoryLogic.feature.createCharacteristicBonus({

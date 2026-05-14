@@ -1,31 +1,32 @@
-import { Button, Drawer, Flex, Input, Popover, Select, Space, Tabs, Upload } from 'antd';
+import { Button, Divider, Drawer, Flex, Popover, Select, Space, Tabs, Upload } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { Plot, PlotContent, PlotContentImage, PlotContentReference, PlotContentRoll, PlotContentText, PlotLink } from '../../../../models/plot';
-import { Adventure } from '../../../../models/adventure';
-import { Characteristic } from '../../../../enums/characteristic';
-import { Collections } from '../../../../utils/collections';
-import { DangerButton } from '../../../controls/danger-button/danger-button';
-import { Empty } from '../../../controls/empty/empty';
-import { EncounterPanel } from '../../elements/encounter-panel/encounter-panel';
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { Expander } from '../../../controls/expander/expander';
-import { FactoryLogic } from '../../../../logic/factory-logic';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { Hero } from '../../../../models/hero';
-import { Modal } from '../../../modals/modal/modal';
-import { MontagePanel } from '../../elements/montage-panel/montage-panel';
-import { MultiLine } from '../../../controls/multi-line/multi-line';
-import { NegotiationPanel } from '../../elements/negotiation-panel/negotiation-panel';
-import { Options } from '../../../../models/options';
-import { PanelMode } from '../../../../enums/panel-mode';
-import { Playbook } from '../../../../models/playbook';
-import { PlaybookLogic } from '../../../../logic/playbook-logic';
-import { PlotPanel } from '../../elements/plot-panel/plot-panel';
-import { SelectablePanel } from '../../../controls/selectable-panel/selectable-panel';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { TacticalMapDisplayType } from '../../../../enums/tactical-map-display-type';
-import { TacticalMapPanel } from '../../elements/tactical-map-panel/tactical-map-panel';
-import { Utils } from '../../../../utils/utils';
+import { Markdown, MarkdownEditor } from '@/components/controls/markdown/markdown';
+import { Plot, PlotContent, PlotContentImage, PlotContentReference, PlotContentRoll, PlotContentText, PlotLink } from '@/models/plot';
+import { SearchBox, TextInput } from '@/components/controls/text-input/text-input';
+import { Sourcebook, SourcebookElementKind } from '@/models/sourcebook';
+import { Adventure } from '@/models/adventure';
+import { AdventureLogic } from '@/logic/adventure-logic';
+import { Characteristic } from '@/enums/characteristic';
+import { Collections } from '@/utils/collections';
+import { DangerButton } from '@/components/controls/danger-button/danger-button';
+import { Empty } from '@/components/controls/empty/empty';
+import { EncounterPanel } from '@/components/panels/elements/encounter-panel/encounter-panel';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Expander } from '@/components/controls/expander/expander';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { Format } from '@/utils/format';
+import { HeaderText } from '@/components/controls/header-text/header-text';
+import { Modal } from '@/components/modals/modal/modal';
+import { MontagePanel } from '@/components/panels/elements/montage-panel/montage-panel';
+import { NameDescEditPanel } from '@/components/panels/edit/name-desc-edit/name-desc-edit-panel';
+import { NegotiationPanel } from '@/components/panels/elements/negotiation-panel/negotiation-panel';
+import { PanelMode } from '@/enums/panel-mode';
+import { PlotPanel } from '@/components/panels/elements/plot-panel/plot-panel';
+import { SelectablePanel } from '@/components/controls/selectable-panel/selectable-panel';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { TacticalMapDisplayType } from '@/enums/tactical-map-display-type';
+import { TacticalMapPanel } from '@/components/panels/elements/tactical-map-panel/tactical-map-panel';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './plot-edit-panel.scss';
@@ -33,10 +34,7 @@ import './plot-edit-panel.scss';
 interface Props {
 	plot: Plot;
 	adventure: Adventure;
-	playbook: Playbook;
 	sourcebooks: Sourcebook[];
-	heroes: Hero[];
-	options: Options;
 	onChange: (plot: Plot) => void;
 	onAddAfter: (plotPointID: string) => void;
 	onDelete: (plotPointID: string) => void;
@@ -45,13 +43,12 @@ interface Props {
 export const PlotEditPanel = (props: Props) => {
 	const [ plot, setPlot ] = useState<Plot>(props.plot);
 	const [ menuOpen, setMenuOpen ] = useState<boolean>(false);
-	const [ addingEncounter, setAddingEncounter ] = useState<boolean>(false);
-	const [ addingMontage, setAddingMontage ] = useState<boolean>(false);
-	const [ addingNegotiation, setAddingNegotiation ] = useState<boolean>(false);
-	const [ addingMap, setAddingMap ] = useState<boolean>(false);
+	const [ addingReference, setAddingReference ] = useState<boolean>(false);
+	const [ referenceType, setReferenceType ] = useState<SourcebookElementKind>('encounter');
+	const [ searchTerm, setSearchTerm ] = useState<string>('');
 
-	const parentPlot = PlaybookLogic.getPlotPointParent(props.adventure.plot, plot.id) as Plot;
-	const upstreamIDs = PlaybookLogic.getUpstreamPlotPoints(parentPlot, plot.id).map(p => p.id);
+	const parentPlot = AdventureLogic.getPlotPointParent(props.adventure.plot, plot.id) as Plot;
+	const upstreamIDs = AdventureLogic.getUpstreamPlotPoints(parentPlot, plot.id).map(p => p.id);
 	const linkTargets = parentPlot.plots.filter(p => !plot.links.map(x => x.plotID).includes(p.id) && !upstreamIDs.includes(p.id));
 
 	const addContentText = () => {
@@ -100,7 +97,7 @@ export const PlotEditPanel = (props: Props) => {
 		props.onChange(copy);
 	};
 
-	const addContentReference = (type: 'encounter' | 'montage' | 'negotiation' | 'map', id: string) => {
+	const addContentReference = (type: SourcebookElementKind, id: string) => {
 		const content: PlotContentReference = {
 			id: Utils.guid(),
 			contentType: 'reference',
@@ -113,10 +110,7 @@ export const PlotEditPanel = (props: Props) => {
 		setPlot(copy);
 		props.onChange(copy);
 
-		setAddingEncounter(false);
-		setAddingMontage(false);
-		setAddingNegotiation(false);
-		setAddingMap(false);
+		setAddingReference(false);
 	};
 
 	const addLink = (target: Plot) => {
@@ -131,33 +125,19 @@ export const PlotEditPanel = (props: Props) => {
 	};
 
 	const getNameAndDescriptionSection = () => {
-		const setName = (value: string) => {
+		const onChange = (name: string, desc: string) => {
 			const copy = Utils.copy(plot);
-			copy.name = value;
-			setPlot(copy);
-			props.onChange(copy);
-		};
-
-		const setDescription = (value: string) => {
-			const copy = Utils.copy(plot);
-			copy.description = value;
+			copy.name = name;
+			copy.description = desc;
 			setPlot(copy);
 			props.onChange(copy);
 		};
 
 		return (
-			<Space direction='vertical' style={{ width: '100%' }}>
-				<HeaderText>Name</HeaderText>
-				<Input
-					status={plot.name === '' ? 'warning' : ''}
-					placeholder='Name'
-					allowClear={true}
-					value={plot.name}
-					onChange={e => setName(e.target.value)}
-				/>
-				<HeaderText>Description</HeaderText>
-				<MultiLine value={plot.description} onChange={setDescription} />
-			</Space>
+			<NameDescEditPanel
+				element={plot}
+				onChange={onChange}
+			/>
 		);
 	};
 
@@ -258,20 +238,17 @@ export const PlotEditPanel = (props: Props) => {
 		};
 
 		return (
-			<Space direction='vertical' style={{ width: '100%' }}>
+			<Space orientation='vertical' style={{ width: '100%' }}>
 				<HeaderText
 					extra={
 						<Popover
 							trigger='click'
 							content={
-								<Space direction='vertical'>
+								<Space orientation='vertical' style={{ width: '120px' }}>
 									<Button block={true} type='text' onClick={() => { setMenuOpen(false); addContentText(); }}>Text</Button>
 									<Button block={true} type='text' onClick={() => { setMenuOpen(false); addContentImage(); }}>Picture</Button>
-									<Button block={true} type='text' onClick={() => { setMenuOpen(false); addContentRoll(); }}>Roll</Button>
-									<Button block={true} type='text' onClick={() => { setMenuOpen(false); setAddingEncounter(true); }}>Encounter</Button>
-									<Button block={true} type='text' onClick={() => { setMenuOpen(false); setAddingMontage(true); }}>Montage</Button>
-									<Button block={true} type='text' onClick={() => { setMenuOpen(false); setAddingNegotiation(true); }}>Negotiation</Button>
-									<Button block={true} type='text' onClick={() => { setMenuOpen(false); setAddingMap(true); }}>Tactical Map</Button>
+									<Button block={true} type='text' onClick={() => { setMenuOpen(false); addContentRoll(); }}>Power Roll</Button>
+									<Button block={true} type='text' onClick={() => { setMenuOpen(false); setAddingReference(true); }}>Library Element</Button>
 								</Space>
 							}
 							open={menuOpen}
@@ -286,6 +263,7 @@ export const PlotEditPanel = (props: Props) => {
 				{
 					plot.content.map(c => {
 						let name = 'Content';
+						let tag = '';
 						let content = null;
 
 						switch (c.contentType) {
@@ -302,7 +280,7 @@ export const PlotEditPanel = (props: Props) => {
 										break;
 								}
 								content = (
-									<Space direction='vertical' style={{ width: '100%' }}>
+									<Space orientation='vertical' style={{ width: '100%' }}>
 										<HeaderText>Text</HeaderText>
 										<Select
 											style={{ width: '100%' }}
@@ -324,15 +302,16 @@ export const PlotEditPanel = (props: Props) => {
 											value={c.format}
 											onChange={value => setTextFormat(c.id, value)}
 										/>
-										<MultiLine value={c.text} onChange={value => setText(c.id, value)} />
+										<MarkdownEditor value={c.text} onChange={value => setText(c.id, value)} />
 									</Space>
 								);
 								break;
 							}
 							case 'image': {
 								name = c.title || 'Picture';
+								tag = 'Picture';
 								content = (
-									<Space direction='vertical' style={{ width: '100%' }}>
+									<Space orientation='vertical' style={{ width: '100%' }}>
 										<HeaderText>Picture</HeaderText>
 										{
 											c.data ?
@@ -347,10 +326,11 @@ export const PlotEditPanel = (props: Props) => {
 													showUploadList={false}
 													beforeUpload={file => {
 														const reader = new FileReader();
-														reader.onload = progress => {
+														reader.onload = async progress => {
 															if (progress.target) {
 																const content = progress.target.result as string;
-																setImageData(c.id, content);
+																const resized = await Utils.getResizedImage(content);
+																setImageData(c.id, resized);
 															}
 														};
 														reader.readAsDataURL(file);
@@ -364,21 +344,21 @@ export const PlotEditPanel = (props: Props) => {
 												</Upload>
 										}
 										<HeaderText>Title</HeaderText>
-										<Input
+										<TextInput
 											status={c.title === '' ? 'warning' : ''}
 											placeholder='Title'
 											allowClear={true}
 											value={c.title}
-											onChange={e => setImageTitle(c.id, e.target.value)}
+											onChange={value => setImageTitle(c.id, value)}
 										/>
 									</Space>
 								);
 								break;
 							}
 							case 'roll': {
-								name = 'Roll';
+								name = 'Power Roll';
 								content = (
-									<Space direction='vertical' style={{ width: '100%' }}>
+									<Space orientation='vertical' style={{ width: '100%' }}>
 										<HeaderText>Roll</HeaderText>
 										<Select
 											style={{ width: '100%' }}
@@ -390,26 +370,26 @@ export const PlotEditPanel = (props: Props) => {
 											value={c.roll.characteristic}
 											onChange={value => setRollCharacteristics(c.id, value)}
 										/>
-										<Input
+										<TextInput
 											status={c.roll.tier1 === '' ? 'warning' : ''}
 											placeholder='Tier 1'
 											allowClear={true}
 											value={c.roll.tier1}
-											onChange={e => setRollTier1(c.id, e.target.value)}
+											onChange={value => setRollTier1(c.id, value)}
 										/>
-										<Input
+										<TextInput
 											status={c.roll.tier2 === '' ? 'warning' : ''}
 											placeholder='Tier 2'
 											allowClear={true}
 											value={c.roll.tier2}
-											onChange={e => setRollTier2(c.id, e.target.value)}
+											onChange={value => setRollTier2(c.id, value)}
 										/>
-										<Input
+										<TextInput
 											status={c.roll.tier3 === '' ? 'warning' : ''}
 											placeholder='Tier 3'
 											allowClear={true}
 											value={c.roll.tier3}
-											onChange={e => setRollTier3(c.id, e.target.value)}
+											onChange={value => setRollTier3(c.id, value)}
 										/>
 									</Space>
 								);
@@ -418,41 +398,59 @@ export const PlotEditPanel = (props: Props) => {
 							case 'reference': {
 								switch (c.type) {
 									case 'encounter': {
-										const element = props.playbook.encounters.find(e => e.id === c.contentID);
+										const element = SourcebookLogic.getEncounters(props.sourcebooks).find(e => e.id === c.contentID);
 										if (element) {
 											name = element.name;
+											tag = 'Encounter';
 											content = (
-												<EncounterPanel encounter={element} sourcebooks={props.sourcebooks} heroes={props.heroes} options={props.options} />
+												<EncounterPanel encounter={element} sourcebooks={props.sourcebooks} />
 											);
 										}
 										break;
 									}
 									case 'montage': {
-										const element = props.playbook.montages.find(m => m.id === c.contentID);
+										const element = SourcebookLogic.getMontages(props.sourcebooks).find(m => m.id === c.contentID);
 										if (element) {
 											name = element.name;
+											tag = 'Montage';
 											content = (
-												<MontagePanel montage={element} />
+												<MontagePanel montage={element} sourcebooks={props.sourcebooks} />
 											);
 										}
 										break;
 									}
 									case 'negotiation': {
-										const element = props.playbook.negotiations.find(n => n.id === c.contentID);
+										const element = SourcebookLogic.getNegotiations(props.sourcebooks).find(n => n.id === c.contentID);
 										if (element) {
 											name = element.name;
+											tag = 'Negotiation';
 											content = (
-												<NegotiationPanel negotiation={element} />
+												<NegotiationPanel negotiation={element} sourcebooks={props.sourcebooks} />
 											);
 										}
 										break;
 									}
-									case 'map': {
-										const element = props.playbook.tacticalMaps.find(tm => tm.id === c.contentID);
+									case 'tactical-map': {
+										const element = SourcebookLogic.getTacticalMaps(props.sourcebooks).find(tm => tm.id === c.contentID);
 										if (element) {
 											name = element.name;
+											tag = 'Tactical Map';
 											content = (
-												<TacticalMapPanel map={element} display={TacticalMapDisplayType.Thumbnail} options={props.options} />
+												<TacticalMapPanel map={element} display={TacticalMapDisplayType.Thumbnail} sourcebooks={props.sourcebooks} />
+											);
+										}
+										break;
+									}
+									default: {
+										const element = SourcebookLogic.getElement(c.contentID, props.sourcebooks);
+										if (element) {
+											name = element.name;
+											tag = Format.capitalize(c.type.split('-').join(' '));
+											content = (
+												<>
+													<HeaderText>{element.name}</HeaderText>
+													<div className='ds-text'>{element.description}</div>
+												</>
 											);
 										}
 										break;
@@ -466,6 +464,7 @@ export const PlotEditPanel = (props: Props) => {
 							<Expander
 								key={c.id}
 								title={name}
+								tags={tag ? [ tag ] : []}
 								extra={[
 									<Button key='up' type='text' title='Move Up' icon={<CaretUpOutlined />} onClick={e => { e.stopPropagation(); moveContent(c, 'up'); }} />,
 									<Button key='down' type='text' title='Move Down' icon={<CaretDownOutlined />} onClick={e => { e.stopPropagation(); moveContent(c, 'down'); }} />,
@@ -513,14 +512,14 @@ export const PlotEditPanel = (props: Props) => {
 		};
 
 		return (
-			<Space direction='vertical' style={{ width: '100%' }}>
+			<Space orientation='vertical' style={{ width: '100%' }}>
 				<HeaderText
 					extra={
 						linkTargets.length > 0 ?
 							<Popover
 								trigger='click'
 								content={
-									<Space direction='vertical' style={{ width: '100%' }}>
+									<Space orientation='vertical' style={{ width: '100%', padding: '0 5px' }}>
 										{
 											linkTargets.map(p => (
 												<Button
@@ -555,11 +554,11 @@ export const PlotEditPanel = (props: Props) => {
 							]}
 						>
 							<HeaderText>Label</HeaderText>
-							<Input
+							<TextInput
 								placeholder='Label'
 								allowClear={true}
 								value={l.label}
-								onChange={e => setLinkLabel(l, e.target.value)}
+								onChange={value => setLinkLabel(l, value)}
 							/>
 						</Expander>
 					))
@@ -578,10 +577,7 @@ export const PlotEditPanel = (props: Props) => {
 			<PlotPanel
 				plot={plot}
 				adventure={props.adventure}
-				playbook={props.playbook}
 				sourcebooks={props.sourcebooks}
-				heroes={props.heroes}
-				options={props.options}
 				mode={PanelMode.Full}
 				onSelect={() => null}
 				onStart={() => null}
@@ -589,121 +585,98 @@ export const PlotEditPanel = (props: Props) => {
 		);
 	};
 
-	try {
-		return (
-			<ErrorBoundary>
-				<div className='plot-edit-panel'>
-					<Tabs
-						items={[
-							{
-								key: '1',
-								label: 'Plot Point',
-								children: getNameAndDescriptionSection()
-							},
-							{
-								key: '2',
-								label: 'Content',
-								children: getContentSection()
-							},
-							{
-								key: '3',
-								label: 'Links',
-								children: getLinksSection()
-							},
-							{
-								key: '4',
-								label: 'Preview',
-								children: getPreviewSection()
-							}
-						]}
-						tabBarExtraContent={
-							<Flex gap={5}>
-								<Button icon={<PlusOutlined />} onClick={() => props.onAddAfter(plot.id)}>Add Point After</Button>
-								<DangerButton mode='icon' onConfirm={() => props.onDelete(plot.id)} />
-							</Flex>
+	const elements = props.sourcebooks
+		.flatMap(sb => SourcebookLogic.getElements(sb))
+		.filter(e => e.element.id !== props.adventure.id)
+		.filter(e => e.type === referenceType)
+		.filter(e => Utils.textMatches([ e.element.name, e.element.description ], searchTerm));
+
+	return (
+		<ErrorBoundary>
+			<div className='plot-edit-panel'>
+				<Tabs
+					items={[
+						{
+							key: '1',
+							label: 'Plot Point',
+							children: getNameAndDescriptionSection()
+						},
+						{
+							key: '2',
+							label: 'Content',
+							children: getContentSection()
+						},
+						{
+							key: '3',
+							label: 'Links',
+							children: getLinksSection()
+						},
+						{
+							key: '4',
+							label: 'Preview',
+							children: getPreviewSection()
 						}
-					/>
-				</div>
-				<Drawer open={addingEncounter} onClose={() => setAddingEncounter(false)} closeIcon={null} width='500px'>
-					<Modal
-						content={
-							<div style={{ padding: '20px' }}>
-								<Space direction='vertical' style={{ width: '100%' }}>
-									{
-										props.playbook.encounters.map(e =>
-											<SelectablePanel key={e.id} onSelect={() => addContentReference('encounter', e.id)}>
-												<EncounterPanel encounter={e} sourcebooks={props.sourcebooks} heroes={props.heroes} options={props.options} />
-											</SelectablePanel>
-										)
+					]}
+					tabBarExtraContent={
+						<Flex gap={5}>
+							<Button icon={<PlusOutlined />} onClick={() => props.onAddAfter(plot.id)}>Add Point After</Button>
+							<DangerButton mode='icon' onConfirm={() => props.onDelete(plot.id)} />
+						</Flex>
+					}
+				/>
+			</div>
+			<Drawer open={addingReference} onClose={() => setAddingReference(false)} closeIcon={null} size={500}>
+				<Modal
+					content={
+						<div style={{ padding: '20px' }}>
+							<Space orientation='vertical' style={{ width: '100%' }}>
+								<Select
+									style={{ width: '100%' }}
+									options={
+										[
+											'adventure',
+											'ancestry',
+											'career',
+											'class',
+											'complication',
+											'culture',
+											'domain',
+											'encounter',
+											'imbuement',
+											'item',
+											'kit',
+											'monster-group',
+											'montage',
+											'negotiation',
+											'perk',
+											'project',
+											'subclass',
+											'tactical-map',
+											'terrain',
+											'title'
+										].map(opt => ({ value: opt, label: <div className='ds-text'>{Format.capitalize(opt.split('-').join(' '))}</div> }))
 									}
-									{props.playbook.encounters.length === 0 ? <Empty /> : null}
-								</Space>
-							</div>
-						}
-						onClose={() => setAddingEncounter(false)}
-					/>
-				</Drawer>
-				<Drawer open={addingMontage} onClose={() => setAddingMontage(false)} closeIcon={null} width='500px'>
-					<Modal
-						content={
-							<div style={{ padding: '20px' }}>
-								<Space direction='vertical' style={{ width: '100%' }}>
-									{
-										props.playbook.montages.map(m =>
-											<SelectablePanel key={m.id} onSelect={() => addContentReference('montage', m.id)}>
-												<MontagePanel montage={m} />
+									value={referenceType}
+									onChange={setReferenceType}
+								/>
+								<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+								<Divider />
+								{
+									Collections.sort(elements, e => e.element.name)
+										.map(e => (
+											<SelectablePanel key={e.element.id} onSelect={() => addContentReference(e.type, e.element.id)}>
+												<HeaderText tags={[ Format.capitalize(e.type.split('-').join(' ')) ]}>{e.element.name}</HeaderText>
+												<Markdown text={e.element.description} />
 											</SelectablePanel>
-										)
-									}
-									{props.playbook.montages.length === 0 ? <Empty /> : null}
-								</Space>
-							</div>
-						}
-						onClose={() => setAddingMontage(false)}
-					/>
-				</Drawer>
-				<Drawer open={addingNegotiation} onClose={() => setAddingNegotiation(false)} closeIcon={null} width='500px'>
-					<Modal
-						content={
-							<div style={{ padding: '20px' }}>
-								<Space direction='vertical' style={{ width: '100%' }}>
-									{
-										props.playbook.negotiations.map(n =>
-											<SelectablePanel key={n.id} onSelect={() => addContentReference('negotiation', n.id)}>
-												<NegotiationPanel negotiation={n} />
-											</SelectablePanel>
-										)
-									}
-									{props.playbook.negotiations.length === 0 ? <Empty /> : null}
-								</Space>
-							</div>
-						}
-						onClose={() => setAddingNegotiation(false)}
-					/>
-				</Drawer>
-				<Drawer open={addingMap} onClose={() => setAddingMap(false)} closeIcon={null} width='500px'>
-					<Modal
-						content={
-							<div style={{ padding: '20px' }}>
-								<Space direction='vertical' style={{ width: '100%' }}>
-									{
-										props.playbook.tacticalMaps.map(tm =>
-											<SelectablePanel key={tm.id} onSelect={() => addContentReference('map', tm.id)}>
-												<TacticalMapPanel map={tm} display={TacticalMapDisplayType.Thumbnail} options={props.options} />
-											</SelectablePanel>
-										)
-									}
-									{props.playbook.tacticalMaps.length === 0 ? <Empty /> : null}
-								</Space>
-							</div>
-						}
-						onClose={() => setAddingMap(false)}
-					/>
-				</Drawer>
-			</ErrorBoundary>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+										))
+								}
+								{elements.length === 0 ? <Empty /> : null}
+							</Space>
+						</div>
+					}
+					onClose={() => setAddingReference(false)}
+				/>
+			</Drawer>
+		</ErrorBoundary>
+	);
 };

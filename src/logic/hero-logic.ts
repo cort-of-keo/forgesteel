@@ -1,35 +1,37 @@
-import { Feature, FeatureAbility, FeatureClassAbility, FeatureLanguageChoice } from '../models/feature';
-import { Ability } from '../models/ability';
-import { AbilityData } from '../data/ability-data';
-import { AbilityKeyword } from '../enums/ability-keyword';
-import { Ancestry } from '../models/ancestry';
-import { AncestryData } from '../data/ancestry-data';
-import { Characteristic } from '../enums/characteristic';
-import { Collections } from '../utils/collections';
-import { ConditionType } from '../enums/condition-type';
-import { DamageModifierType } from '../enums/damage-modifier-type';
-import { DamageType } from '../enums/damage-type';
-import { FactoryLogic } from './factory-logic';
-import { FeatureField } from '../enums/feature-field';
-import { FeatureLogic } from './feature-logic';
-import { FeatureType } from '../enums/feature-type';
-import { Hero } from '../models/hero';
-import { Item } from '../models/item';
-import { ItemType } from '../enums/item-type';
-import { Kit } from '../models/kit';
-import { Language } from '../models/language';
-import { LanguageType } from '../enums/language-type';
-import { Modifier } from '../models/damage-modifier';
-import { MonsterOrganizationType } from '../enums/monster-organization-type';
-import { MonsterRoleType } from '../enums/monster-role-type';
-import { NameGenerator } from '../utils/name-generator';
-import { Size } from '../models/size';
-import { Skill } from '../models/skill';
-import { SkillList } from '../enums/skill-list';
-import { Sourcebook } from '../models/sourcebook';
-import { SourcebookData } from '../data/sourcebook-data';
-import { SourcebookLogic } from './sourcebook-logic';
-import { Utils } from '../utils/utils';
+import { Feature, FeatureAbility, FeatureClassAbility, FeatureLanguageChoice, FeatureSwitchOptions, FeatureSwitchValue } from '@/models/feature';
+import { Hero, HeroOverview } from '@/models/hero';
+import { Ability } from '@/models/ability';
+import { AbilityData } from '@/data/ability-data';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Ancestry } from '@/models/ancestry';
+import { AncestryData } from '@/data/ancestry-data';
+import { Characteristic } from '@/enums/characteristic';
+import { Collections } from '@/utils/collections';
+import { ConditionType } from '@/enums/condition-type';
+import { CreatureLogic } from '@/logic/creature-logic';
+import { CultureData } from '@/data/culture-data';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { FeatureLogic } from '@/logic/feature-logic';
+import { FeatureType } from '@/enums/feature-type';
+import { Item } from '@/models/item';
+import { ItemType } from '@/enums/item-type';
+import { Kit } from '@/models/kit';
+import { Language } from '@/models/language';
+import { LanguageType } from '@/enums/language-type';
+import { ModifierLogic } from '@/logic/modifier-logic';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { NameGenerator } from '@/utils/name-generator';
+import { Options } from '@/models/options';
+import { Size } from '@/models/size';
+import { Skill } from '@/models/skill';
+import { SkillList } from '@/enums/skill-list';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { SummonLogic } from '@/logic/summon-logic';
+import { Utils } from '@/utils/utils';
 
 export class HeroLogic {
 	static getHeroDescription = (hero: Hero) => {
@@ -40,49 +42,154 @@ export class HeroLogic {
 		return `Level ${hero.class.level} ${hero.ancestry.name} ${hero.class.name}`;
 	};
 
-	static getFeatures = (hero: Hero) => {
-		const features: { feature: Feature, source: string }[] = [];
+	static getFeatures = (hero: Hero, includeCustomizations = true) => {
+		let features: { feature: Feature, source: string, level: number | undefined }[] = [];
 
 		if (hero.ancestry) {
-			features.push(...FeatureLogic.getFeaturesFromAncestry(hero.ancestry, hero));
+			try {
+				const list = FeatureLogic.getFeaturesFromAncestry(hero.ancestry, hero);
+				features.push(...list);
+			} catch (ex) {
+				console.error('Error in ancestry features');
+				console.error(ex);
+			}
 		}
 
 		if (hero.culture) {
-			features.push(...FeatureLogic.getFeaturesFromCulture(hero.culture, hero));
+			try {
+				const list = FeatureLogic.getFeaturesFromCulture(hero.culture, hero);
+				features.push(...list);
+			} catch (ex) {
+				console.error('Error in culture features');
+				console.error(ex);
+			}
 		}
 
 		if (hero.career) {
-			features.push(...FeatureLogic.getFeaturesFromCareer(hero.career, hero));
+			try {
+				const list = FeatureLogic.getFeaturesFromCareer(hero.career, hero);
+				features.push(...list);
+			} catch (ex) {
+				console.error('Error in career features');
+				console.error(ex);
+			}
 		}
 
 		if (hero.class) {
-			features.push(...FeatureLogic.getFeaturesFromClass(hero.class, hero));
+			try {
+				const list = FeatureLogic.getFeaturesFromClass(hero.class, hero);
+				features.push(...list);
+			} catch (ex) {
+				console.error('Error in class features');
+				console.error(ex);
+			}
 		}
 
 		if (hero.complication) {
-			features.push(...FeatureLogic.getFeaturesFromComplication(hero.complication, hero));
+			try {
+				const list = FeatureLogic.getFeaturesFromComplication(hero.complication, hero);
+				features.push(...list);
+			} catch (ex) {
+				console.error('Error in complication features');
+				console.error(ex);
+			}
 		}
 
-		features.push(...FeatureLogic.getFeaturesFromCustomization(hero));
-
-		hero.state.inventory.forEach(item => {
+		if (hero.features.length > 0) {
 			try {
-				features.push(...FeatureLogic.getFeaturesFromItem(item, hero));
+				const list = FeatureLogic.getFeaturesFromCustomization(hero);
+				features.push(...list);
 			} catch (ex) {
+				console.error('Error in custom features');
+				console.error(ex);
+			}
+		}
+
+		hero.state.titles.forEach(title => {
+			try {
+				const list = FeatureLogic.getFeaturesFromTitle(title, hero);
+				features.push(...list);
+			} catch (ex) {
+				console.error(`Error in title features: ${title.name}`);
 				console.error(ex);
 			}
 		});
 
-		return Collections.sort(features, f => f.feature.name);
+		hero.state.inventory.forEach(item => {
+			try {
+				const list = FeatureLogic.getFeaturesFromItem(item, hero);
+				features.push(...list);
+			} catch (ex) {
+				console.error(`Error in item features: ${item.name}`);
+				console.error(ex);
+			}
+		});
+
+		// Handle switches
+		while (features.some(f => f.feature.type === FeatureType.SwitchOptions)) {
+			const switchFeatures = features.filter(f => f.feature.type === FeatureType.SwitchOptions);
+			const switchFeatureIDs = switchFeatures.map(sf => sf.feature.id);
+			features = features.filter(f => !switchFeatureIDs.includes(f.feature.id));
+
+			const switchValues = features.filter(f => f.feature.type === FeatureType.SwitchValue).map(f => f.feature) as FeatureSwitchValue[];
+			const valueMap = switchValues.reduce((map, sv) => {
+				map[sv.data.switch] = sv.data.value;
+				return map;
+			}, {} as { [key: string]: string });
+
+			switchFeatures.forEach(f => {
+				try {
+					const optionsFeature = f.feature as FeatureSwitchOptions;
+					const value = valueMap[optionsFeature.data.switch];
+					if (value) {
+						const option = optionsFeature.data.options.find(o => o.value === value);
+						if (option) {
+							const simplified = FeatureLogic.simplifyFeatures([ { feature: option.feature, source: f.source, level: f.level } ], hero);
+							features.push(...simplified);
+						}
+					} else if (optionsFeature.data.defaultOption) {
+						const simplified = FeatureLogic.simplifyFeatures([ { feature: optionsFeature.data.defaultOption, source: f.source, level: f.level } ], hero);
+						features.push(...simplified);
+					}
+				} catch (ex) {
+					console.error(`Error in switch feature: ${f.feature.name}`);
+					console.error(ex);
+				}
+			});
+		}
+
+		return Collections
+			.sort(features, f => f.feature.name)
+			.map(f => {
+				if (!includeCustomizations) {
+					return f;
+				}
+
+				const customization = hero.abilityCustomizations.find(ac => ac.abilityID === f.feature.id) || null;
+				if (!customization) {
+					return f;
+				}
+
+				const feature = Utils.copy(f.feature);
+
+				feature.name = customization.name || feature.name;
+				feature.description = customization.description || feature.description;
+
+				if (customization.notes) {
+					feature.description += `\n\n${customization.notes}`;
+				}
+
+				return { feature: feature, source: f.source, level: f.level };
+			});
 	};
 
-	static getAbilities = (hero: Hero, sourcebooks: Sourcebook[], includeStandard: boolean) => {
-		const choices: { ability: Ability, source: string }[] = [];
+	static getAbilities = (hero: Hero, sourcebooks: Sourcebook[], standardAbilityIDs: string[]) => {
+		const choices: { ability: Ability, source: string, level: number | undefined }[] = [];
 
 		HeroLogic.getFeatures(hero)
 			.filter(f => f.feature.type === FeatureType.Ability)
 			.forEach(f => {
-				choices.push({ ability: (f.feature as FeatureAbility).data.ability, source: f.source });
+				choices.push({ ability: (f.feature as FeatureAbility).data.ability, source: f.source, level: f.level });
 			});
 
 		HeroLogic.getFeatures(hero)
@@ -95,11 +202,11 @@ export class HeroLogic {
 						.find(c => c.id === feature.data.classID) || null;
 				}
 				if (heroClass) {
-					const abilities = SourcebookLogic.getAllClassAbilities(heroClass);
+					const abilities = SourcebookLogic.getAbilitiesFromClass(heroClass, feature.data.source.fromClassAbilities, feature.data.source.fromSelectedSubclassAbilities, feature.data.source.fromUnselectedSubclassAbilities, feature.data.source.fromClassLevels, feature.data.source.fromSelectedSubclassLevels, feature.data.source.fromUnselectedSubclassLevels);
 					feature.data.selectedIDs.forEach(abilityID => {
 						const ability = abilities.find(a => a.id === abilityID);
 						if (ability) {
-							choices.push({ ability: ability, source: f.source });
+							choices.push({ ability: ability, source: f.source, level: f.level });
 						}
 					});
 				}
@@ -119,37 +226,39 @@ export class HeroLogic {
 				}
 				return a.ability.cost - b.ability.cost;
 			})
-			.sort((a, b) => a.ability.type.usage.localeCompare(b.ability.type.usage))
-			;
+			.sort((a, b) => a.ability.type.usage.localeCompare(b.ability.type.usage));
 
-		if (includeStandard) {
-			abilities.push({ ability: AbilityData.advance, source: 'Standard' });
-			abilities.push({ ability: AbilityData.disengage, source: 'Standard' });
-			abilities.push({ ability: AbilityData.ride, source: 'Standard' });
+		AbilityData.standardAbilities
+			.filter(a => standardAbilityIDs.includes(a.id))
+			.forEach(a => abilities.push({ ability: a, source: 'Standard', level: undefined }));
 
-			abilities.push({ ability: AbilityData.aidAttack, source: 'Standard' });
-			abilities.push({ ability: AbilityData.catchBreath, source: 'Standard' });
-			abilities.push({ ability: AbilityData.clawDirt, source: 'Standard' });
-			abilities.push({ ability: AbilityData.escapeGrab, source: 'Standard' });
-			abilities.push({ ability: AbilityData.goProne, source: 'Standard' });
-			abilities.push({ ability: AbilityData.grab, source: 'Standard' });
-			abilities.push({ ability: AbilityData.hide, source: 'Standard' });
-			abilities.push({ ability: AbilityData.knockback, source: 'Standard' });
-			abilities.push({ ability: AbilityData.makeAssistTest, source: 'Standard' });
-			abilities.push({ ability: AbilityData.search, source: 'Standard' });
-			abilities.push({ ability: AbilityData.standUp, source: 'Standard' });
-			abilities.push({ ability: AbilityData.useConsumable, source: 'Standard' });
+		return abilities.map(a => {
+			const customization = hero.abilityCustomizations.find(ac => ac.abilityID === a.ability.id) || null;
+			if (customization) {
+				const ability = Utils.copy(a.ability);
 
-			abilities.push({ ability: AbilityData.charge, source: 'Standard' });
-			abilities.push({ ability: AbilityData.defend, source: 'Standard' });
-			abilities.push({ ability: AbilityData.freeStrike, source: 'Standard' });
-			abilities.push({ ability: AbilityData.heal, source: 'Standard' });
-			abilities.push({ ability: AbilityData.swap, source: 'Standard' });
+				ability.name = customization.name || ability.name;
+				ability.description = customization.description || ability.description;
 
-			abilities.push({ ability: AbilityData.opportunityAttack, source: 'Standard' });
-		}
+				if (ability.cost !== 'signature') {
+					ability.cost += customization.costModifier;
+				}
 
-		return abilities;
+				// Distance bonus / damage bonus are handled separately
+
+				if (customization.characteristic) {
+					ability.sections.filter(s => s.type === 'roll').forEach(s => s.roll.characteristic = [ customization.characteristic! ]);
+				}
+
+				if (customization.notes) {
+					ability.sections.push(FactoryLogic.createAbilitySectionField({ name: 'Notes', effect: customization.notes }));
+				}
+
+				return { ability: ability, source: a.source, level: a.level };
+			}
+
+			return a;
+		});
 	};
 
 	static getPerks = (hero: Hero) => {
@@ -167,10 +276,31 @@ export class HeroLogic {
 	};
 
 	static getTitles = (hero: Hero) => {
-		return HeroLogic.getFeatures(hero)
-			.map(f => f.feature)
-			.filter(f => f.type === FeatureType.TitleChoice)
-			.flatMap(f => f.data.selected);
+		return [
+			...hero.state.titles,
+			...HeroLogic.getFeatures(hero)
+				.map(f => f.feature)
+				.filter(f => f.type === FeatureType.TitleChoice)
+				.flatMap(f => f.data.selected)
+		];
+	};
+
+	static getClassSpecialization = (hero: Hero): string[] => {
+		if (!hero.class) {
+			return [];
+		}
+
+		const selected = hero.class.subclasses.filter(sc => sc.selected).map(sc => sc.name);
+		if (selected.length > 0) {
+			return selected;
+		}
+
+		const domains = HeroLogic.getDomains(hero).map(d => d.name);
+		if (domains.length > 0) {
+			return [ domains.join('/') ];
+		}
+
+		return [];
 	};
 
 	static getDomains = (hero: Hero) => {
@@ -196,20 +326,26 @@ export class HeroLogic {
 	};
 
 	static getAncestryPoints = (hero: Hero) => {
+		let value = 0;
+
 		if (hero.ancestry) {
-			let points = hero.ancestry.ancestryPoints;
+			value += hero.ancestry.ancestryPoints;
 
 			if (hero.ancestry.id === AncestryData.revenant.id) {
 				const size = HeroLogic.getSize(hero);
 				if ((size.value == 1) && (size.mod === 'S')) {
-					points += 1;
+					value += 1;
 				}
 			}
-
-			return points;
 		}
 
-		return 0;
+		HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.Bonus)
+			.filter(f => f.data.field === FeatureField.AncestryPoints)
+			.forEach(f => value += ModifierLogic.calculateModifierValue(f.data, hero));
+
+		return value;
 	};
 
 	static getCompanions = (hero: Hero) => {
@@ -217,7 +353,15 @@ export class HeroLogic {
 			.map(f => f.feature)
 			.filter(f => f.type === FeatureType.Companion)
 			.map(f => f.data.selected)
-			.filter(a => !!a);
+			.filter(a => !!a)
+			.map(m => {
+				const copy = Utils.copy(m);
+				if (copy.retainer) {
+					copy.retainer.level = Math.max(copy.level, hero?.class?.level || 1);
+				}
+				return copy;
+			})
+			.sort((a, b) => a.name.localeCompare(b.name));
 	};
 
 	static getFollowers = (hero: Hero) => {
@@ -225,14 +369,59 @@ export class HeroLogic {
 			.map(f => f.feature)
 			.filter(f => f.type === FeatureType.Follower)
 			.map(f => f.data.follower)
-			.filter(a => !!a);
+			.filter(a => !!a)
+			.sort((a, b) => a.name.localeCompare(b.name));
+	};
+
+	static getRetainers = (hero: Hero) => {
+		return HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.Retainer)
+			.map(f => f.data.selected)
+			.filter(a => !!a)
+			.map(m => {
+				const copy = Utils.copy(m);
+				if (copy.retainer) {
+					copy.retainer.level = Math.max(copy.level, hero?.class?.level || 1);
+				}
+				return copy;
+			})
+			.sort((a, b) => a.name.localeCompare(b.name));
 	};
 
 	static getSummons = (hero: Hero) => {
 		return HeroLogic.getFeatures(hero)
 			.map(f => f.feature)
-			.filter(f => f.type === FeatureType.Summon)
-			.flatMap(f => f.data.selected);
+			.flatMap(f => {
+				switch (f.type) {
+					case FeatureType.Summon:
+						return f.data.summons;
+					case FeatureType.SummonChoice:
+						return f.data.selected;
+				}
+				return [];
+			})
+			.map(s => {
+				const copy = Utils.copy(s);
+				copy.info.level = hero.class?.level || 1;
+				copy.monster = SummonLogic.getSummonedMonster(copy, hero);
+				return copy;
+			})
+			.sort((a, b) => {
+				let result = a.info.cost - b.info.cost;
+				if (result === 0) {
+					result = a.name.localeCompare(b.name);
+				}
+				return result;
+			});
+	};
+
+	static getFixtures = (hero: Hero) => {
+		return HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.Fixture)
+			.map(f => f.data.fixture)
+			.sort((a, b) => a.name.localeCompare(b.name));
 	};
 
 	static getCharacteristic = (hero: Hero, characteristic: Characteristic) => {
@@ -275,7 +464,7 @@ export class HeroLogic {
 				languageNames.push(...selected);
 			});
 
-		const allLanguages = sourcebooks.flatMap(cs => cs.languages);
+		const allLanguages = sourcebooks.flatMap(sb => sb.languages);
 
 		const languages: Language[] = [];
 		Collections.distinct(languageNames, l => l)
@@ -295,12 +484,6 @@ export class HeroLogic {
 		const skillNames: string[] = [];
 
 		// Collate from features
-		HeroLogic.getFeatures(hero)
-			.map(f => f.feature)
-			.filter(f => f.type === FeatureType.Skill)
-			.forEach(f => {
-				skillNames.push(f.data.skill);
-			});
 		HeroLogic.getFeatures(hero)
 			.map(f => f.feature)
 			.filter(f => f.type === FeatureType.SkillChoice)
@@ -340,49 +523,11 @@ export class HeroLogic {
 		return Collections.sort(conditions, c => c);
 	};
 
-	static getDamageModifiers = (hero: Hero, type: DamageModifierType) => {
-		const modifiers: { damageType: string, value: number }[] = [];
-
-		// Collate from features
-		HeroLogic.getFeatures(hero)
+	static getDamageModifiers = (hero: Hero) => {
+		const features = HeroLogic.getFeatures(hero)
 			.map(f => f.feature)
-			.filter(f => f.type === FeatureType.DamageModifier)
-			.forEach(f => {
-				f.data.modifiers
-					.filter(dm => dm.type === type)
-					.forEach(dm => {
-						const value = HeroLogic.calculateModifierValue(hero, dm);
-
-						const existing = modifiers.find(x => x.damageType === dm.damageType);
-						if (existing) {
-							existing.value = Math.max(existing.value, value);
-						} else {
-							modifiers.push({
-								damageType: dm.damageType,
-								value: value
-							});
-						}
-					});
-			});
-
-		return Collections.sort(modifiers, dm => dm.damageType);
-	};
-
-	static calculateModifierValue = (hero: Hero, mod: Modifier) => {
-		let value = mod.value;
-
-		if (mod.valueCharacteristics.length > 0) {
-			const characteristicValue = Collections.max(mod.valueCharacteristics.map(ch => HeroLogic.getCharacteristic(hero, ch)), v => v) || 0;
-			const multiplier = mod.valueCharacteristicMultiplier || 1;
-			value += characteristicValue * multiplier;
-		}
-
-		if (hero.class) {
-			value += mod.valuePerLevel * (hero.class.level - 1);
-			value += mod.valuePerEchelon * HeroLogic.getEchelon(hero.class.level);
-		}
-
-		return value;
+			.filter(f => f.type === FeatureType.DamageModifier);
+		return ModifierLogic.getDamageModifiers(features, hero);
 	};
 
 	///////////////////////////////////////////////////////////////////////////
@@ -394,7 +539,7 @@ export class HeroLogic {
 		const kits = HeroLogic.getKits(hero);
 		const v = Collections.max(kits.map(kit => kit.stamina), value => value) || 0;
 		if (hero.class) {
-			value += v * HeroLogic.getEchelon(hero.class.level);
+			value += v * CreatureLogic.getEchelon(hero.class.level);
 		}
 
 		HeroLogic.getFeatures(hero)
@@ -402,7 +547,7 @@ export class HeroLogic {
 			.filter(f => f.type === FeatureType.Bonus)
 			.map(f => f.data)
 			.filter(data => data.field === FeatureField.Stamina)
-			.forEach(data => value += HeroLogic.calculateModifierValue(hero, data));
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
 
 		return value;
 	};
@@ -423,7 +568,7 @@ export class HeroLogic {
 			.filter(f => f.type === FeatureType.Bonus)
 			.map(f => f.data)
 			.filter(data => data.field === FeatureField.RecoveryValue)
-			.forEach(data => value += HeroLogic.calculateModifierValue(hero, data));
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
 
 		return value;
 	};
@@ -436,7 +581,7 @@ export class HeroLogic {
 			.filter(f => f.type === FeatureType.Bonus)
 			.map(f => f.data)
 			.filter(data => data.field === FeatureField.Recoveries)
-			.forEach(data => value += HeroLogic.calculateModifierValue(hero, data));
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
 
 		return value;
 	};
@@ -494,7 +639,7 @@ export class HeroLogic {
 				.filter(f => f.type === FeatureType.Bonus)
 				.map(f => f.data)
 				.filter(data => data.field === FeatureField.Speed)
-				.forEach(data => value += HeroLogic.calculateModifierValue(hero, data));
+				.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
 
 			if (hero.state.conditions.some(c => [ ConditionType.Grabbed, ConditionType.Restrained ].includes(c.type))) {
 				value = 0;
@@ -511,7 +656,7 @@ export class HeroLogic {
 				.map(f => f.feature)
 				.filter(f => f.type === FeatureType.MovementMode)
 				.map(f => f.data.mode);
-			return Collections.sort(Collections.distinct(modes, m => m), m => m);
+			return Collections.sort(Collections.distinct(modes, m => m), m => m) || [];
 		};
 
 		return {
@@ -540,7 +685,7 @@ export class HeroLogic {
 			.filter(f => f.type === FeatureType.Bonus)
 			.map(f => f.data)
 			.filter(data => data.field === FeatureField.Stability)
-			.forEach(data => value += HeroLogic.calculateModifierValue(hero, data));
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
 
 		return value;
 	};
@@ -557,7 +702,31 @@ export class HeroLogic {
 			.filter(f => f.type === FeatureType.Bonus)
 			.map(f => f.data)
 			.filter(data => data.field === FeatureField.Disengage)
-			.forEach(data => value += HeroLogic.calculateModifierValue(hero, data));
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
+
+		return value;
+	};
+
+	static getSaveThreshold = (hero: Hero) => {
+		const values = [ 6 ];
+
+		HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.SaveThreshold)
+			.forEach(f => values.push(f.data.value));
+
+		return Math.min(...values);
+	};
+
+	static getSaveBonus = (hero: Hero) => {
+		let value = 0;
+
+		HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.Bonus)
+			.map(f => f.data)
+			.filter(data => data.field === FeatureField.Save)
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
 
 		return value;
 	};
@@ -570,7 +739,7 @@ export class HeroLogic {
 			.filter(f => f.type === FeatureType.Bonus)
 			.map(f => f.data)
 			.filter(data => data.field === FeatureField.Renown)
-			.forEach(data => value += HeroLogic.calculateModifierValue(hero, data));
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
 
 		return value;
 	};
@@ -583,7 +752,7 @@ export class HeroLogic {
 			.filter(f => f.type === FeatureType.Bonus)
 			.map(f => f.data)
 			.filter(data => data.field === FeatureField.ProjectPoints)
-			.forEach(data => value += HeroLogic.calculateModifierValue(hero, data));
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
 
 		return value;
 	};
@@ -596,7 +765,33 @@ export class HeroLogic {
 			.filter(f => f.type === FeatureType.Bonus)
 			.map(f => f.data)
 			.filter(data => data.field === FeatureField.Wealth)
-			.forEach(data => value += HeroLogic.calculateModifierValue(hero, data));
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
+
+		return value;
+	};
+
+	static getForcedMovementBonus = (hero: Hero, type: 'push' | 'pull' | 'slide') => {
+		let value = 0;
+
+		let field = FeatureField.ForcedMovementPush;
+		switch (type) {
+			case 'push':
+				field = FeatureField.ForcedMovementPush;
+				break;
+			case 'pull':
+				field = FeatureField.ForcedMovementPull;
+				break;
+			case 'slide':
+				field = FeatureField.ForcedMovementSlide;
+				break;
+		}
+
+		HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.Bonus)
+			.map(f => f.data)
+			.filter(data => data.field === field)
+			.forEach(data => value += ModifierLogic.calculateModifierValue(data, hero));
 
 		return value;
 	};
@@ -669,15 +864,26 @@ export class HeroLogic {
 		return result;
 	};
 
-	static getFeatureDamageBonuses = (hero: Hero, ability: Ability) => {
+	static getFeatureDamageBonuses = (hero: Hero, ability: Ability, distance: AbilityDistanceType | undefined) => {
 		const array: { feature: string, value: number, type: DamageType }[] = [];
 
 		HeroLogic.getFeatures(hero)
 			.map(f => f.feature)
 			.filter(f => f.type === FeatureType.AbilityDamage)
+			.filter(f => {
+				if (distance === AbilityDistanceType.Melee) {
+					return f.data.keywords.includes(AbilityKeyword.Melee);
+				}
+
+				if (distance === AbilityDistanceType.Ranged) {
+					return f.data.keywords.includes(AbilityKeyword.Ranged);
+				}
+
+				return true;
+			})
 			.filter(f => f.data.keywords.every(kw => ability.keywords.includes(kw)))
 			.forEach(f => {
-				const mod = HeroLogic.calculateModifierValue(hero, f.data);
+				const mod = ModifierLogic.calculateModifierValue(f.data, hero);
 				array.push({
 					feature: f.name,
 					value: mod,
@@ -718,7 +924,7 @@ export class HeroLogic {
 			.filter(f => f.type === FeatureType.AbilityDistance)
 			.filter(f => f.data.keywords.every(kw => ability.keywords.includes(kw)))
 			.forEach(f => {
-				const mod = HeroLogic.calculateModifierValue(hero, f.data);
+				const mod = ModifierLogic.calculateModifierValue(f.data, hero);
 				value += mod;
 			});
 
@@ -812,27 +1018,6 @@ export class HeroLogic {
 		return true;
 	};
 
-	static getEchelon = (level: number) => {
-		switch (level) {
-			case 1:
-			case 2:
-			case 3:
-				return 1;
-			case 4:
-			case 5:
-			case 6:
-				return 2;
-			case 7:
-			case 8:
-			case 9:
-				return 3;
-			case 10:
-				return 4;
-		}
-
-		return 1;
-	};
-
 	static getCharacteristicArrays = (primaryCount: number) => {
 		if (primaryCount === 2) {
 			return [
@@ -860,7 +1045,7 @@ export class HeroLogic {
 
 		return Collections.distinct(Collections.getPermutations(array), item => item.join(', ')).map(arr => {
 			return all.map(ch => {
-				let value = 0;
+				let value;
 				if (primary.includes(ch)) {
 					value = 2;
 				} else {
@@ -873,20 +1058,6 @@ export class HeroLogic {
 				};
 			});
 		});
-	};
-
-	static calculateSaveValue = (hero: Hero) => {
-		// Account for Ancestry Traits that reduce Saving Throw
-		const featureIdsSaveOn5: string[] = [
-			'devil-feature-2-5', // Impressive Horns
-			'high-elf-feature-2-4', // Otherworldly Grace
-			'wode-elf-feature-2-4' // Otherworldly Grace
-		];
-		const features = HeroLogic.getFeatures(hero);
-		if (features.find(f => featureIdsSaveOn5.includes(f.feature.id))) {
-			return 5;
-		}
-		return 6;
 	};
 
 	static getPotency = (hero: Hero, strength: 'weak' | 'average' | 'strong') => {
@@ -909,8 +1080,9 @@ export class HeroLogic {
 	};
 
 	static calculateSurgeDamage = (hero: Hero) => {
-		const value = hero.class && (hero.class.characteristics.length > 0) ? Math.max(...hero.class.characteristics.map(c => this.getCharacteristic(hero, c.characteristic))) : 0;
-		return value;
+		return hero.class && (hero.class.characteristics.length > 0) ?
+			Math.max(...hero.class.characteristics.map(c => this.getCharacteristic(hero, c.characteristic)))
+			: 0;
 	};
 
 	static getCombatState = (hero: Hero) => {
@@ -940,16 +1112,64 @@ export class HeroLogic {
 		return 'healthy';
 	};
 
-	static getMinXP = (level: number) => {
-		return Math.max(0, (level - 1) * 16);
+	static getMinXP = (level: number, options: Options) => {
+		return Math.max(0, (level - 1) * options.xpPerLevel);
 	};
 
-	static canLevelUp = (hero: Hero) => {
+	static canLevelUp = (hero: Hero, options: Options) => {
 		if (!hero.class) {
 			return false;
 		}
 
-		return hero.state.xp >= HeroLogic.getMinXP(hero.class.level + 1);
+		const maxLevel = Math.max(
+			...hero.class.featuresByLevel.flatMap(lvl => lvl.level),
+			...hero.class.subclasses.flatMap(sc => sc.featuresByLevel).flatMap(lvl => lvl.level)
+		);
+		if (hero.class.level >= maxLevel) {
+			return false;
+		}
+
+		return hero.state.xp >= HeroLogic.getMinXP(hero.class.level + 1, options);
+	};
+
+	static setLevel = (hero: Hero, options: Options, level: number) => {
+		if (hero.class) {
+			hero.class.level = level;
+			hero.state.xp = HeroLogic.getMinXP(level, options);
+		}
+
+		HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.Companion)
+			.forEach(f => {
+				if (f.data.selected && f.data.selected.retainer) {
+					f.data.selected.retainer.level = Math.max(f.data.selected.level, f.data.selected.retainer.level, level);
+				}
+			});
+
+		HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.Retainer)
+			.forEach(f => {
+				if (f.data.selected && f.data.selected.retainer) {
+					f.data.selected.retainer.level = Math.max(f.data.selected.level, f.data.selected.retainer.level, level);
+				}
+			});
+
+		HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.Summon)
+			.forEach(f => {
+				f.data.summons.forEach(s => s.info.level = level);
+			});
+
+		HeroLogic.getFeatures(hero)
+			.map(f => f.feature)
+			.filter(f => f.type === FeatureType.SummonChoice)
+			.forEach(f => {
+				f.data.options.forEach(o => o.info.level = level);
+				f.data.selected.forEach(s => s.info.level = level);
+			});
 	};
 
 	static takeRespite = (hero: Hero) => {
@@ -974,11 +1194,11 @@ export class HeroLogic {
 	///////////////////////////////////////////////////////////////////////////
 
 	static createRandomHero = () => {
-		const sourcebooks = [ SourcebookData.core, SourcebookData.orden ];
+		const sourcebooks = SourcebookLogic.getSourcebooks();
 		const hero = FactoryLogic.createHero(sourcebooks.map(sb => sb.id));
 		hero.name = NameGenerator.generateName();
 		hero.ancestry = Collections.draw(SourcebookLogic.getAncestries(sourcebooks));
-		hero.culture = Collections.draw(SourcebookLogic.getCultures(sourcebooks));
+		hero.culture = Collections.draw(SourcebookLogic.getCultures(sourcebooks, true));
 		hero.career = Collections.draw(SourcebookLogic.getCareers(sourcebooks));
 		hero.class = Collections.draw(SourcebookLogic.getClasses(sourcebooks));
 
@@ -1048,25 +1268,25 @@ export class HeroLogic {
 						break;
 					}
 					case FeatureType.Companion: {
-						const options = SourcebookLogic.getMonsterGroups(sourcebooks)
+						const options = SourcebookLogic
+							.getMonsterGroups(sourcebooks)
+							.flatMap(mg => mg.monsters);
+						feature.data.selected = Collections.draw(Utils.copy(options));
+						break;
+					}
+					case FeatureType.Retainer: {
+						const options = SourcebookLogic
+							.getMonsterGroups(sourcebooks)
 							.flatMap(mg => mg.monsters)
-							.filter(m => {
-								switch (feature.data.type) {
-									case 'companion':
-										return true;
-									case 'mount':
-										return m.role.type === MonsterRoleType.Mount;
-									case 'retainer':
-										return m.role.organization === MonsterOrganizationType.Retainer;
-								}
-							});
+							.filter(m => m.role.organization === MonsterOrganizationType.Retainer);
 						feature.data.selected = Collections.draw(Utils.copy(options));
 						break;
 					}
 					case FeatureType.Domain: {
 						while (feature.data.selected.length < feature.data.count) {
 							const currentIDs = HeroLogic.getDomains(hero).map(d => d.id);
-							const options = SourcebookLogic.getDomains(sourcebooks)
+							const options = SourcebookLogic
+								.getDomains(sourcebooks)
 								.filter(a => !currentIDs.includes(a.id));
 							feature.data.selected.push(Collections.draw(options));
 						}
@@ -1087,7 +1307,8 @@ export class HeroLogic {
 					case FeatureType.ItemChoice: {
 						while (feature.data.selected.length < feature.data.count) {
 							const currentIDs = feature.data.selected.map(d => d.id);
-							const options = SourcebookLogic.getItems(sourcebooks)
+							const options = SourcebookLogic
+								.getItems(sourcebooks)
 								.filter(i => !currentIDs.includes(i.id))
 								.filter(i => (feature.data.types.length === 0) || feature.data.types.includes(i.type));
 							feature.data.selected.push(Collections.draw(options));
@@ -1097,7 +1318,8 @@ export class HeroLogic {
 					case FeatureType.Kit: {
 						while (feature.data.selected.length < feature.data.count) {
 							const currentIDs = HeroLogic.getKits(hero).map(k => k.id);
-							const options = SourcebookLogic.getKits(sourcebooks)
+							const options = SourcebookLogic
+								.getKits(sourcebooks)
 								.filter(k => !currentIDs.includes(k.id))
 								.filter(k => (feature.data.types.length === 0) || feature.data.types.includes(k.type));
 							feature.data.selected.push(Collections.draw(options));
@@ -1107,7 +1329,8 @@ export class HeroLogic {
 					case FeatureType.LanguageChoice: {
 						while (feature.data.selected.length < feature.data.count) {
 							const current = HeroLogic.getLanguages(hero, sourcebooks).map(l => l.name);
-							const options = SourcebookLogic.getLanguages(sourcebooks)
+							const options = SourcebookLogic
+								.getLanguages(sourcebooks)
 								.filter(l => !current.includes(l.name));
 							feature.data.selected.push(Collections.draw(options).name);
 						}
@@ -1116,7 +1339,8 @@ export class HeroLogic {
 					case FeatureType.Perk: {
 						while (feature.data.selected.length < feature.data.count) {
 							const currentIDs = HeroLogic.getPerks(hero).map(p => p.id);
-							const options = SourcebookLogic.getPerks(sourcebooks)
+							const options = SourcebookLogic
+								.getPerks(sourcebooks)
 								.filter(p => !currentIDs.includes(p.id))
 								.filter(p => (feature.data.lists.length === 0) || feature.data.lists.includes(p.list));
 							feature.data.selected.push(Collections.draw(options));
@@ -1128,7 +1352,8 @@ export class HeroLogic {
 							const current = HeroLogic.getSkills(hero, sourcebooks).map(s => s.name);
 							const allOptions = [ ...feature.data.options ];
 							feature.data.listOptions.forEach(list => {
-								SourcebookLogic.getSkills(sourcebooks)
+								SourcebookLogic
+									.getSkills(sourcebooks)
 									.filter(s => s.list === list)
 									.map(s => s.name)
 									.forEach(s => allOptions.push(s));
@@ -1159,7 +1384,8 @@ export class HeroLogic {
 					case FeatureType.TitleChoice: {
 						while (feature.data.selected.length < feature.data.count) {
 							const currentIDs = HeroLogic.getTitles(hero).map(t => t.id);
-							const options = SourcebookLogic.getTitles(sourcebooks)
+							const options = SourcebookLogic
+								.getTitles(sourcebooks)
 								.filter(t => !currentIDs.includes(t.id))
 								.filter(t => feature.data.echelon === t.echelon);
 							feature.data.selected.push(Collections.draw(options));
@@ -1173,5 +1399,32 @@ export class HeroLogic {
 		hero.career.incitingIncidents.selected = Utils.copy(Collections.draw(hero.career.incitingIncidents.options));
 
 		return hero;
+	};
+
+	static createOverview = (hero: Hero) => {
+		const background: string[] = [];
+		if (hero.culture && (hero.culture.id !== CultureData.bespoke.id)) {
+			background.push(hero.culture.name);
+		}
+		if (hero.career) {
+			background.push(hero.career.name);
+
+			if (hero.career.incitingIncidents.selected) {
+				background.push(hero.career.incitingIncidents.selected.name);
+			}
+		}
+
+		const overview: HeroOverview = {
+			id: hero.id,
+			name: hero.name,
+			ancestry: hero.ancestry ? hero.ancestry.name : null,
+			background: background.length > 0 ? background.join(', ') : null,
+			class: hero.class ? `${hero.class.name} (${[ `Level ${hero.class.level}`, ...HeroLogic.getClassSpecialization(hero) ].join(' ')})` : null,
+			complication: hero.complication ? hero.complication.name : null,
+			picture: hero.picture,
+			folder: hero.folder
+		};
+
+		return overview;
 	};
 }

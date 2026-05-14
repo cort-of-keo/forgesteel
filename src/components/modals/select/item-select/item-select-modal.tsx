@@ -1,19 +1,20 @@
-import { Button, Divider, Input, Space } from 'antd';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { Empty } from '../../../controls/empty/empty';
-import { Expander } from '../../../controls/expander/expander';
-import { Hero } from '../../../../models/hero';
-import { HeroLogic } from '../../../../logic/hero-logic';
-import { Item } from '../../../../models/item';
-import { ItemPanel } from '../../../panels/elements/item-panel/item-panel';
-import { ItemType } from '../../../../enums/item-type';
-import { Modal } from '../../modal/modal';
-import { Options } from '../../../../models/options';
-import { PanelMode } from '../../../../enums/panel-mode';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { SourcebookLogic } from '../../../../logic/sourcebook-logic';
-import { Toggle } from '../../../controls/toggle/toggle';
-import { Utils } from '../../../../utils/utils';
+import { Button, Divider, Space } from 'antd';
+import { Empty } from '@/components/controls/empty/empty';
+import { Expander } from '@/components/controls/expander/expander';
+import { Hero } from '@/models/hero';
+import { HeroLogic } from '@/logic/hero-logic';
+import { ImbuedItemData } from '@/data/items/imbued-item-data';
+import { Item } from '@/models/item';
+import { ItemPanel } from '@/components/panels/elements/item-panel/item-panel';
+import { ItemType } from '@/enums/item-type';
+import { Modal } from '@/components/modals/modal/modal';
+import { PanelMode } from '@/enums/panel-mode';
+import { PlusOutlined } from '@ant-design/icons';
+import { SearchBox } from '@/components/controls/text-input/text-input';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { Toggle } from '@/components/controls/toggle/toggle';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './item-select-modal.scss';
@@ -21,11 +22,10 @@ import './item-select-modal.scss';
 interface Props {
 	types: ItemType[];
 	sourcebooks: Sourcebook[];
-	options: Options;
 	hero: Hero;
-	selectOriginal?: boolean;
 	onClose: () => void;
 	onSelect: (item: Item) => void;
+	onCustomize?: () => void;
 }
 
 export const ItemSelectModal = (props: Props) => {
@@ -47,106 +47,93 @@ export const ItemSelectModal = (props: Props) => {
 		setShowTypes(types);
 	};
 
-	try {
-		const items = SourcebookLogic
-			.getItems(props.sourcebooks)
-			.filter(item => props.types.includes(item.type))
-			.filter(item => !showUsableOnly || HeroLogic.canUseItem(props.hero, item))
-			.filter(item => showTypes[item.type])
-			.filter(item => Utils.textMatches([
-				item.name,
-				item.description,
-				...item.keywords,
-				...item.featuresByLevel.flatMap(lvl => lvl.features.map(f => f.name))
-			], searchTerm));
+	const items = [ ...SourcebookLogic.getItems(props.sourcebooks), ImbuedItemData.imbuedArmor, ImbuedItemData.imbuedImplement, ImbuedItemData.imbuedWeapon ]
+		.filter(item => props.types.includes(item.type))
+		.filter(item => !showUsableOnly || HeroLogic.canUseItem(props.hero, item))
+		.filter(item => showTypes[item.type])
+		.filter(item => Utils.textMatches([
+			item.name,
+			item.description,
+			...item.keywords,
+			...item.featuresByLevel.flatMap(lvl => lvl.features.map(f => f.name))
+		], searchTerm));
 
-		return (
-			<Modal
-				toolbar={
-					<>
-						<Input
-							name='search'
-							placeholder='Search'
-							allowClear={true}
-							value={searchTerm}
-							suffix={<SearchOutlined />}
-							onChange={e => setSearchTerm(e.target.value)}
-						/>
-					</>
-				}
-				content={
-					<div className='item-select-modal'>
-						<Space direction='vertical' style={{ width: '100%' }}>
-							<Expander title='Filter'>
-								<div className='item-type-filter-panel'>
-									{
-										props.types.length > 1 ?
-											<>
-												<Toggle label='Show everything' value={props.types.every(t => showTypes[t])} onChange={setShowEverything} />
-												<Divider />
-												{
-													props.types.map(type => (
-														<Toggle
-															key={type}
-															label={type}
-															value={showTypes[type]}
-															onChange={value => {
-																const newTypes = { ...showTypes };
-																newTypes[type] = value;
-																setShowTypes(newTypes);
-															}}
-														/>
-													))
-												}
-												<Divider />
-											</>
-											: null
-									}
-									<Toggle label='Only show items you can use' value={showUsableOnly} onChange={setShowUsableOnly} />
-								</div>
-							</Expander>
-							<Divider />
-							{
-								items.map(item => (
-									<Expander
-										key={item.id}
-										title={item.name}
-										tags={[ item.type ]}
-										extra={[
-											<Button
-												key='select'
-												type='text'
-												title='Select'
-												icon={<PlusOutlined />}
-												onClick={() => {
-													if (props.selectOriginal) {
-														props.onSelect(item);
-													} else {
-														const copy = Utils.copy(item);
-														copy.id = Utils.guid();
-														props.onSelect(copy);
-													}
-												}}
-											/>
-										]}
-									>
-										<ItemPanel item={item} options={props.options} hero={props.hero} mode={PanelMode.Full} />
-									</Expander>
-								))
-							}
-							{
-								items.length === 0 ?
-									<Empty />
-									: null
-							}
-						</Space>
-					</div>
-				}
-				onClose={props.onClose}
-			/>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+	return (
+		<Modal
+			toolbar={
+				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+			}
+			content={
+				<div className='item-select-modal'>
+					<Space orientation='vertical' style={{ width: '100%' }}>
+						<Expander title='Filter'>
+							<div className='item-type-filter-panel'>
+								{
+									props.types.length > 1 ?
+										<>
+											<Toggle label='Show everything' value={props.types.every(t => showTypes[t])} onChange={setShowEverything} />
+											<Divider />
+											{
+												props.types.map(type => (
+													<Toggle
+														key={type}
+														label={type}
+														value={showTypes[type]}
+														onChange={value => {
+															const newTypes = { ...showTypes };
+															newTypes[type] = value;
+															setShowTypes(newTypes);
+														}}
+													/>
+												))
+											}
+											<Divider />
+										</>
+										: null
+								}
+								<Toggle label='Only show items you can use' value={showUsableOnly} onChange={setShowUsableOnly} />
+							</div>
+						</Expander>
+						<Divider />
+						{
+							items.map(item => (
+								<Expander
+									key={item.id}
+									title={item.name}
+									tags={[ item.type ]}
+									extra={[
+										<Button
+											key='select'
+											type='text'
+											title='Select'
+											icon={<PlusOutlined />}
+											onClick={() => props.onSelect(item)}
+										/>
+									]}
+								>
+									<ItemPanel item={item} sourcebooks={props.sourcebooks} wielder={props.hero} mode={PanelMode.Full} />
+								</Expander>
+							))
+						}
+						{
+							items.length === 0 ?
+								props.onCustomize ?
+									<div>
+										<p>
+											Can't find what you're looking for? It might be in a sourcebook that your hero doesn't have access to.
+										</p>
+										<Button block={true} onClick={props.onCustomize}>
+											Click here to change your hero's sourcebooks
+										</Button>
+									</div>
+									:
+									<Empty text='Not found' />
+								: null
+						}
+					</Space>
+				</div>
+			}
+			onClose={props.onClose}
+		/>
+	);
 };

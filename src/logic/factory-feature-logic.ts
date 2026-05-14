@@ -1,23 +1,26 @@
-import { Feature, FeatureAbility, FeatureAbilityCost, FeatureAbilityDamage, FeatureAbilityData, FeatureAbilityDistance, FeatureAddOn, FeatureAncestryChoice, FeatureAncestryFeatureChoice, FeatureBonus, FeatureCharacteristicBonus, FeatureChoice, FeatureClassAbility, FeatureCompanion, FeatureConditionImmunity, FeatureDamageModifier, FeatureDomain, FeatureDomainFeature, FeatureFollower, FeatureHeroicResource, FeatureHeroicResourceGain, FeatureItemChoice, FeatureKit, FeatureLanguage, FeatureLanguageChoice, FeatureMalice, FeatureMaliceAbility, FeatureMovementMode, FeatureMultiple, FeaturePackage, FeaturePackageContent, FeaturePerk, FeatureProficiency, FeatureSize, FeatureSkill, FeatureSkillChoice, FeatureSpeed, FeatureSummon, FeatureTaggedFeature, FeatureTaggedFeatureChoice, FeatureText, FeatureTitleChoice } from '../models/feature';
-import { Ability } from '../models/ability';
-import { AbilityKeyword } from '../enums/ability-keyword';
-import { Characteristic } from '../enums/characteristic';
-import { ConditionType } from '../enums/condition-type';
-import { DamageModifier } from '../models/damage-modifier';
-import { DamageType } from '../enums/damage-type';
-import { FeatureAddOnType } from '../enums/feature-addon-type';
-import { FeatureField } from '../enums/feature-field';
-import { FeatureType } from '../enums/feature-type';
-import { Follower } from '../models/follower';
-import { Format } from '../utils/format';
-import { FormatLogic } from './format-logic';
-import { ItemType } from '../enums/item-type';
-import { KitArmor } from '../enums/kit-armor';
-import { KitWeapon } from '../enums/kit-weapon';
-import { Monster } from '../models/monster';
-import { PerkList } from '../enums/perk-list';
-import { PowerRoll } from '../models/power-roll';
-import { SkillList } from '../enums/skill-list';
+import { Feature, FeatureAbility, FeatureAbilityCost, FeatureAbilityDamage, FeatureAbilityData, FeatureAbilityDistance, FeatureAbilityKeyword, FeatureAddOn, FeatureAncestryChoice, FeatureAncestryFeatureChoice, FeatureBonus, FeatureCharacteristicBonus, FeatureChoice, FeatureClassAbility, FeatureCompanion, FeatureConditionImmunity, FeatureDamageModifier, FeatureDomain, FeatureDomainFeature, FeatureFixture, FeatureFollower, FeatureHeroicResource, FeatureHeroicResourceGain, FeatureItemChoice, FeatureKit, FeatureLanguage, FeatureLanguageChoice, FeatureMalice, FeatureMaliceAbility, FeatureMovementMode, FeatureMultiple, FeaturePackage, FeaturePackageContent, FeaturePerk, FeatureProficiency, FeatureRetainer, FeatureSaveThreshold, FeatureSize, FeatureSkillChoice, FeatureSpeed, FeatureSummon, FeatureSummonChoice, FeatureSwitchOptions, FeatureSwitchValue, FeatureTaggedFeature, FeatureTaggedFeatureChoice, FeatureText, FeatureTitleChoice, FeatureToggle } from '@/models/feature';
+import { Ability } from '@/models/ability';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { ConditionType } from '@/enums/condition-type';
+import { DamageModifier } from '@/models/damage-modifier';
+import { DamageType } from '@/enums/damage-type';
+import { FeatureAddOnType } from '@/enums/feature-addon-type';
+import { FeatureField } from '@/enums/feature-field';
+import { FeatureType } from '@/enums/feature-type';
+import { Fixture } from '@/models/fixture';
+import { Follower } from '@/models/follower';
+import { Format } from '@/utils/format';
+import { ItemType } from '@/enums/item-type';
+import { KitArmor } from '@/enums/kit-armor';
+import { KitWeapon } from '@/enums/kit-weapon';
+import { Monster } from '@/models/monster';
+import { Perk } from '@/models/perk';
+import { PerkList } from '@/enums/perk-list';
+import { PowerRoll } from '@/models/power-roll';
+import { SkillList } from '@/enums/skill-list';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
+import { Summon } from '@/models/summon';
 
 export class FactoryFeatureLogic {
 	create = (data: { id: string, name: string, description: string }): FeatureText => {
@@ -55,7 +58,7 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createAbilityDamage = (data: { id: string, name?: string, description?: string, keywords: AbilityKeyword[], value?: number, valueCharacteristics?: Characteristic[], valueCharacteristicMultiplier?: number, valuePerLevel?: number, valuePerEchelon?: number, damageType?: DamageType }): FeatureAbilityDamage => {
+	createAbilityDamage = (data: { id: string, name?: string, description?: string, keywords: AbilityKeyword[], value?: number, valueFromController?: FeatureField, valueCharacteristics?: Characteristic[], valueCharacteristicMultiplier?: number, valuePerLevel?: number, valuePerEchelon?: number, damageType?: DamageType }): FeatureAbilityDamage => {
 		return {
 			id: data.id,
 			name: data.name || 'Ability damage modifier',
@@ -64,6 +67,7 @@ export class FactoryFeatureLogic {
 			data: {
 				keywords: data.keywords,
 				value: data.value || 0,
+				valueFromController: data.valueFromController || null,
 				valueCharacteristics: data.valueCharacteristics || [],
 				valueCharacteristicMultiplier: data.valueCharacteristicMultiplier || 0,
 				valuePerLevel: data.valuePerLevel || 0,
@@ -73,7 +77,7 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createAbilityDistance = (data: { id: string, name?: string, description?: string, keywords: AbilityKeyword[], value?: number, valueCharacteristics?: Characteristic[], valueCharacteristicMultiplier?: number, valuePerLevel?: number, valuePerEchelon?: number }): FeatureAbilityDistance => {
+	createAbilityDistance = (data: { id: string, name?: string, description?: string, keywords: AbilityKeyword[], value?: number, valueFromController?: FeatureField, valueCharacteristics?: Characteristic[], valueCharacteristicMultiplier?: number, valuePerLevel?: number, valuePerEchelon?: number }): FeatureAbilityDistance => {
 		return {
 			id: data.id,
 			name: data.name || 'Ability distance modifier',
@@ -82,10 +86,25 @@ export class FactoryFeatureLogic {
 			data: {
 				keywords: data.keywords,
 				value: data.value || 0,
+				valueFromController: data.valueFromController || null,
 				valueCharacteristics: data.valueCharacteristics || [],
 				valueCharacteristicMultiplier: data.valueCharacteristicMultiplier || 0,
 				valuePerLevel: data.valuePerLevel || 0,
 				valuePerEchelon: data.valuePerEchelon || 0
+			}
+		};
+	};
+
+	createAbilityKeyword = (data: { id: string, name?: string, description?: string, keywords: AbilityKeyword[], toAdd: AbilityKeyword[], toRemove: AbilityKeyword[] }): FeatureAbilityKeyword => {
+		return {
+			id: data.id,
+			name: data.name || 'Ability keyword modifier',
+			description: data.description || '',
+			type: FeatureType.AbilityKeyword,
+			data: {
+				keywords: data.keywords,
+				toAdd: data.toAdd,
+				toRemove: data.toRemove
 			}
 		};
 	};
@@ -133,7 +152,7 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createBonus = (data: { id: string, name?: string, description?: string, field: FeatureField, value?: number, valueCharacteristics?: Characteristic[], valueCharacteristicMultiplier?: number, valuePerLevel?: number, valuePerEchelon?: number }): FeatureBonus => {
+	createBonus = (data: { id: string, name?: string, description?: string, field: FeatureField, value?: number, valueFromController?: FeatureField, valueCharacteristics?: Characteristic[], valueCharacteristicMultiplier?: number, valuePerLevel?: number, valuePerEchelon?: number }): FeatureBonus => {
 		return {
 			id: data.id,
 			name: data.name || data.field.toString(),
@@ -142,6 +161,7 @@ export class FactoryFeatureLogic {
 			data: {
 				field: data.field,
 				value: data.value || 0,
+				valueFromController: data.valueFromController || null,
 				valueCharacteristics: data.valueCharacteristics || [],
 				valueCharacteristicMultiplier: data.valueCharacteristicMultiplier || 1,
 				valuePerLevel: data.valuePerLevel || 0,
@@ -163,7 +183,7 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createChoice = (data: { id: string, name?: string, description?: string, options: { feature: Feature, value: number }[], count?: number | 'ancestry' }): FeatureChoice => {
+	createChoice = (data: { id: string, name?: string, description?: string, options: { feature: Feature, value: number }[], selectAt?: 'build' | 'respite' | 'play', count?: number | 'ancestry' }): FeatureChoice => {
 		return {
 			id: data.id,
 			name: data.name || 'Choice',
@@ -172,21 +192,29 @@ export class FactoryFeatureLogic {
 			data: {
 				options: data.options,
 				count: data.count || 1,
+				selectAt: data.selectAt || 'build',
 				selected: []
 			}
 		};
 	};
 
-	createClassAbilityChoice = (data: { id: string, name?: string, description?: string, cost: number | 'signature', allowAnySource?: boolean, minLevel?: number, count?: number }): FeatureClassAbility => {
+	createClassAbilityChoice = (data: { id: string, name?: string, description?: string, cost: number | 'signature', fromClass?: boolean, fromSubclass?: boolean, minLevel?: number, count?: number }): FeatureClassAbility => {
 		return {
 			id: data.id,
-			name: data.name || 'Ability',
+			name: data.name || `${data.cost === 'signature' ? 'Signature' : `${data.cost}pt`} Ability`,
 			description: data.description || '',
 			type: FeatureType.ClassAbility,
 			data: {
 				classID: undefined,
 				cost: data.cost,
-				allowAnySource: data.allowAnySource ?? false,
+				source: {
+					fromClassAbilities: (data.fromClass ?? true) ? true : false,
+					fromSelectedSubclassAbilities: (data.fromSubclass ?? true) ? true : false,
+					fromUnselectedSubclassAbilities: false,
+					fromClassLevels: false,
+					fromSelectedSubclassLevels: false,
+					fromUnselectedSubclassLevels: false
+				},
 				minLevel: data.minLevel || 1,
 				count: data.count || 1,
 				selectedIDs: []
@@ -194,14 +222,13 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createCompanion = (data: { id: string, name?: string, description?: string, type: 'companion' | 'mount' | 'retainer' }): FeatureCompanion => {
+	createCompanion = (data: { id: string, name?: string, description?: string }): FeatureCompanion => {
 		return {
 			id: data.id,
-			name: data.name || Format.capitalize(data.type),
+			name: data.name || 'Companion / Mount',
 			description: data.description || '',
 			type: FeatureType.Companion,
 			data: {
-				type: data.type,
 				selected: null
 			}
 		};
@@ -223,7 +250,7 @@ export class FactoryFeatureLogic {
 		return {
 			id: data.id,
 			name: data.name || 'Damage Modifier',
-			description: data.description || data.modifiers.map(FormatLogic.getDamageModifier).join(', '),
+			description: data.description || '',
 			type: FeatureType.DamageModifier,
 			data: {
 				modifiers: data.modifiers
@@ -231,13 +258,15 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createDomainChoice = (data: { id: string, name?: string, description?: string, count?: number }): FeatureDomain => {
+	createDomainChoice = (data: { id: string, name?: string, description?: string, characteristic?: Characteristic, levels?: number[], count?: number }): FeatureDomain => {
 		return {
 			id: data.id,
 			name: data.name || 'Domain',
 			description: data.description || '',
 			type: FeatureType.Domain,
 			data: {
+				characteristic: data.characteristic || Characteristic.Intuition,
+				levels: data.levels || [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
 				count: data.count || 1,
 				selected: []
 			}
@@ -254,6 +283,18 @@ export class FactoryFeatureLogic {
 				level: data.level,
 				count: data.count || 1,
 				selected: []
+			}
+		};
+	};
+
+	createFixture = (data: { fixture: Fixture }): FeatureFixture => {
+		return {
+			id: data.fixture.id,
+			name: `Fixture: ${data.fixture.name}`,
+			description: '',
+			type: FeatureType.Fixture,
+			data: {
+				fixture: data.fixture
 			}
 		};
 	};
@@ -309,7 +350,7 @@ export class FactoryFeatureLogic {
 			description: data.description || '',
 			type: FeatureType.ItemChoice,
 			data: {
-				types: data.types || [ ItemType.Artifact, ItemType.Consumable, ItemType.Leveled, ItemType.Trinket1st, ItemType.Trinket2nd, ItemType.Trinket3rd, ItemType.Trinket4th ],
+				types: data.types || [ ItemType.Artifact, ItemType.Consumable1st, ItemType.Consumable2nd, ItemType.Consumable3rd, ItemType.Consumable4th, ItemType.Leveled, ItemType.Trinket1st, ItemType.Trinket2nd, ItemType.Trinket3rd, ItemType.Trinket4th ],
 				count: data.count || 1,
 				selected: []
 			}
@@ -357,7 +398,7 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createMalice = (data: { id: string, name: string, cost: number, repeatable?: boolean, sections: (string | PowerRoll)[], echelon?: number }): FeatureMalice => {
+	createMalice = (data: { id: string, name: string, cost: number, repeatable?: boolean, sections: (string | PowerRoll)[], echelon?: number, icon?: StatBlockIcon }): FeatureMalice => {
 		return {
 			id: data.id,
 			name: data.name,
@@ -367,7 +408,8 @@ export class FactoryFeatureLogic {
 				cost: data.cost,
 				repeatable: data.repeatable || false,
 				sections: data.sections,
-				echelon: data.echelon || 1
+				echelon: data.echelon || 1,
+				icon: data.icon
 			}
 		};
 	};
@@ -385,11 +427,11 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createMovementMode = (data: { id: string, name?: string, mode: string }): FeatureMovementMode => {
+	createMovementMode = (data: { id: string, name?: string, description?: string, mode: string }): FeatureMovementMode => {
 		return {
 			id: data.id,
 			name: data.name || 'Movement Mode',
-			description: '',
+			description: data.description || '',
 			type: FeatureType.MovementMode,
 			data: {
 				mode: data.mode
@@ -433,7 +475,7 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createPerk = (data: { id: string, name?: string, description?: string, lists?: PerkList[], count?: number }): FeaturePerk => {
+	createPerk = (data: { id: string, name?: string, description?: string, lists?: PerkList[], count?: number, selected?: Perk[] }): FeaturePerk => {
 		const count = data.count || 1;
 		const lists = data.lists || [];
 
@@ -447,7 +489,7 @@ export class FactoryFeatureLogic {
 			data: {
 				lists: data.lists || [ PerkList.Crafting, PerkList.Exploration, PerkList.Interpersonal, PerkList.Intrigue, PerkList.Lore, PerkList.Supernatural ],
 				count: count,
-				selected: []
+				selected: data.selected || []
 			}
 		};
 	};
@@ -465,7 +507,31 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createSize = (data: { id: string, name?: string, description?: string, sizeValue: number, sizeMod: 'T' | 'S' | 'M' | 'L' }): FeatureSize => {
+	createRetainer = (data: { id: string, name?: string, description?: string, retainer?: Monster }): FeatureRetainer => {
+		return {
+			id: data.id,
+			name: data.name || 'Retainer',
+			description: data.description || '',
+			type: FeatureType.Retainer,
+			data: {
+				selected: data.retainer || null
+			}
+		};
+	};
+
+	createSaveThreshold = (data: { id: string, name?: string, description?: string, value: number }): FeatureSaveThreshold => {
+		return {
+			id: data.id,
+			name: data.name || 'Save Threshold',
+			description: data.description || '',
+			type: FeatureType.SaveThreshold,
+			data: {
+				value: data.value
+			}
+		};
+	};
+
+	createSize = (data: { id: string, name?: string, description?: string, sizeValue: number, sizeMod?: 'T' | 'S' | 'M' | 'L' }): FeatureSize => {
 		return {
 			id: data.id,
 			name: data.name || 'Size',
@@ -474,20 +540,8 @@ export class FactoryFeatureLogic {
 			data: {
 				size: {
 					value: data.sizeValue,
-					mod: data.sizeMod
+					mod: data.sizeMod || ''
 				}
-			}
-		};
-	};
-
-	createSkill = (data: { id: string, name?: string, description?: string, skill: string }): FeatureSkill => {
-		return {
-			id: data.id,
-			name: data.name || data.skill,
-			description: data.description || '',
-			type: FeatureType.Skill,
-			data: {
-				skill: data.skill
 			}
 		};
 	};
@@ -547,16 +601,55 @@ export class FactoryFeatureLogic {
 		};
 	};
 
-	createSummon = (data: { id: string, name?: string, description?: string, options: Monster[], count?: number }): FeatureSummon => {
+	createSummon = (data: { id: string, name?: string, description?: string, summons: Summon[] }): FeatureSummon => {
 		return {
 			id: data.id,
-			name: data.name || 'Summon',
+			name: data.name || 'Summon Choice',
 			description: data.description || '',
 			type: FeatureType.Summon,
+			data: {
+				summons: data.summons
+			}
+		};
+	};
+
+	createSummonChoice = (data: { id: string, name?: string, description?: string, options: Summon[], count?: number }): FeatureSummonChoice => {
+		return {
+			id: data.id,
+			name: data.name || 'Summon Choice',
+			description: data.description || '',
+			type: FeatureType.SummonChoice,
 			data: {
 				options: data.options,
 				count: data.count || 1,
 				selected: []
+			}
+		};
+	};
+
+	createSwitchOptions = (data: { id: string, name?: string, description?: string, switch: string, options: { value: string, feature: Feature }[], defaultOption?: Feature }): FeatureSwitchOptions => {
+		return {
+			id: data.id,
+			name: data.name || 'Switch Options',
+			description: data.description || '',
+			type: FeatureType.SwitchOptions,
+			data: {
+				switch: data.switch,
+				options: data.options,
+				defaultOption: data.defaultOption || null
+			}
+		};
+	};
+
+	createSwitchValue = (data: { id: string, name?: string, description?: string, switch: string, value: string }): FeatureSwitchValue => {
+		return {
+			id: data.id,
+			name: data.name || data.switch || 'Switch Value',
+			description: data.description || '',
+			type: FeatureType.SwitchValue,
+			data: {
+				switch: data.switch,
+				value: data.value
 			}
 		};
 	};
@@ -599,6 +692,21 @@ export class FactoryFeatureLogic {
 				echelon: data.echelon || 1,
 				count: count,
 				selected: []
+			}
+		};
+	};
+
+	createToggle = (data: { id: string, name?: string, description?: string, condition: string, featureChecked: Feature, featureUnchecked?: Feature, checked?: boolean }): FeatureToggle => {
+		return {
+			id: data.id,
+			name: data.name || 'Toggle',
+			description: data.description || '',
+			type: FeatureType.Toggle,
+			data: {
+				condition: data.condition,
+				featureChecked: data.featureChecked,
+				featureUnchecked: data.featureUnchecked || null,
+				checked: (data.checked ?? true) ? true : false
 			}
 		};
 	};

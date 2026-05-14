@@ -1,9 +1,8 @@
-import { AbilityDistanceType } from '../../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../../enums/ability-keyword';
-import { Characteristic } from '../../../enums/characteristic';
-import { FactoryLogic } from '../../../logic/factory-logic';
-import { SkillList } from '../../../enums/skill-list';
-import { SubClass } from '../../../models/subclass';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { SubClass } from '@/models/subclass';
 
 export const duelist: SubClass = {
 	id: 'O51GO1EdIggJHj40',
@@ -15,7 +14,6 @@ export const duelist: SubClass = {
 			features: [
 				FactoryLogic.feature.createSkillChoice({
 					id: '1NhlI9WCQUCKkX0u',
-					listOptions: [ SkillList.Exploration ],
 					selected: [ 'Gymnastics' ]
 				}),
 				FactoryLogic.feature.createAbility({
@@ -43,9 +41,7 @@ export const duelist: SubClass = {
 						cost: 1,
 						sections: [
 							FactoryLogic.createAbilitySectionText('You gain a +2 bonus to speed until the end of your turn. Additionally, the next power roll you make this turn can’t have an outcome lower than tier 2.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
-								value: 1,
+							FactoryLogic.createAbilitySectionSpend({
 								effect: 'You gain a +4 bonus to speed instead.'
 							})
 						]
@@ -310,5 +306,6 @@ Additionally, when your named signature ability is the last ability you use in a
 			features: []
 		}
 	],
+	abilities: [],
 	selected: false
 };

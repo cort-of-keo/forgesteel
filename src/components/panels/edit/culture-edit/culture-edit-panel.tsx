@@ -1,17 +1,16 @@
-import { EnvironmentData, OrganizationData, UpbringingData } from '../../../../data/culture-data';
-import { Input, Segmented, Select, Space, Tabs } from 'antd';
-import { Culture } from '../../../../models/culture';
-import { CultureType } from '../../../../enums/culture-type';
-import { ErrorBoundary } from '../../../controls/error-boundary/error-boundary';
-import { Feature } from '../../../../models/feature';
-import { Field } from '../../../controls/field/field';
-import { HeaderText } from '../../../controls/header-text/header-text';
-import { MultiLine } from '../../../controls/multi-line/multi-line';
-import { NameGenerator } from '../../../../utils/name-generator';
-import { Sourcebook } from '../../../../models/sourcebook';
-import { SourcebookLogic } from '../../../../logic/sourcebook-logic';
-import { ThunderboltOutlined } from '@ant-design/icons';
-import { Utils } from '../../../../utils/utils';
+import { EnvironmentData, OrganizationData, UpbringingData } from '@/data/culture-data';
+import { Segmented, Select, Space, Tabs } from 'antd';
+import { Culture } from '@/models/culture';
+import { CulturePanel } from '@/components/panels/elements/culture-panel/culture-panel';
+import { CultureType } from '@/enums/culture-type';
+import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
+import { Field } from '@/components/controls/field/field';
+import { NameDescEditPanel } from '@/components/panels/edit/name-desc-edit/name-desc-edit-panel';
+import { PanelMode } from '@/enums/panel-mode';
+import { SelectablePanel } from '@/components/controls/selectable-panel/selectable-panel';
+import { Sourcebook } from '@/models/sourcebook';
+import { SourcebookLogic } from '@/logic/sourcebook-logic';
+import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 import './culture-edit-panel.scss';
@@ -19,174 +18,114 @@ import './culture-edit-panel.scss';
 interface Props {
 	culture: Culture;
 	sourcebooks: Sourcebook[];
+	mode?: PanelMode;
 	onChange: (culture: Culture) => void;
 }
 
 export const CultureEditPanel = (props: Props) => {
 	const [ culture, setCulture ] = useState<Culture>(props.culture);
 
-	try {
-		const getNameAndDescriptionSection = () => {
-			const setName = (value: string) => {
-				const copy = Utils.copy(culture);
-				copy.name = value;
-				setCulture(copy);
-				props.onChange(copy);
-			};
-
-			const setDescription = (value: string) => {
-				const copy = Utils.copy(culture);
-				copy.description = value;
-				setCulture(copy);
-				props.onChange(copy);
-			};
-
-			return (
-				<Space direction='vertical' style={{ width: '100%' }}>
-					<HeaderText>Name</HeaderText>
-					<Input
-						status={culture.name === '' ? 'warning' : ''}
-						placeholder='Name'
-						allowClear={true}
-						addonAfter={<ThunderboltOutlined className='random-btn' onClick={() => setName(NameGenerator.generateName())} />}
-						value={culture.name}
-						onChange={e => setName(e.target.value)}
-					/>
-					<HeaderText>Description</HeaderText>
-					<MultiLine value={culture.description} onChange={setDescription} />
-				</Space>
-			);
-		};
-
-		const getDetailsEditSection = () => {
-			return (
-				<Space direction='vertical' style={{ width: '100%' }}>
-					<Segmented
-						block={true}
-						options={[ CultureType.Ancestral, CultureType.Professional ]}
-						value={culture.type}
-						onChange={value => {
-							const copy = Utils.copy(culture);
-							copy.type = value;
-							setCulture(copy);
-							props.onChange(copy);
-						}}
-					/>
-					<Select
-						style={{ width: '100%' }}
-						allowClear={true}
-						placeholder='Select language'
-						options={SourcebookLogic.getLanguages(props.sourcebooks).map(l => ({ label: l.name, value: l.name, desc: l.description }))}
-						optionRender={option => <Field label={option.data.label} value={option.data.desc} />}
-						showSearch={true}
-						filterOption={(input, option) => {
-							const strings = option ?
-								[
-									option.label,
-									option.desc
-								]
-								: [];
-							return strings.some(str => str.toLowerCase().includes(input.toLowerCase()));
-						}}
-						value={culture.language.data.selected.length > 0 ? culture.language.data.selected[0] : null}
-						onChange={value => {
-							const copy = Utils.copy(culture);
-							copy.language.data.selected = value ? [ value ] : [];
-							setCulture(copy);
-							props.onChange(copy);
-						}}
-					/>
-					<Select
-						style={{ width: '100%' }}
-						status={culture.environment === null ? 'warning' : ''}
-						allowClear={true}
-						placeholder='Select environment'
-						options={EnvironmentData.getEnvironments().map(s => ({ value: s.id, label: s.name }))}
-						optionRender={option => <div className='ds-text'>{option.data.label}</div>}
-						showSearch={true}
-						filterOption={(input, option) => {
-							const strings = option ?
-								[
-									option.label
-								]
-								: [];
-							return strings.some(str => str.toLowerCase().includes(input.toLowerCase()));
-						}}
-						value={culture.environment ? culture.environment.id : null}
-						onChange={value => {
-							const copy = Utils.copy(culture);
-							const env = EnvironmentData.getEnvironments().find(e => e.id === value);
-							if (env) {
-								const envCopy = Utils.copy(env) as Feature;
-								copy.environment = envCopy;
-							}
-							setCulture(copy);
-							props.onChange(copy);
-						}}
-					/>
-					<Select
-						style={{ width: '100%' }}
-						status={culture.organization === null ? 'warning' : ''}
-						allowClear={true}
-						placeholder='Select organization'
-						options={OrganizationData.getOrganizations().map(s => ({ value: s.id, label: s.name }))}
-						optionRender={option => <div className='ds-text'>{option.data.label}</div>}
-						showSearch={true}
-						filterOption={(input, option) => {
-							const strings = option ?
-								[
-									option.label
-								]
-								: [];
-							return strings.some(str => str.toLowerCase().includes(input.toLowerCase()));
-						}}
-						value={culture.organization ? culture.organization.id : null}
-						onChange={value => {
-							const copy = Utils.copy(culture);
-							const org = OrganizationData.getOrganizations().find(o => o.id === value);
-							if (org) {
-								const orgCopy = Utils.copy(org) as Feature;
-								copy.organization = orgCopy;
-							}
-							setCulture(copy);
-							props.onChange(copy);
-						}}
-					/>
-					<Select
-						style={{ width: '100%' }}
-						status={culture.upbringing === null ? 'warning' : ''}
-						allowClear={true}
-						placeholder='Select upbringing'
-						options={UpbringingData.getUpbringings().map(s => ({ value: s.id, label: s.name }))}
-						optionRender={option => <div className='ds-text'>{option.data.label}</div>}
-						showSearch={true}
-						filterOption={(input, option) => {
-							const strings = option ?
-								[
-									option.label
-								]
-								: [];
-							return strings.some(str => str.toLowerCase().includes(input.toLowerCase()));
-						}}
-						value={culture.upbringing ? culture.upbringing.id : null}
-						onChange={value => {
-							const copy = Utils.copy(culture);
-							const ub = UpbringingData.getUpbringings().find(u => u.id === value);
-							if (ub) {
-								const ubCopy = Utils.copy(ub) as Feature;
-								copy.upbringing = ubCopy;
-							}
-							setCulture(copy);
-							props.onChange(copy);
-						}}
-					/>
-				</Space>
-			);
+	const getNameAndDescriptionSection = () => {
+		const onChange = (name: string, desc: string) => {
+			const copy = Utils.copy(culture);
+			copy.name = name;
+			copy.description = desc;
+			setCulture(copy);
+			props.onChange(copy);
 		};
 
 		return (
-			<ErrorBoundary>
-				<div className='culture-edit-panel'>
+			<NameDescEditPanel
+				element={culture}
+				onChange={onChange}
+			/>
+		);
+	};
+
+	const getDetailsEditSection = () => {
+		return (
+			<Space orientation='vertical' style={{ width: '100%' }}>
+				<Segmented
+					block={true}
+					options={[ CultureType.Ancestral, CultureType.Professional ]}
+					value={culture.type}
+					onChange={value => {
+						const copy = Utils.copy(culture);
+						copy.type = value;
+						setCulture(copy);
+						props.onChange(copy);
+					}}
+				/>
+				<Select
+					style={{ width: '100%' }}
+					allowClear={true}
+					placeholder='Select language'
+					options={SourcebookLogic.getLanguages(props.sourcebooks).map(l => ({ label: l.name, value: l.name, desc: l.description }))}
+					optionRender={option => <Field label={option.data.label} value={option.data.desc} />}
+					value={culture.language.data.selected.length > 0 ? culture.language.data.selected[0] : null}
+					onChange={value => {
+						const copy = Utils.copy(culture);
+						copy.language.data.selected = value ? [ value ] : [];
+						setCulture(copy);
+						props.onChange(copy);
+					}}
+				/>
+				<Select
+					style={{ width: '100%' }}
+					status={culture.environment === null ? 'warning' : ''}
+					allowClear={true}
+					placeholder='Select environment'
+					options={EnvironmentData.getEnvironments().map(s => ({ value: s.id, label: s.name }))}
+					optionRender={option => <div className='ds-text'>{option.data.label}</div>}
+					value={culture.environment ? culture.environment.id : null}
+					onChange={value => {
+						const copy = Utils.copy(culture);
+						const env = EnvironmentData.getEnvironments().find(e => e.id === value);
+						copy.environment = env ? Utils.copy(env) : null;
+						setCulture(copy);
+						props.onChange(copy);
+					}}
+				/>
+				<Select
+					style={{ width: '100%' }}
+					status={culture.organization === null ? 'warning' : ''}
+					allowClear={true}
+					placeholder='Select organization'
+					options={OrganizationData.getOrganizations().map(s => ({ value: s.id, label: s.name }))}
+					optionRender={option => <div className='ds-text'>{option.data.label}</div>}
+					value={culture.organization ? culture.organization.id : null}
+					onChange={value => {
+						const copy = Utils.copy(culture);
+						const org = OrganizationData.getOrganizations().find(o => o.id === value);
+						copy.organization = org ? Utils.copy(org) : null;
+						setCulture(copy);
+						props.onChange(copy);
+					}}
+				/>
+				<Select
+					style={{ width: '100%' }}
+					status={culture.upbringing === null ? 'warning' : ''}
+					allowClear={true}
+					placeholder='Select upbringing'
+					options={UpbringingData.getUpbringings().map(s => ({ value: s.id, label: s.name }))}
+					optionRender={option => <div className='ds-text'>{option.data.label}</div>}
+					value={culture.upbringing ? culture.upbringing.id : null}
+					onChange={value => {
+						const copy = Utils.copy(culture);
+						const ub = UpbringingData.getUpbringings().find(u => u.id === value);
+						copy.upbringing = ub ? Utils.copy(ub) : null;
+						setCulture(copy);
+						props.onChange(copy);
+					}}
+				/>
+			</Space>
+		);
+	};
+
+	return (
+		<ErrorBoundary>
+			<div className='culture-edit-panel'>
+				<div className='culture-workspace-column'>
 					<Tabs
 						items={[
 							{
@@ -202,10 +141,30 @@ export const CultureEditPanel = (props: Props) => {
 						]}
 					/>
 				</div>
-			</ErrorBoundary>
-		);
-	} catch (ex) {
-		console.error(ex);
-		return null;
-	}
+				{
+					props.mode === PanelMode.Full ?
+						<div className='culture-preview-column'>
+							<Tabs
+								items={[
+									{
+										key: '1',
+										label: 'Preview',
+										children: (
+											<SelectablePanel>
+												<CulturePanel
+													culture={culture}
+													sourcebooks={props.sourcebooks}
+													mode={PanelMode.Full}
+												/>
+											</SelectablePanel>
+										)
+									}
+								]}
+							/>
+						</div>
+						: null
+				}
+			</div>
+		</ErrorBoundary>
+	);
 };

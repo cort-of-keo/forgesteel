@@ -1,49 +1,45 @@
-import { Collections } from '../utils/collections';
-import { RollState } from '../enums/roll-state';
+import { Collections } from '@/utils/collections';
+import { RollState } from '@/enums/roll-state';
 
 export class RollLogic {
-	static getOdds = (modifiers: number[], rollState: RollState) => {
+	static getOdds = (modifiers: number[], rollState: RollState, rollType: string = 'Power Roll') => {
 		const results = [];
 
 		for (let a = 1; a <= 10; ++a) {
 			for (let b = 1; b <= 10; ++b) {
-				if (a + b >= 19) {
-					results.push(4);
+				const total = Collections.sum([ a, b, ...modifiers, RollLogic.getBonus(rollState, rollType) ], r => r);
+				if (total >= 17) {
+					// Tier 3
+					switch (rollState) {
+						case RollState.DoubleBane:
+							results.push(2);
+							break;
+						default:
+							results.push(3);
+							break;
+					}
+				} else if (total >= 12) {
+					// Tier 2
+					switch (rollState) {
+						case RollState.DoubleBane:
+							results.push(1);
+							break;
+						case RollState.DoubleEdge:
+							results.push(3);
+							break;
+						default:
+							results.push(2);
+							break;
+					}
 				} else {
-					const total = Collections.sum([ a, b, ...modifiers, RollLogic.getBonus(rollState) ], r => r);
-					if (total >= 17) {
-						// Tier 3
-						switch (rollState) {
-							case RollState.DoubleBane:
-								results.push(2);
-								break;
-							default:
-								results.push(3);
-								break;
-						}
-					} else if (total >= 12) {
-						// Tier 2
-						switch (rollState) {
-							case RollState.DoubleBane:
-								results.push(1);
-								break;
-							case RollState.DoubleEdge:
-								results.push(3);
-								break;
-							default:
-								results.push(2);
-								break;
-						}
-					} else {
-						// Tier 1
-						switch (rollState) {
-							case RollState.DoubleEdge:
-								results.push(2);
-								break;
-							default:
-								results.push(1);
-								break;
-						}
+					// Tier 1
+					switch (rollState) {
+						case RollState.DoubleEdge:
+							results.push(2);
+							break;
+						default:
+							results.push(1);
+							break;
 					}
 				}
 			}
@@ -52,7 +48,11 @@ export class RollLogic {
 		return results;
 	};
 
-	static getBonus = (rollState: RollState) => {
+	static getBonus = (rollState: RollState, type: string = 'Power Roll') => {
+		if (type == 'Saving Throw') {
+			return 0;
+		}
+
 		switch (rollState) {
 			case RollState.Edge:
 				return 2;

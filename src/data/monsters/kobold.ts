@@ -1,12 +1,12 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { DamageModifierType } from '../../enums/damage-modifier-type';
-import { DamageType } from '../../enums/damage-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { DamageModifierType } from '@/enums/damage-modifier-type';
+import { DamageType } from '@/enums/damage-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const kobold: MonsterGroup = {
 	id: 'monster-group-kobold',
@@ -63,6 +63,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			id: 'kobold-malice-1',
 			name: 'Maniple Tactics',
 			cost: 3,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Up to 3 kobolds make a free strike, swaps positions with an adjacent kobold, and then that kobold makes a free strike.'
 			]
@@ -71,6 +72,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			id: 'kobold-malice-2',
 			name: 'Set the Initiative',
 			cost: 5,
+			icon: StatBlockIcon.SpecialArea,
 			sections: [
 				'Two kobolds take their turns in a row.'
 			]
@@ -79,6 +81,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			id: 'kobold-malice-3',
 			name: 'Shield Wall',
 			cost: 7,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Until the end of the round, all kobolds with Shield? Shield! Impose an additional bane on incoming strikes and abilities.'
 			]
@@ -99,7 +102,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stability: 0,
 			freeStrikeDamage: 1,
 			withCaptain: '+2 bonus to Stamina',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -142,7 +145,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stability: 0,
 			freeStrikeDamage: 2,
 			withCaptain: '+5 bonus to ranged distance',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -185,7 +188,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stability: 0,
 			freeStrikeDamage: 1,
 			withCaptain: '+1 bonus to speed',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -228,7 +231,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stability: 0,
 			freeStrikeDamage: 1,
 			withCaptain: '+1 bonus to speed',
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -273,7 +276,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stamina: 10,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(0, 1, 2, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 1, 2, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -335,7 +338,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stamina: 10,
 			stability: 0,
 			freeStrikeDamage: 1,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 1, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 1, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -366,8 +369,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 						target: 'One trap or other terrain object',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The trap or terrain object instantly triggers.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'The artifex places a new trap in the encounter and can instantly trigger it. The artifex prefers working with angry beehives, flammable oil, snare traps, and spike traps.'
 							})
@@ -394,7 +396,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stamina: 20,
 			stability: 0,
 			freeStrikeDamage: 1,
-			characteristics: MonsterLogic.createCharacteristics(2, 1, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -412,8 +414,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 								tier2: '4 damage; taunted (EoT)',
 								tier3: '5 damage; taunted (EoT)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'If the legionary is acting as a captain, they and each member of their squad shift up to 2 squares before this ability is used.'
 							})
@@ -458,7 +459,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stamina: 15,
 			stability: 0,
 			freeStrikeDamage: 1,
-			characteristics: MonsterLogic.createCharacteristics(0, 1, 0, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(0, 1, 0, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -477,8 +478,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 								tier3: '5 damage'
 							})),
 							FactoryLogic.createAbilitySectionText('One ally within 10 squares of the signifer can shift up to their speed if they end that shift adjacent to an ally.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								repeatable: true,
 								effect: 'One additional ally can shift for each 2 Malice spent.'
@@ -525,7 +525,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stamina: 15,
 			stability: 0,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -543,8 +543,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 								tier2: '6 damage; M<1 restrained (save ends)',
 								tier3: '7 damage; M<2 restrained (save ends)'
 							})),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'The venator lights their net on fire, and a target restrained this way takes 2 fire damage at the start of each of their turns.'
 							})
@@ -581,7 +580,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stamina: 40,
 			stability: 2,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(2, -1, -3, 0, -2),
+			characteristics: FactoryLogic.createCharacteristics(2, -1, -3, 0, -2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -600,8 +599,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 								tier3: '14 acid damage; A < 2 restrained (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('A size 2 or smaller creature restrained this way is pulled into the brick’s space, moves with the brick, and takes 4 acid damage at the start of each of their turns. An engulfed creature who is no longer restrained moves to the nearest unoccupied space adjacent to the brick. The brick can have as many creatures or objects engulfed as will fit within their space.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 2,
 								effect: 'This ability targets one additional target.'
 							})
@@ -644,7 +642,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stamina: 80,
 			stability: 2,
 			freeStrikeDamage: 2,
-			characteristics: MonsterLogic.createCharacteristics(2, 3, 2, 0, 2),
+			characteristics: FactoryLogic.createCharacteristics(2, 3, 2, 0, 2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -666,8 +664,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 								tier3: '13 damage; M<3 weakened (save ends)'
 							})),
 							FactoryLogic.createAbilitySectionText('Each ally adjacent to a target can make a free strike against that target.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'While weakened this way, a target is also restrained.'
 							})
@@ -683,8 +680,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 						target: 'One enemy',
 						sections: [
 							FactoryLogic.createAbilitySectionText('Until the start of the centurion’s next turn, the centurion and their allies gain an edge on power rolls against the target.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								repeatable: true,
 								effect: 'This ability targets one additional target for each 3 Malice spent.'
@@ -714,7 +710,6 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 						id: 'kobold-10-feature-5',
 						name: 'Firetail Pilum',
 						type: FactoryLogic.type.createVillainAction(1),
-						keywords: [],
 						distance: [ FactoryLogic.distance.createSpecial('Special') ],
 						target: 'Special',
 						sections: [
@@ -768,7 +763,7 @@ Kobold legionaries might join worthy adventurers as retainers, lending their def
 			stamina: 80,
 			stability: 0,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 1, -3, 0, -2),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, -3, 0, -2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({

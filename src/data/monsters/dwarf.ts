@@ -1,11 +1,11 @@
-import { AbilityDistanceType } from '../../enums/abiity-distance-type';
-import { AbilityKeyword } from '../../enums/ability-keyword';
-import { Characteristic } from '../../enums/characteristic';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { MonsterGroup } from '../../models/monster-group';
-import { MonsterLogic } from '../../logic/monster-logic';
-import { MonsterOrganizationType } from '../../enums/monster-organization-type';
-import { MonsterRoleType } from '../../enums/monster-role-type';
+import { AbilityDistanceType } from '@/enums/ability-distance-type';
+import { AbilityKeyword } from '@/enums/ability-keyword';
+import { Characteristic } from '@/enums/characteristic';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { MonsterGroup } from '@/models/monster-group';
+import { MonsterOrganizationType } from '@/enums/monster-organization-type';
+import { MonsterRoleType } from '@/enums/monster-role-type';
+import { StatBlockIcon } from '@/enums/stat-block-icon';
 
 export const dwarf: MonsterGroup = {
 	id: 'monster-group-dwarf',
@@ -68,6 +68,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			id: 'dwarf-malice-1',
 			name: 'Breaching Charge',
 			cost: 3,
+			icon: StatBlockIcon.Self,
 			repeatable: true,
 			sections: [
 				'A dwarf can destroy one adjacent object or square of wall for each 3 Malice spent. Each enemy adjacent to the destroyed object or square takes the object’s Stamina in damage (3 for wood, 6 for stone, or 9 for metal).'
@@ -77,6 +78,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			id: 'dwarf-malice-2',
 			name: 'Rappelling Barrage',
 			cost: 5,
+			icon: StatBlockIcon.Trait,
 			sections: [
 				'Each dwarf acting this turn can automatically climb at full speed while moving. At any point during this movement, they can make a free strike.'
 			]
@@ -119,7 +121,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stability: 2,
 			freeStrikeDamage: 1,
 			withCaptain: '+2 bonus to Stamina',
-			characteristics: MonsterLogic.createCharacteristics(1, 0, 0, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 0, 0, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -159,7 +161,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stability: 2,
 			freeStrikeDamage: 2,
 			withCaptain: '+2 bonus to Stamina',
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -196,7 +198,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stability: 1,
 			freeStrikeDamage: 1,
 			withCaptain: '+2 bonus to Stamina',
-			characteristics: MonsterLogic.createCharacteristics(2, 1, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 1, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -236,7 +238,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stability: 1,
 			freeStrikeDamage: 1,
 			withCaptain: '+2 bonus to Stamina',
-			characteristics: MonsterLogic.createCharacteristics(1, 2, 0, 0, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 2, 0, 0, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -272,7 +274,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stamina: 26,
 			stability: 1,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -291,8 +293,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 								tier3: '12 damage; push 5'
 							})),
 							FactoryLogic.createAbilitySectionText('If the target is adjacent to an object or a wall after the power roll is resolved, they are restrained until the end of their next turn. A target restrained by a dwarf can be force moved by this ability. This forced movement doesn’t end the restrained condition unless the Director determines otherwise.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 5,
 								effect: 'If the target is pushed into another creature, the target and the creature are each restrained until the end of their next turn.'
 							})
@@ -332,7 +333,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stamina: 39,
 			stability: 3,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(1, 0, 0, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 0, 0, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -393,7 +394,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stamina: 36,
 			stability: 2,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -448,7 +449,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stamina: 72,
 			stability: 4,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 0, 0, 1),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 0, 0, 1),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -467,8 +468,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 								tier3: '13 damage; slide 1'
 							})),
 							FactoryLogic.createAbilitySectionText('The shieldwall can shift 1 square to remain adjacent to the target. A target restrained by a dwarf can be force moved by this ability. This forced movement doesn’t end the restrained condition unless the Director determines otherwise.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'This ablitiy targets one additional target.'
 							})
@@ -506,7 +506,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stamina: 52,
 			stability: 2,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(1, 0, 2, 2, 0),
+			characteristics: FactoryLogic.createCharacteristics(1, 0, 2, 2, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -567,7 +567,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stamina: 36,
 			stability: 2,
 			freeStrikeDamage: 3,
-			characteristics: MonsterLogic.createCharacteristics(0, 2, 0, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(0, 2, 0, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -627,7 +627,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stamina: 59,
 			stability: 3,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, 0, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, 0, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -688,7 +688,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stamina: 132,
 			stability: 4,
 			freeStrikeDamage: 5,
-			characteristics: MonsterLogic.createCharacteristics(3, 0, 2, 1, 0),
+			characteristics: FactoryLogic.createCharacteristics(3, 0, 2, 1, 0),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({
@@ -710,8 +710,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 								tier3: '15 damage; slide 5'
 							})),
 							FactoryLogic.createAbilitySectionText('target restrained by a dwarf can be force moved by this ability. This forced movement doesn’t end the restrained condition unless the Director determines otherwise.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 3,
 								effect: 'A target force moved adjacent to an ally of the marauder lord is restrained until the end of their next turn.'
 							})
@@ -728,8 +727,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 						target: 'One creature or object',
 						sections: [
 							FactoryLogic.createAbilitySectionText('The target vertical slides up to 5 squares. A target restrained by a dwarf can be force moved by this ability. This forced movement doesn’t end the restrained condition unless the Director determines otherwise.'),
-							FactoryLogic.createAbilitySectionField({
-								name: 'Spend',
+							FactoryLogic.createAbilitySectionSpend({
 								value: 5,
 								effect: 'This ability takes the Area keyword and loses the Ranged keyword, its distance becomes a 10 burst, and it targets each restrained creature in the area.'
 							})
@@ -799,7 +797,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 		}),
 		FactoryLogic.createMonster({
 			id: 'dwarf-13',
-			name: 'Servitor War Worker',
+			name: 'Servitor War Walker',
 			level: 1,
 			role: FactoryLogic.createMonsterRole(MonsterOrganizationType.Elite, MonsterRoleType.Mount),
 			keywords: [ 'Construct', 'Dwarf' ],
@@ -809,7 +807,7 @@ Legends speak of stone singers, dwarves who could move mountains with their song
 			stamina: 60,
 			stability: 2,
 			freeStrikeDamage: 4,
-			characteristics: MonsterLogic.createCharacteristics(2, 0, -2, 0, -2),
+			characteristics: FactoryLogic.createCharacteristics(2, 0, -2, 0, -2),
 			features: [
 				FactoryLogic.feature.createAbility({
 					ability: FactoryLogic.createAbility({

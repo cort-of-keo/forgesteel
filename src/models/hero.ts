@@ -1,18 +1,21 @@
-import { Ancestry } from './ancestry';
-import { Career } from './career';
-import { Complication } from './complication';
-import { Culture } from './culture';
-import { Feature } from './feature';
-import { HeroClass } from './class';
-import { HeroState } from './hero-state';
+import { Ancestry } from '@/models/ancestry';
+import { Career } from '@/models/career';
+import { Characteristic } from '@/enums/characteristic';
+import { Complication } from '@/models/complication';
+import { Culture } from '@/models/culture';
+import { Feature } from '@/models/feature';
+import { HeroClass } from '@/models/class';
+import { HeroState } from '@/models/hero-state';
 
 export interface AbilityCustomization {
 	abilityID: string;
 	name: string;
 	description: string;
 	notes: string;
+	costModifier: number;
 	distanceBonus: number;
 	damageBonus: number;
+	characteristic: Characteristic | null;
 }
 
 export interface Hero {
@@ -21,17 +24,28 @@ export interface Hero {
 
 	picture: string | null;
 	folder: string;
-	settingIDs: string[];
+	sourcebookIDs: string[];
 
 	ancestry: Ancestry | null;
 	culture: Culture | null;
-	class: HeroClass | null;
 	career: Career | null;
+	class: HeroClass | null;
 	complication: Complication | null;
 
 	features: Feature[];
 	state: HeroState;
 	abilityCustomizations: AbilityCustomization[];
+}
+
+export interface HeroOverview {
+	id: string;
+	name: string;
+	ancestry: string | null;
+	background: string | null;
+	class: string | null;
+	complication: string | null;
+	picture: string | null;
+	folder: string;
 }
 
 export type HeroEditTab = 'start' | 'ancestry' | 'culture' | 'career' | 'class' | 'complication' | 'details';

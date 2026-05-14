@@ -1,7 +1,9 @@
-import { Ancestry } from '../../models/ancestry';
-import { ConditionType } from '../../enums/condition-type';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureField } from '../../enums/feature-field';
+import { EnvironmentData, OrganizationData, UpbringingData } from '@/data/culture-data';
+import { Ancestry } from '@/models/ancestry';
+import { ConditionType } from '@/enums/condition-type';
+import { CultureType } from '@/enums/culture-type';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
 
 export const highElf: Ancestry = {
 	id: 'ancestry-high-elf',
@@ -24,10 +26,8 @@ export const highElf: Ancestry = {
 							name: 'Glamor of Terror',
 							description: 'When a foe strikes, you reverse the magic of your glamor to instill fear into their heart.',
 							type: FactoryLogic.type.createTrigger('You take damage from a creature'),
-							distance: [ FactoryLogic.distance.createSelf() ],
-							target: 'Self',
 							sections: [
-								FactoryLogic.createAbilitySectionText('You make the triggering creature frightened of you until the end of their next turn.')
+								FactoryLogic.createAbilitySectionText('Whenever you take damage from a creature, you can use a triggered action to make that creature frightened of you until the end of their next turn.')
 							]
 						})
 					}),
@@ -52,10 +52,11 @@ export const highElf: Ancestry = {
 					value: 1
 				},
 				{
-					feature: FactoryLogic.feature.create({
+					feature: FactoryLogic.feature.createSaveThreshold({
 						id: 'high-elf-feature-2-4',
 						name: 'Otherworldly Grace',
-						description: 'Your elf body and mind can’t be contained for long. Whenever you make a saving throw, you succeed on a roll of 5 or higher.'
+						description: 'Your elf body and mind can’t be contained for long. Whenever you make a saving throw, you succeed on a roll of 5 or higher.',
+						value: 5
 					}),
 					value: 2
 				},
@@ -80,5 +81,6 @@ export const highElf: Ancestry = {
 			count: 'ancestry'
 		})
 	],
-	ancestryPoints: 3
+	ancestryPoints: 3,
+	culture: FactoryLogic.createCulture('High Elf', 'Secluded, bureaucratic, martial.', CultureType.Ancestral, EnvironmentData.secluded, OrganizationData.bureaucratic, UpbringingData.martial, 'Hyrallic')
 };

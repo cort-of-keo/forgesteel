@@ -1,8 +1,8 @@
-import { Career } from '../../models/career';
-import { FactoryLogic } from '../../logic/factory-logic';
-import { FeatureField } from '../../enums/feature-field';
-import { PerkList } from '../../enums/perk-list';
-import { SkillList } from '../../enums/skill-list';
+import { Career } from '@/models/career';
+import { FactoryLogic } from '@/logic/factory-logic';
+import { FeatureField } from '@/enums/feature-field';
+import { PerkList } from '@/enums/perk-list';
+import { SkillList } from '@/enums/skill-list';
 
 export const farmer: Career = {
 	id: 'career-farmer',
@@ -11,7 +11,6 @@ export const farmer: Career = {
 	features: [
 		FactoryLogic.feature.createSkillChoice({
 			id: 'career-farmer-feature-1',
-			listOptions: [ SkillList.Interpersonal ],
 			selected: [ 'Handle Animals' ]
 		}),
 		FactoryLogic.feature.createSkillChoice({
@@ -65,7 +64,6 @@ export const farmer: Career = {
 				description: 'Your family bred horses - beautiful creatures that few could rival on the track and in the jousting lists. When a local noble arrived with an offer to buy your prized stallion, your father refused. The noble struck him down where he stood and stole the horse. Without that stallion, the renowned bloodline would end. You intend to get them back - and get revenge.'
 			}
 		],
-		selected: null,
-		selectedID: null
+		selected: null
 	}
 };
